@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Image, StyleSheet } from "react-native";
 
-const LoadingPage = () => {
+const LoadingPage = ({ navigation }: any) => {
+    useEffect(() => {
+      setTimeout(() => {
+        // 로딩이 끝나면 MainPage로 이동
+        navigation.navigate('MainPage');
+      }, 3000); // 3초 후 MainPage로 이동
+    }, [navigation]);
 
     return (
         <View style={styles.container}>
@@ -20,8 +26,8 @@ const styles = StyleSheet.create({
         backgroundColor : '#C6E4FF'
     },
     locoImage:{
-        width: 335,
-        height: 407
+        width: 235,
+        height: 307
     }
 })
 
