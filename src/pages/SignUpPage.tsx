@@ -4,11 +4,13 @@ import CustomButton from '../components/CustomButton';
 import Logo from '../components/Logo'
 import CustomTextInput from "../components/CustomTextInput";
 
-const LoginPage = () => {
+const SignUpPage = () => {
     return (
         <View style={styles.container}>
             <Logo/>
-
+            <CustomTextInput
+                placeholder="학교 선택" 
+            />
             <CustomTextInput
                 placeholder="아이디" 
             />
@@ -16,8 +18,15 @@ const LoginPage = () => {
                 placeholder="비밀번호"
                 secureTextEntry={true}
             />
+            <CustomTextInput
+                placeholder="비밀번호 확인"
+                secureTextEntry={true}
+            />
+            <CustomTextInput
+                placeholder="닉네임"
+            />
 
-            <CustomButton title="로그인" onPress={() => {}}/>
+            <CustomButton title="회원가입" onPress={() => {}}/>
         </View>
     )
 }
@@ -31,4 +40,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default LoginPage;
+export default SignUpPage;

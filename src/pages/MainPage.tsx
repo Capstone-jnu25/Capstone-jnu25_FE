@@ -4,7 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
 
-import Button from '../components/Button';
+import CustomButton from '../components/CustomButton';
 import Logo from '../components/Logo'
 
 type MainPageNavigationProp = StackNavigationProp<RootStackParamList, 'MainPage'>;
@@ -15,8 +15,8 @@ const MainPage = () => {
     return (
             <View style={styles.container}>
                 <Logo />
-                <Button title="로그인" onPress={() => navigation.navigate('LoginPage')} style={styles.button} />
-                <Button title="회원가입" onPress={() => {}} style={styles.button} />
+                <CustomButton title="로그인" onPress={() => navigation.navigate('LoginPage')} style={styles.button} />
+                <CustomButton title="회원가입" onPress={() => navigation.navigate('SignUpPage')} style={styles.button} />
             </View>
         )
 }
