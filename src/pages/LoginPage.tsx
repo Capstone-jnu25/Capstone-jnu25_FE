@@ -1,10 +1,17 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
+import { useNavigation } from '@react-navigation/native';
+
 import CustomButton from '../components/CustomButton';
 import Logo from '../components/Logo'
 import CustomTextInput from "../components/CustomTextInput";
 
+type LoginPageNavigationProp = StackNavigationProp<RootStackParamList, 'LoginPage'>;
 const LoginPage = () => {
+    const navigation = useNavigation<LoginPageNavigationProp>();
+    
     return (
         <View style={styles.container}>
             <Logo/>
@@ -17,7 +24,7 @@ const LoginPage = () => {
                 secureTextEntry={true}
             />
 
-            <CustomButton title="로그인" onPress={() => {}}/>
+            <CustomButton title="로그인" onPress={() => navigation.navigate('LostPage')}/>
         </View>
     )
 }

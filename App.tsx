@@ -6,6 +6,7 @@ import LoadingPage from './src/pages/LoadingPage';
 import MainPage from './src/pages/MainPage';
 import LoginPage from './src/pages/LoginPage';
 import SignUpPage from './src/pages/SignUpPage';
+import LostPage from './src/pages/LostPage'
 
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -18,6 +19,7 @@ const App: React.FC = () => {
         <Stack.Screen name="MainPage" component={MainPage} />
         <Stack.Screen name="LoginPage" component={LoginPage} />
         <Stack.Screen name="SignUpPage" component={SignUpPage} />
+        <Stack.Screen name="LostPage" component={LostPage} />
       </Stack.Navigator>
     </NavigationContainer>
   );

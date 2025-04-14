@@ -11,7 +11,7 @@ type MainPageNavigationProp = StackNavigationProp<RootStackParamList, 'MainPage'
 
 const MainPage = () => {
     const navigation = useNavigation<MainPageNavigationProp>();
-
+    
     return (
             <View style={styles.container}>
                 <Logo />

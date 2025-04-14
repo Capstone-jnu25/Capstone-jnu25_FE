@@ -3,4 +3,5 @@ export type RootStackParamList = {
     MainPage: undefined;
     LoginPage: undefined;
     SignUpPage: undefined;
+    LostPage: undefined;
   };
