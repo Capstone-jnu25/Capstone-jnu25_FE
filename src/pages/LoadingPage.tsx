@@ -1,19 +1,17 @@
 import React, { useEffect } from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import Logo from '../components/Logo'
 
 const LoadingPage = ({ navigation }: any) => {
     useEffect(() => {
       setTimeout(() => {
-        // 로딩이 끝나면 MainPage로 이동
         navigation.navigate('MainPage');
-      }, 3000); // 3초 후 MainPage로 이동
+      }, 3000); 
     }, [navigation]);
 
     return (
         <View style={styles.container}>
-            <Image
-                style={styles.locoImage}
-                source={require('../assets/logo.png')}/>
+            <Logo />
         </View>
     )
 }

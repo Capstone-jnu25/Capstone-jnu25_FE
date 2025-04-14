@@ -1,15 +1,21 @@
 import React from "react";
-import { View, Image, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
+import { useNavigation } from '@react-navigation/native';
+
 import Button from '../components/Button';
+import Logo from '../components/Logo'
+
+type MainPageNavigationProp = StackNavigationProp<RootStackParamList, 'MainPage'>;
 
 const MainPage = () => {
+    const navigation = useNavigation<MainPageNavigationProp>();
 
     return (
             <View style={styles.container}>
-                <Image
-                    style={styles.locoImage}
-                    source={require('../assets/logo.png')}/>
-                <Button title="로그인" onPress={() => {}} style={styles.button} />
+                <Logo />
+                <Button title="로그인" onPress={() => navigation.navigate('LoginPage')} style={styles.button} />
                 <Button title="회원가입" onPress={() => {}} style={styles.button} />
             </View>
         )

@@ -21,9 +21,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#007BFF',
     paddingVertical: 10,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
+    width:200,
+    marginBottom: 20,
   },
   text: {
     color: '#FFF',
