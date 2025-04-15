@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import { View, StyleSheet } from "react-native";
 import { NaverMapView } from  '@mj-studio/react-native-naver-map';
 import MenuBar from '../components/MenuBar';
+import CircleButton from "../components/CircleButton";
 
 const INITIAL_CAMERA = {
   latitude: 37.5666102,  // 서울 중심부 위도
@@ -18,6 +19,10 @@ const LostPage = () => {
               style={{ width: '100%', height: '100%' }}
               initialCamera={INITIAL_CAMERA}
             />
+            <View style={styles.buttonContainer}>
+              <CircleButton iconName="notifications-outline" onPress={() => {}} />
+              <CircleButton iconName="list" onPress={() => {}} />
+            </View>
 
             </View>
             <MenuBar currentTab={currentTab} onTabPress={setCurrentTab} />
@@ -39,6 +44,13 @@ const styles = StyleSheet.create({
       fontSize: 18,
       marginBottom: 20, // 하단 메뉴바와의 간격
     },
+    buttonContainer: {
+      position: 'absolute',
+      top: 20,
+      right: 20,
+      flexDirection: 'row',
+      gap: 10,
+    }
   });
 
 export default LostPage;
