@@ -1,8 +1,13 @@
-import React, {useState} from "react";
+import React from "react";
 import { View, StyleSheet } from "react-native";
 import { NaverMapView } from  '@mj-studio/react-native-naver-map';
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
+
+type LostPageProps = {
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+};
 
 const INITIAL_CAMERA = {
   latitude: 37.5666102,  // 서울 중심부 위도
@@ -10,8 +15,7 @@ const INITIAL_CAMERA = {
   zoom: 12,  // 줌 레벨
 };
 
-const LostPage = () => {
-    const [currentTab, setCurrentTab] = useState('Lost');
+const LostPage: React.FC<LostPageProps> = ({ currentTab, setCurrentTab }) => {
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>

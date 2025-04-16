@@ -4,4 +4,7 @@ export type RootStackParamList = {
     LoginPage: undefined;
     SignUpPage: undefined;
     LostPage: undefined;
+    TradePage: undefined;
+    StudyPage: undefined;
+    MeetPage: undefined;
   };
