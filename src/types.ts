@@ -8,3 +8,8 @@ export type RootStackParamList = {
     StudyPage: undefined;
     MeetPage: undefined;
   };
+
+export type TabProps = {
+  currentTab: string;
+  setCurrentTab: (tab: string) => void;
+};

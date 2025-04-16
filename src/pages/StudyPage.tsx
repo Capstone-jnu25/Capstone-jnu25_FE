@@ -1,17 +1,13 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import MenuBar from '../components/MenuBar';
+import { TabProps } from '../types';
 
-type StudyPageProps = {
-    currentTab: string;
-    setCurrentTab: (tab: string) => void;
-  };
-
-const StudyPage: React.FC<StudyPageProps> = ({ currentTab, setCurrentTab }) => {
+const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     
     return (
         <View>
-            <MenuBar currentTab={currentTab} onTabPress={setCurrentTab} />
+            <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
         </View>
     )
 }

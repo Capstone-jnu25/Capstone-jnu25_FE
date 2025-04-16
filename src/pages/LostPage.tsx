@@ -1,6 +1,7 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
 import { NaverMapView } from  '@mj-studio/react-native-naver-map';
+import { TabProps } from "../types";
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
 
@@ -15,7 +16,11 @@ const INITIAL_CAMERA = {
   zoom: 12,  // 줌 레벨
 };
 
+<<<<<<< HEAD
 const LostPage: React.FC<LostPageProps> = ({ currentTab, setCurrentTab }) => {
+=======
+const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
+>>>>>>> e116bcd (feat: MeunBar 화면 전환)
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
@@ -29,7 +34,7 @@ const LostPage: React.FC<LostPageProps> = ({ currentTab, setCurrentTab }) => {
             </View>
 
             </View>
-            <MenuBar currentTab={currentTab} onTabPress={setCurrentTab} />
+            <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
         </View> 
     )
 }
