@@ -3,22 +3,22 @@ import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 type SubMenuProps = {
-  onClose: () => void; // 닫기 핸들러
-  onNavigate: (screen: string) => void; // 네비게이션 핸들러
+  onClose: () => void; 
+  onNavigate: (screen: string) => void; 
 };
 
 const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.item} onPress={() => onNavigate('MyInfo')}>
+      <TouchableOpacity style={styles.item} onPress={() => {}}>
         <Icon name="person" size={25} color="#2D4183" />
         <Text style={styles.text}>내정보</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => onNavigate('Chat')}>
+      <TouchableOpacity style={styles.item} onPress={() => {}}>
         <Icon name="chatbubble" size={25} color="#2D4183" />
         <Text style={styles.text}>채팅</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => onNavigate('Group')}>
+      <TouchableOpacity style={styles.item} onPress={() => {}}>
         <Icon name="people" size={25} color="#2D4183" />
         <Text style={styles.text}>내그룹</Text>
       </TouchableOpacity>
