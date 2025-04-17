@@ -74,6 +74,7 @@ const MenuBar: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
 const styles = StyleSheet.create({
   container: {
+    height:100,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',

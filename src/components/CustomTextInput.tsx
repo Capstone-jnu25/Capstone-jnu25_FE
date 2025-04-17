@@ -6,6 +6,7 @@ type CustomTextInputProps = {
 //  value: string;
 //  onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
+  style?: object;
 };
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
@@ -13,10 +14,11 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 //  value,
 //  onChangeText,
   secureTextEntry = false,
+  style
 }) => {
   return (
     <TextInput
-      style={styles.input}
+      style={[styles.input, style]}
       placeholder={placeholder}
     //  value={value}
     //  onChangeText={onChangeText}
@@ -41,6 +43,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 20,
+        fontSize: 12, // 텍스트 크기
+        fontWeight: 'bold', // 텍스트 두께
       },
 });
 

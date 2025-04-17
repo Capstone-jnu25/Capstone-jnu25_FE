@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, Text } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
@@ -25,6 +25,8 @@ const LoginPage = () => {
             />
 
             <CustomButton title="로그인" onPress={() => navigation.navigate('LostPage')}/>
+
+            <Text style={styles.signUpText} onPress={()=>{navigation.navigate('SignUpPage')}}>회원가입</Text>
         </View>
     )
 }
@@ -36,6 +38,10 @@ const styles = StyleSheet.create({
         alignItems : 'center',
         backgroundColor : '#C6E4FF'
     },
+    signUpText: {
+        color: '#2D7DD2', // 회원가입 텍스트 색상
+        fontSize: 12,
+    }
 })
 
 export default LoginPage;
