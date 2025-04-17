@@ -1,15 +1,10 @@
 import React from "react";
 import { View, StyleSheet } from "react-native";
-import { NaverMapView } from  '@mj-studio/react-native-naver-map';
-import { NavigationProp, TabProps } from "../types";
 import { useNavigation } from '@react-navigation/native';
+import { NaverMapView } from  '@mj-studio/react-native-naver-map';
+import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
-
-type LostPageProps = {
-  currentTab: string;
-  setCurrentTab: (tab: string) => void;
-};
 
 const INITIAL_CAMERA = {
   latitude: 37.5666102,  // 서울 중심부 위도
@@ -17,16 +12,9 @@ const INITIAL_CAMERA = {
   zoom: 12,  // 줌 레벨
 };
 
-<<<<<<< HEAD
-const LostPage: React.FC<LostPageProps> = ({ currentTab, setCurrentTab }) => {
-=======
 const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-<<<<<<< HEAD
->>>>>>> e116bcd (feat: MeunBar 화면 전환)
-=======
     const navigation = useNavigation<NavigationProp>();
-
->>>>>>> 72a0b97 (feat: LostPostList 작성)
+    
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
@@ -36,7 +24,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             />
             <View style={styles.buttonContainer}>
               <CircleButton iconName="notifications-outline" onPress={() => {}} />
-              <CircleButton iconName="list" onPress={() => {navigation.navigate('LostPostList');}} />
+              <CircleButton iconName="list" onPress={() => {navigation.navigate('LostPostList')}} />
             </View>
 
             </View>

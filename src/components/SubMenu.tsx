@@ -35,15 +35,13 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 15,
     elevation: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
+    zIndex: 2,
   },
   item: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
+    
   },
   text: {
     marginLeft: 10,
