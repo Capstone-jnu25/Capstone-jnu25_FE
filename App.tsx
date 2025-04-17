@@ -11,6 +11,7 @@ import TradePage from './src/pages/TradePage';
 import StudyPage from './src/pages/StudyPage';
 import MeetPage from './src/pages/MeetPage';
 import LostPostList from './src/pages/LostPostList';
+import NotificationPage from './src/pages/NotificationPage';
 
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -39,6 +40,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="LostPostList">
           {(props) => <LostPostList {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="NotificationPage">
+          {(props) => <NotificationPage {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

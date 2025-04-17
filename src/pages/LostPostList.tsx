@@ -110,7 +110,7 @@ const styles = StyleSheet.create({
       backgroundColor: '#fff',
       marginBottom: 10,
       padding: 15,
-      borderRadius: 8,
+      borderRadius: 12,
       elevation: 3,
     },
     postHeader: {

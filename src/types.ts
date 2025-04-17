@@ -10,6 +10,7 @@ export type RootStackParamList = {
     StudyPage: undefined;
     MeetPage: undefined;
     LostPostList: undefined;
+    NotificationPage: undefined;
   };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;

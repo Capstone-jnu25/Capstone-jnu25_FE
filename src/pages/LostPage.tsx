@@ -23,7 +23,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               initialCamera={INITIAL_CAMERA}
             />
             <View style={styles.buttonContainer}>
-              <CircleButton iconName="notifications-outline" onPress={() => {}} />
+              <CircleButton iconName="notifications-outline" onPress={() => {navigation.navigate('NotificationPage')}} />
               <CircleButton iconName="list" onPress={() => {navigation.navigate('LostPostList')}} />
             </View>
 
