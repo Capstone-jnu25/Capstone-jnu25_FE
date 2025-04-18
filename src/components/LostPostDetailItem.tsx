@@ -32,7 +32,7 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
       <Image source={ post.image } style={styles.postImage} />
 
       <View style={styles.locationRow}>
-        <Icon name="location-outline" size={16} color="#888" />
+        <Icon name="location-sharp" size={16} color="#777" />
         <Text style={styles.locationText}>{post.location}</Text>
       </View>
     </View>
