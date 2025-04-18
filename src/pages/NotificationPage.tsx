@@ -26,18 +26,19 @@ const NotificationPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => 
     return(
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
-            <TouchableOpacity onPress={() => {navigation.goBack()}}>
-               <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
-            </TouchableOpacity>
+                <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                    <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
+                </TouchableOpacity>
+                
                 <View style={styles.itemContainer}>
-                <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>알림</Text>
-                </View>
-                <FlatList
-                    data={notice}
-                    renderItem={renderItem}
-                    keyExtractor={(item) => item.id}
-                />
+                    <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold' }}>알림</Text>
+                    </View>
+                    <FlatList
+                        data={notice}
+                        renderItem={renderItem}
+                        keyExtractor={(item) => item.id}
+                    />
                 </View>
             </View>
             

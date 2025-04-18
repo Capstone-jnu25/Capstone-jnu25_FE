@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { TabProps } from "../types";
+import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleButton from "../components/CircleButton";
+import LostPostItem from '../components/LostPostItem';
 
 const posts = [
     { id: '1', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
@@ -16,28 +18,9 @@ const posts = [
   ];
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-  const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
-     // FlatList로 게시글 리스트 렌더링
-  const renderItem = ({ item }: { item: { id: string; title: string; content: string, location: string, image: any, time: string } }) => (
-    <TouchableOpacity style={styles.postItem} onPress={() => {}}>
-      <View style={styles.postHeader}>
-        <View style={styles.textContainer}>
-          <Text style={styles.postTitle}>{item.title}</Text>
-          <Text style={styles.postContent}>{item.content}</Text>
-        </View>
-        <Image source={item.image} style={styles.postImage} />
-      </View>
-      
-      <View style={styles.postFooter}>
-        <View style={styles.locationContainer}>
-          <Icon1 name="location-sharp" size={16} color="#777" />
-          <Text style={styles.locationText}>{item.location}</Text>
-        </View>
-        <Text style={styles.timeAgo}>{item.time}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const navigation = useNavigation<NavigationProp>();
 
+  const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
@@ -63,11 +46,11 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <View style={styles.buttonContainer}>
             <CircleButton iconName="pencil" onPress={() => {}} />
           </View>
-        <FlatList
-          data={posts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => <LostPostItem post={item} />}
+            keyExtractor={(item) => item.id}
+          />
       </View>
       
       <View style={styles.menuBarContainer}>
@@ -105,54 +88,6 @@ const styles = StyleSheet.create({
     },
     menuBarContainer: {
       marginTop:'auto',
-    },
-    postItem: {
-      backgroundColor: '#fff',
-      marginBottom: 10,
-      padding: 15,
-      borderRadius: 12,
-      elevation: 3,
-    },
-    postHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    textContainer: {
-      flex: 1,
-      paddingRight: 10,
-    },
-    postTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 5,
-    },
-    postContent: {
-      fontSize: 14,
-      color: '#777',
-    },
-    postImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 8,
-    },
-    postFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 10,
-    },
-    locationContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    locationText: {
-      marginLeft: 5,
-      fontSize: 14,
-      color: '#777',
-    },
-    timeAgo: {
-      fontSize: 12,
-      color: '#aaa',
     },
     tabContainer: {
       flexDirection: 'row',
