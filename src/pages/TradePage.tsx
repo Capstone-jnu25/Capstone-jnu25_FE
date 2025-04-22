@@ -1,10 +1,12 @@
 import React, { useState } from "react";
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { TabProps } from "../types";
+import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleButton from "../components/CircleButton";
+import TradePostItem from "../components/TradePostItem";
 
 const posts = [
     { id: '1', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
@@ -16,25 +18,7 @@ const posts = [
   ];
 
 const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-  const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
-     // FlatList로 게시글 리스트 렌더링
-  const renderItem = ({ item }: { item: { id: string; title: string; content: string, price: string, image: any, time: string } }) => (
-    <TouchableOpacity style={styles.postItem} onPress={() => {}}>
-      <View style={styles.postHeader}>
-        <View style={styles.textContainer}>
-          <Text style={styles.postTitle}>{item.title}</Text>
-          <Text style={styles.postContent}>{item.content}</Text>
-        </View>
-        <Image source={item.image} style={styles.postImage} />
-      </View>
-      
-      <View style={styles.postFooter}>
-        <Text style={styles.priceText}>가격 : {item.price}</Text>
-        
-        <Text style={styles.timeAgo}>{item.time}</Text>
-      </View>
-    </TouchableOpacity>
-  );
+  const navigation = useNavigation();
 
   return (
     <View style={styles.mainContainer}>
@@ -50,11 +34,11 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <View style={styles.buttonContainer}>
             <CircleButton iconName="pencil" onPress={() => {}} />
           </View>
-        <FlatList
-          data={posts}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-        />
+          <FlatList
+            data={posts}
+            renderItem={({ item }) => <TradePostItem post={item} />}
+            keyExtractor={(item) => item.id}
+          />
       </View>
       
       <View style={styles.menuBarContainer}>
@@ -77,7 +61,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 25,
+      marginBottom: 10,
       marginTop : 16,
     },
     headerText: {
@@ -93,50 +77,6 @@ const styles = StyleSheet.create({
     menuBarContainer: {
       marginTop:'auto',
     },
-    postItem: {
-      backgroundColor: '#fff',
-      marginBottom: 10,
-      padding: 15,
-      borderRadius: 12,
-      elevation: 3,
-    },
-    postHeader: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-    },
-    textContainer: {
-      flex: 1,
-      paddingRight: 10,
-    },
-    postTitle: {
-      fontSize: 18,
-      fontWeight: 'bold',
-      marginBottom: 5,
-    },
-    postContent: {
-      fontSize: 14,
-      color: '#777',
-    },
-    postImage: {
-      width: 100,
-      height: 100,
-      borderRadius: 8,
-    },
-    postFooter: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      marginTop: 10,
-    },
-    priceText: {
-      marginLeft: 5,
-      fontSize: 14,
-      color: '#777',
-    },
-    timeAgo: {
-      fontSize: 12,
-      color: '#aaa',
-    },
     buttonContainer: {
       position: 'absolute',
       bottom: 20,
@@ -144,5 +84,6 @@ const styles = StyleSheet.create({
       zIndex: 1,
     }
   });
+
 
 export default TradePage;

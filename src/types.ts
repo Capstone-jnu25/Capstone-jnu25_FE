@@ -12,6 +12,7 @@ export type RootStackParamList = {
     LostPostList: undefined;
     LostPostDetail: undefined;
     NotificationPage: undefined;
+    TradePostDetail: undefined;
   };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;

@@ -10,10 +10,10 @@ export type PostData = {
   title: string;
   description: string;
   image: ImageSourcePropType;
-  location: string;
+  price: string;
 };
 
-const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
+const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
   return (
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
@@ -31,10 +31,7 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
 
       <Image source={ post.image } style={styles.postImage} />
 
-      <View style={styles.locationRow}>
-        <Icon name="location-sharp" size={16} color="#777" />
-        <Text style={styles.locationText}>{post.location}</Text>
-      </View>
+      <Text style={styles.priceText}>{post.price}</Text>
     </View>
   );
 };
@@ -82,15 +79,11 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 10,
   },
-  locationRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  locationText: {
+  priceText: {
     fontSize: 12,
     color: '#666',
     marginLeft: 5,
   },
 });
 
-export default LostPostDetailItem;
+export default TradePostDetailItem;
