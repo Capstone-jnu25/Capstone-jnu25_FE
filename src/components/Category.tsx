@@ -30,11 +30,12 @@ const Category: React.FC<CategoryProps> = ({ label }) => {
 
 const styles = StyleSheet.create({
     categoryContainer: {
-      paddingHorizontal: 12,
-      paddingVertical: 8,
-      borderRadius: 20,
-      marginRight: 8,
-      alignSelf: 'flex-start',
+        width: 70,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        borderRadius: 20,
+        marginRight: 8,
+        alignItems: 'center',
     },
   });
   
