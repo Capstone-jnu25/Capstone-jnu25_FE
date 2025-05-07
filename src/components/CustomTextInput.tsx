@@ -6,6 +6,7 @@ type CustomTextInputProps = {
 //  value: string;
 //  onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
+  keyboardType?: 'default' | 'numeric';
   style?: object;
 };
 
@@ -14,6 +15,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
 //  value,
 //  onChangeText,
   secureTextEntry = false,
+  keyboardType = 'default',
   style
 }) => {
   return (
@@ -23,6 +25,7 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     //  value={value}
     //  onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
+      keyboardType={keyboardType}
       autoCapitalize="none"
       placeholderTextColor="#D2D2D2" // 회색 텍스트
       textAlign="center" // 텍스트 가운데 정렬

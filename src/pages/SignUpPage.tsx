@@ -33,6 +33,7 @@ const SignUpPage = () => {
             />
             <CustomTextInput
                 placeholder="학번" 
+                keyboardType="numeric"
             />
 
             <CustomButton title="회원가입" onPress={() => {}}/>

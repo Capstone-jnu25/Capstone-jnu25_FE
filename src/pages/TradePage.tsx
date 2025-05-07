@@ -18,7 +18,7 @@ const posts = [
   ];
 
 const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-  const navigation = useNavigation();
+ const navigation = useNavigation<NavigationProp>();
 
   return (
     <View style={styles.mainContainer}>
@@ -32,7 +32,7 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         </View>
         
           <View style={styles.buttonContainer}>
-            <CircleButton iconName="pencil" onPress={() => {}} />
+            <CircleButton iconName="pencil" onPress={() => {navigation.navigate('TradePostAdd')}} />
           </View>
           <FlatList
             data={posts}

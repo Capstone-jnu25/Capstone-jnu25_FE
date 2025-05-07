@@ -7,14 +7,15 @@ import MainPage from './src/pages/MainPage';
 import LoginPage from './src/pages/LoginPage';
 import SignUpPage from './src/pages/SignUpPage';
 import LostPage from './src/pages/LostPage';
-import TradePage from './src/pages/TradePage';
-import StudyPage from './src/pages/StudyPage';
-import MeetPage from './src/pages/MeetPage';
 import LostPostList from './src/pages/LostPostList';
 import LostPostDetail from './src/pages/LostPostDetail';
 import LostPostAdd from './src/pages/LostPostAdd';
 import NotificationPage from './src/pages/NotificationPage';
+import TradePage from './src/pages/TradePage';
 import TradePostDetail from './src/pages/TradePostDetail';
+import TradePostAdd from './src/pages/TradePostAdd';
+import StudyPage from './src/pages/StudyPage';
+import MeetPage from './src/pages/MeetPage';
 
 
 const Stack = createStackNavigator<RootStackParamList>();
@@ -55,6 +56,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="TradePostDetail">
           {(props) => <TradePostDetail {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="TradePostAdd">
+          {(props) => <TradePostAdd {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
