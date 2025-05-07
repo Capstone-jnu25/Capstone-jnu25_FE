@@ -20,7 +20,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         <Text style={styles.fixButton}>내 정보 수정</Text>
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={() => {}}>
+                <TouchableOpacity onPress={() => {navigation.navigate('KeywordPage')}}>
                     <View style={styles.rowButton}>
                         <Text style={styles.text}>키워드 설정</Text>
                         <Icon name='chevron-forward-outline' size={15} style={styles.icon} />
