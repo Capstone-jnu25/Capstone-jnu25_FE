@@ -15,6 +15,7 @@ export type RootStackParamList = {
     NotificationPage: undefined;
     TradePostDetail: undefined;
     TradePostAdd: undefined;
+    MyPage: undefined;
   };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;

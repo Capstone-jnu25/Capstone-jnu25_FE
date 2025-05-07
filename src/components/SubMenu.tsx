@@ -3,30 +3,32 @@ import { useNavigation } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { NavigationProp } from "../types";
+import { RootStackParamList } from '../types';
 
 type SubMenuProps = {
-  onClose: () => void; 
-  onNavigate: (screen: string) => void; 
+  onClose: () => void;
+  onNavigate: (screen: keyof RootStackParamList) => void;
 };
 
 const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
-  const navigation = useNavigation<NavigationProp>();
-
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.item} onPress={() => {}}>
+      <TouchableOpacity style={styles.item} onPress={() => { onNavigate('MyPage'); onClose(); }}>
         <Icon name="person" size={25} color="#2D4183" />
         <Text style={styles.text}>내정보</Text>
       </TouchableOpacity>
+
       <TouchableOpacity style={styles.item} onPress={() => {}}>
         <Icon name="chatbubble" size={25} color="#2D4183" />
         <Text style={styles.text}>채팅</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => {}}>
+
+      <TouchableOpacity style={styles.item} onPress={() => { }}>
         <Icon name="people" size={25} color="#2D4183" />
         <Text style={styles.text}>내그룹</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('NotificationPage')}}>
+
+      <TouchableOpacity style={styles.item} onPress={() => { onNavigate('NotificationPage'); onClose(); }}>
         <Icon name="notifications" size={25} color="#2D4183" />
         <Text style={styles.text}>알림</Text>
       </TouchableOpacity>
@@ -49,7 +51,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
-    
   },
   text: {
     marginLeft: 10,
