@@ -27,14 +27,20 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
                 <TextInput
                     placeholder="물품 이름" 
+                    placeholderTextColor={'#777'} 
                     style = {styles.input} />
                 <TextInput
-                    placeholder="물품과 관련된 정보를 입력해주세요"
+                    placeholder="물품과 관련된 정보를 입력하세요"
+                    placeholderTextColor={'#777'} 
                     multiline 
                     style = {styles.textArea} />
                 <TouchableOpacity style={styles.location} onPress={()=>{}}>
-                    <Text style={styles.uploadText}>분실/습득한 장소를 입력해주세요</Text>
+                    <Text style={styles.uploadText}>분실/습득한 장소를 선택하세요</Text>
                 </TouchableOpacity>
+                <TextInput
+                    placeholder="상세 위치를 작성하세요"
+                    placeholderTextColor={'#777'} 
+                    style = {styles.inputLocation} />
                 <TouchableOpacity style={styles.guideline} onPress={()=>{}}>
                     <View style={styles.row}>
                         <Icon name='help-circle' size={15} color='#2D4183'/>
@@ -44,7 +50,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 <TouchableOpacity style={styles.upload} onPress={()=>{}}>
                     <View style={styles.row}>
                         <Icon name='add-outline' size={15} color="#777"/>
-                        <Text style={styles.uploadText}> 물품 사진을 업로드해주세요 </Text>
+                        <Text style={styles.uploadText}> 물품 사진을 업로드하세요 </Text>
                     </View>
                 </TouchableOpacity>
                 
@@ -86,6 +92,15 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 15,
         fontSize: 16,
+     },
+     inputLocation:{
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 15,
+        marginBottom: 15,
+        fontSize: 16,
+        textAlign: 'center', 
      },
      textArea: {
         width: '100%',

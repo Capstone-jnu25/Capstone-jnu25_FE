@@ -28,6 +28,14 @@ jobs:
         with:
           node-version: 18
 
+      - name: Cache Node Modules
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: npm-${{ runner.os }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            npm-${{ runner.os }}-
+
       - name: Install dependencies
         run: npm ci
 
@@ -40,6 +48,8 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
+            **/build
+            **/.gradle
           key: gradle-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             gradle-${{ runner.os }}-
@@ -50,4 +60,4 @@ jobs:
       - name: Build Android
         run: |
           cd android
-          ./gradlew assembleDebug
+          ./gradlew assembleDebug --no-daemon --max-workers=4

@@ -21,27 +21,31 @@ const TradePostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
                 <TextInput
                     placeholder="물품 이름" 
+                    placeholderTextColor={'#777'} 
                     style = {styles.input} />
                 <TextInput
-                    placeholder="물품과 관련된 정보를 입력해주세요"
+                    placeholder="물품과 관련된 정보를 입력하세요"
+                    placeholderTextColor={'#777'} 
                     multiline 
                     style = {styles.textArea} />
                 <TextInput 
                     placeholder="거래 장소를 입력하세요"
-                    style = {styles.input}
+                    placeholderTextColor={'#777'} 
+                    style = {styles.inputCenter}
                 />
                 
                 <TouchableOpacity style={styles.upload} onPress={()=>{}}>
                     <View style={styles.row}>
                         <Icon name='add-outline' size={15} color="#777"/>
-                        <Text style={styles.uploadText}> 물품 사진을 업로드해주세요 </Text>
+                        <Text style={styles.uploadText}> 물품 사진을 업로드하세요 </Text>
                     </View>
                 </TouchableOpacity>
 
                 <TextInput 
                     placeholder="가격을 입력하세요"
+                    placeholderTextColor={'#777'} 
                     keyboardType="numeric"
-                    style = {styles.input}
+                    style = {styles.inputCenter}
                 />
                 
                 <CustomButton title='완료' style={styles.button} onPress={() => {}}/>
@@ -70,6 +74,15 @@ const styles = StyleSheet.create({
         padding: 15,
         marginBottom: 15,
         fontSize: 16,
+     },
+     inputCenter:{
+        width: '100%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 15,
+        marginBottom: 15,
+        fontSize: 16,
+        textAlign: 'center', 
      },
      textArea: {
         width: '100%',
