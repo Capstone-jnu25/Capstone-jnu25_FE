@@ -44,7 +44,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         </View>
         
           <View style={styles.buttonContainer}>
-            <CircleButton iconName="pencil" onPress={() => {}} />
+            <CircleButton iconName="pencil" onPress={() => {navigation.navigate('LostPostAdd')}} />
           </View>
           <FlatList
             data={posts}

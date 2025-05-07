@@ -11,6 +11,7 @@ export type RootStackParamList = {
     MeetPage: undefined;
     LostPostList: undefined;
     LostPostDetail: undefined;
+    LostPostAdd: undefined;
     NotificationPage: undefined;
     TradePostDetail: undefined;
   };
