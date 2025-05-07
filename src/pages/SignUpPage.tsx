@@ -31,6 +31,9 @@ const SignUpPage = () => {
             <CustomTextInput
                 placeholder="닉네임"
             />
+            <CustomTextInput
+                placeholder="학번" 
+            />
 
             <CustomButton title="회원가입" onPress={() => {}}/>
         </View>

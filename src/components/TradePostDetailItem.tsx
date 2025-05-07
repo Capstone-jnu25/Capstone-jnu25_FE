@@ -11,6 +11,7 @@ export type PostData = {
   description: string;
   image: ImageSourcePropType;
   price: string;
+  location: string;
 };
 
 const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
@@ -30,7 +31,10 @@ const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
       <Text style={styles.postContent}>{post.description}</Text>
 
       <Image source={ post.image } style={styles.postImage} />
-
+      <View style={styles.locationRow}>
+          <Icon name="location-sharp" size={16} color="#777" />
+          <Text style={styles.locationText}>{post.location}</Text>
+      </View>
       <Text style={styles.priceText}>{post.price}</Text>
     </View>
   );
@@ -80,6 +84,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   priceText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 5,
+  },
+  locationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  locationText: {
     fontSize: 12,
     color: '#666',
     marginLeft: 5,

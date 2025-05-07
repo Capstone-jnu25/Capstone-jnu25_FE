@@ -1,6 +1,8 @@
 import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { NavigationProp } from "../types";
 
 type SubMenuProps = {
   onClose: () => void; 
@@ -8,6 +10,8 @@ type SubMenuProps = {
 };
 
 const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
+  const navigation = useNavigation<NavigationProp>();
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.item} onPress={() => {}}>
@@ -21,6 +25,10 @@ const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
       <TouchableOpacity style={styles.item} onPress={() => {}}>
         <Icon name="people" size={25} color="#2D4183" />
         <Text style={styles.text}>내그룹</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.item} onPress={() => {navigation.navigate('NotificationPage')}}>
+        <Icon name="notifications" size={25} color="#2D4183" />
+        <Text style={styles.text}>알림</Text>
       </TouchableOpacity>
     </View>
   );

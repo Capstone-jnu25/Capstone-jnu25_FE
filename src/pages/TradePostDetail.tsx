@@ -12,7 +12,8 @@ import TradePostDetailItem from "../components/TradePostDetailItem";
         title: '나이키 바람막이',
         description: '상세설명상세설명상세설명상세설명상세설명상세설명상세설명상세설명',
         image: require('../assets/images.png'),
-        price: "15000원"
+        price: "15000원",
+        location: '광주 북구 용봉로 77 전남대학교 백도 앞'
     };
     
 const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {

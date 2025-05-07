@@ -36,6 +36,7 @@ const TradePostItem: React.FC<TradePostItemProps> = ({ post }) => {
         
         <Text style={styles.timeAgo}>{post.time}</Text>
       </View>
+
     </TouchableOpacity>
   );
 };
