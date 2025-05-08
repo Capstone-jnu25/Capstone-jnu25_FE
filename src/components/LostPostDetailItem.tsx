@@ -17,7 +17,10 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
   return (
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
-        <View style={styles.profileCircle} />
+        <Image 
+          source={require('../assets/profile.png')} // 고정된 프로필 이미지
+          style={styles.profileImage} 
+        />
         <View>
           <Text style={styles.postTitle}>{post.nickname}</Text>
           <Text style={styles.postDate}>{post.date}</Text>
@@ -29,7 +32,7 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
       <Text style={styles.postTitle}>{post.title}</Text>
       <Text style={styles.postContent}>{post.description}</Text>
 
-      <Image source={ post.image } style={styles.postImage} />
+      <Image source={post.image} style={styles.postImage} />
 
       <View style={styles.locationRow}>
         <Icon name="location-sharp" size={16} color="#777" />
@@ -49,14 +52,16 @@ const styles = StyleSheet.create({
   },
   postHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
   },
-  profileCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ccc',
-    marginRight: 10,
+  profileImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 30,
+    marginRight: 5,
+    borderWidth: 2,
+    borderColor: '#95CEFF'
   },
   postTitle: {
     fontSize: 18,

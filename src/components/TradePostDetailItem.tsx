@@ -18,7 +18,10 @@ const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
   return (
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
-        <View style={styles.profileCircle} />
+        <Image 
+                  source={require('../assets/profile.png')} // 고정된 프로필 이미지
+                  style={styles.profileImage} 
+                />
         <View>
           <Text style={styles.postTitle}>{post.nickname}</Text>
           <Text style={styles.postDate}>{post.date}</Text>
@@ -96,6 +99,14 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginLeft: 5,
+  },
+  profileImage: {
+    width: 45,
+    height: 45,
+    borderRadius: 30,
+    marginRight: 5,
+    borderWidth: 2,
+    borderColor: '#95CEFF'
   },
 });
 
