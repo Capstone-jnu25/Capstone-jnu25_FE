@@ -16,8 +16,8 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity onPress={() => {navigation.goBack()}}>
                         <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() =>{}}>
-                        <Text style={styles.fixButton}>내 정보 수정</Text>
+                    <TouchableOpacity onPress={() =>{navigation.navigate('EditProfile')}}>
+                        <Text style={styles.editButton}>내 정보 수정</Text>
                     </TouchableOpacity>
                 </View>
                 <TouchableOpacity onPress={() => {navigation.navigate('KeywordPage')}}>
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
     },
-    fixButton: {
+    editButton: {
         fontSize: 14,
         color: '#007AFF',
     },

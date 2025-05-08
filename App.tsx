@@ -18,6 +18,7 @@ import StudyPage from './src/pages/StudyPage';
 import MeetPage from './src/pages/MeetPage';
 import MyPage from './src/pages/MyPage';
 import KeywordPage from './src/pages/KeywordPage';
+import EditProfile from './src/pages/EditProfile';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -66,6 +67,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="KeywordPage">
           {(props) => <KeywordPage {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="EditProfile">
+          {(props) => <EditProfile {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
