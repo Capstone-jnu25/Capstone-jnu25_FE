@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import CustomButton from './CustomButton';
 
-interface StudyPostItemProps {
+interface MeetPostItemProps {
     title: string;
     dDay: string;
     members: string;
@@ -11,21 +12,25 @@ interface StudyPostItemProps {
     onPress: () => void;
 }
 
-const StudyPostItem: React.FC<StudyPostItemProps> = ({ title, dDay, members, details, date, location, onPress }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, onPress }) => {
     return (
-        <TouchableOpacity style={styles.container} onPress={onPress}>
+        <View style={styles.container}>
             <View style={styles.header}>
                 <Text style={styles.dday}>{dDay}</Text>
+                <Text style={styles.members}>{members}</Text>
             </View>
             <View style={styles.content}>
                 <Text style={styles.title} numberOfLines={1}>{title}</Text>
                 <Text style={styles.details}>{date}</Text>
                 <Text style={styles.details}>{location}</Text>
-                <Text style={styles.details} numberOfLines={3}>{details}</Text>
+                <Text style={styles.details} numberOfLines={3}>{details}</Text>     
                 
-                <Text style={styles.members}>{members}</Text>
             </View>
-        </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+                <CustomButton title='신청' style={styles.button} onPress={() => {}}/>  
+            </View>
+            
+        </View>
     );
 };
 
@@ -34,8 +39,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         margin: 10,
-        width: 170,
-        height: 180,
+        flexShrink: 1,
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -44,7 +48,9 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     header: {
-        alignItems: 'flex-end',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         marginBottom: 10,
     },
     dday: {
@@ -66,12 +72,27 @@ const styles = StyleSheet.create({
         color: '#777',
         marginBottom: 5,
     },
+    location: {
+        fontSize: 12,
+        color: '#777',
+        marginBottom: 5,
+    },
     members: {
         fontSize: 12,
         fontWeight: 'bold',
         color: '#333',
         textAlign: 'right',
     },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'flex-end', // 오른쪽 정렬
+        marginTop: 10,
+    },
+    button: {
+        width: '25%',
+        backgroundColor: '#233b6d',
+        marginBottom:0,
+    }
 });
 
-export default StudyPostItem;
+export default MeetPostItem;

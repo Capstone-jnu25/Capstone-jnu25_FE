@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -50,7 +50,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             details={item.details}
                             date={item.date}
                             location={item.location}
-                            onPress={() => console.log(item.title)}
+                            onPress={() => {}}
                         />
                     )}
                     numColumns={2}  
@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
         zIndex: 1,
     },
     listContainer: {
-        alignItems: 'center',  // ✅ 가운데 정렬
+        alignItems: 'center',
     },
 })
 
