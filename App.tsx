@@ -19,6 +19,7 @@ import MeetPage from './src/pages/MeetPage';
 import MyPage from './src/pages/MyPage';
 import KeywordPage from './src/pages/KeywordPage';
 import EditProfile from './src/pages/EditProfile';
+import GroupPage from './src/pages/GroupPage';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -71,6 +72,10 @@ const App: React.FC = () => {
         <Stack.Screen name="EditProfile">
           {(props) => <EditProfile {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
+        <Stack.Screen name="GroupPage">
+          {(props) => <GroupPage {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        
       </Stack.Navigator>
     </NavigationContainer>
   );

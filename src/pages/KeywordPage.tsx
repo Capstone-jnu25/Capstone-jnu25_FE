@@ -26,7 +26,7 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
                     </TouchableOpacity>
                     <Text>키워드 설정</Text>
-                    <Text></Text>
+                    <Text/>
                 </View>
 
                 <View style={styles.row}>

@@ -1,8 +1,6 @@
 import React from 'react';
-import { useNavigation } from '@react-navigation/native';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { NavigationProp } from "../types";
 import { RootStackParamList } from '../types';
 
 type SubMenuProps = {
@@ -23,7 +21,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
         <Text style={styles.text}>채팅</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.item} onPress={() => { }}>
+      <TouchableOpacity style={styles.item} onPress={() => {onNavigate('GroupPage'); onClose(); }}>
         <Icon name="people" size={25} color="#2D4183" />
         <Text style={styles.text}>내그룹</Text>
       </TouchableOpacity>
