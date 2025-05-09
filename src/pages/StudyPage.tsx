@@ -38,7 +38,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         <Icon name="search" size={25} onPress={() =>{}}/>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <CircleButton iconName="pencil" onPress={() => {}} />
+                    <CircleButton iconName="pencil" onPress={() => {navigation.navigate('StudyPostAdd')}} />
                 </View>
                 <FlatList
                     data={studyPosts}

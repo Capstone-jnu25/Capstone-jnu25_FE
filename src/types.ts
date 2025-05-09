@@ -9,12 +9,17 @@ export type RootStackParamList = {
     TradePage: undefined;
     StudyPage: undefined;
     MeetPage: undefined;
+
     LostPostList: undefined;
     LostPostDetail: undefined;
     LostPostAdd: undefined;
-    NotificationPage: undefined;
+    
     TradePostDetail: undefined;
     TradePostAdd: undefined;
+    
+    StudyPostAdd: undefined;
+
+    NotificationPage: undefined;
     MyPage: undefined;
     KeywordPage: undefined;
     EditProfile: undefined;

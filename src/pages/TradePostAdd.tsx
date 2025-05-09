@@ -3,7 +3,6 @@ import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
-import DropDownPicker from 'react-native-dropdown-picker';
 import { Text } from "react-native-gesture-handler";
 import CustomButton from "../components/CustomButton";
 

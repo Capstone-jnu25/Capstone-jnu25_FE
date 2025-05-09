@@ -6,16 +6,23 @@ import LoadingPage from './src/pages/LoadingPage';
 import MainPage from './src/pages/MainPage';
 import LoginPage from './src/pages/LoginPage';
 import SignUpPage from './src/pages/SignUpPage';
+
 import LostPage from './src/pages/LostPage';
 import LostPostList from './src/pages/LostPostList';
 import LostPostDetail from './src/pages/LostPostDetail';
 import LostPostAdd from './src/pages/LostPostAdd';
-import NotificationPage from './src/pages/NotificationPage';
+
+
 import TradePage from './src/pages/TradePage';
 import TradePostDetail from './src/pages/TradePostDetail';
 import TradePostAdd from './src/pages/TradePostAdd';
+
 import StudyPage from './src/pages/StudyPage';
+import StudyPostAdd from './src/pages/StudyPostAdd';
+
 import MeetPage from './src/pages/MeetPage';
+
+import NotificationPage from './src/pages/NotificationPage';
 import MyPage from './src/pages/MyPage';
 import KeywordPage from './src/pages/KeywordPage';
 import EditProfile from './src/pages/EditProfile';
@@ -74,6 +81,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="GroupPage">
           {(props) => <GroupPage {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="StudyPostAdd">
+          {(props) => <StudyPostAdd {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
         
       </Stack.Navigator>
