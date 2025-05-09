@@ -5,7 +5,7 @@ import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 
-const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
+const MeetPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
     
     return(
@@ -125,4 +125,4 @@ const styles = StyleSheet.create({
       },
 })
 
-export default StudyPostAdd;
+export default MeetPostAdd;
