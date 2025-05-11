@@ -37,7 +37,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         <Icon name="search" size={25} onPress={() =>{}}/>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <CircleButton iconName="pencil" onPress={() => {}} />
+                    <CircleButton iconName="pencil" onPress={() => {navigation.navigate('MeetPostAdd')}} />
                 </View>
                 <FlatList
                     data={meetPosts}

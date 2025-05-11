@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, TouchableOpacity, TextInput, Text} from 'react-native';
+import { View, StyleSheet, TouchableOpacity, TextInput, Text } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
+import CustomCheckbox from "../components/CustomCheckBox";
+
 
 const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
-    
+    const [isSelected, setIsSelected] = useState(false);
+
     return(
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
@@ -22,6 +25,13 @@ const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     placeholderTextColor={'#777'} 
                     style = {styles.input} />
                 <View style={styles.content}>
+                    
+                    <CustomCheckbox 
+                        label="선착순으로 받기" 
+                        checked={isSelected} 
+                        onChange={setIsSelected} 
+                    />
+
                     <View style={styles.row}>
                         <Text style= {styles.text}>마감일:</Text>
                         <TextInput
@@ -49,6 +59,14 @@ const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <View style={styles.separator} />
                         <Text style= {styles.text}>기타</Text>
                         <TextInput multiline style={styles.textArea}/> 
+                </View>
+                <View>
+                    <TextInput
+                        placeholder="인원수"
+                        placeholderTextColor={'#777'} 
+                        style={styles.inputNum}
+                        keyboardType="numeric"
+                        />
                 </View>
                 
                 <CustomButton title='완료' style={styles.button} onPress={() => {}}/>
@@ -82,6 +100,15 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         fontSize: 16,
     },
+    inputNum : {
+        width: '20%',
+        backgroundColor: 'white',
+        borderRadius: 20,
+        padding: 15,
+        marginBottom: 15,
+        fontSize: 16,
+        alignContent:'center'
+    },
     textinput:{
         marginTop:5,
         width:'80%',
@@ -91,6 +118,7 @@ const styles = StyleSheet.create({
         marginTop:5,
         width:'100%',
         height:'50%',
+        textAlignVertical: 'top'
     },
     text:{
         width:50,

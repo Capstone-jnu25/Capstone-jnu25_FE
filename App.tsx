@@ -21,6 +21,7 @@ import StudyPage from './src/pages/StudyPage';
 import StudyPostAdd from './src/pages/StudyPostAdd';
 
 import MeetPage from './src/pages/MeetPage';
+import MeetPostAdd from './src/pages/MeetPostAdd';
 
 import NotificationPage from './src/pages/NotificationPage';
 import MyPage from './src/pages/MyPage';
@@ -85,7 +86,9 @@ const App: React.FC = () => {
         <Stack.Screen name="StudyPostAdd">
           {(props) => <StudyPostAdd {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
-        
+        <Stack.Screen name="MeetPostAdd">
+          {(props) => <MeetPostAdd {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>
   );
