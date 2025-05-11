@@ -50,7 +50,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             details={item.details}
                             date={item.date}
                             location={item.location}
-                            onPress={() => {}}
+                            onPress={() => {navigation.navigate('StudyPostDetail')}}
                         />
                     )}
                     numColumns={2}  

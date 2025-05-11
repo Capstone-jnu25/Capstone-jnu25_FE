@@ -19,6 +19,7 @@ import TradePostAdd from './src/pages/TradePostAdd';
 
 import StudyPage from './src/pages/StudyPage';
 import StudyPostAdd from './src/pages/StudyPostAdd';
+import StudyPostDetail from './src/pages/StudyPostDetail';
 
 import MeetPage from './src/pages/MeetPage';
 import MeetPostAdd from './src/pages/MeetPostAdd';
@@ -88,6 +89,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="MeetPostAdd">
           {(props) => <MeetPostAdd {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="StudyPostDetail">
+          {(props) => <StudyPostDetail {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

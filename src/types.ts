@@ -18,6 +18,7 @@ export type RootStackParamList = {
     TradePostAdd: undefined;
     
     StudyPostAdd: undefined;
+    StudyPostDetail: undefined;
 
     MeetPostAdd: undefined;
 
