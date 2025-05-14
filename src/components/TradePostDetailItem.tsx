@@ -26,8 +26,8 @@ const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
           <Text style={styles.postTitle}>{post.nickname}</Text>
           <Text style={styles.postDate}>{post.date}</Text>
         </View>
-        <Icon name="share-social" size={20} style={styles.iconRight} />
-        <Icon name="ellipsis-vertical" size={20} />
+        <Icon name="share-social" size={20} style={styles.iconRight} color="#233b6d"/>
+        <Icon name="ellipsis-vertical" size={20} color="#233b6d"/>
       </View>
 
       <Text style={styles.postTitle}>{post.title}</Text>

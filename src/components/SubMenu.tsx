@@ -16,7 +16,7 @@ const SubMenu: React.FC<SubMenuProps> = ({ onClose, onNavigate }) => {
         <Text style={styles.text}>내정보</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.item} onPress={() => {}}>
+      <TouchableOpacity style={styles.item} onPress={() => {onNavigate('ChatList'); onClose(); }}>
         <Icon name="chatbubble" size={25} color="#2D4183" />
         <Text style={styles.text}>채팅</Text>
       </TouchableOpacity>

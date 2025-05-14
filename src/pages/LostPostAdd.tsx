@@ -41,12 +41,6 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     placeholder="상세 위치를 작성하세요"
                     placeholderTextColor={'#777'} 
                     style = {styles.inputLocation} />
-                <TouchableOpacity style={styles.guideline} onPress={()=>{}}>
-                    <View style={styles.row}>
-                        <Icon name='help-circle' size={15} color='#2D4183'/>
-                        <Text style={styles.guidelineText}>사진 업로드 가이드라인</Text>
-                    </View>
-                </TouchableOpacity>
                 <TouchableOpacity style={styles.upload} onPress={()=>{}}>
                     <View style={styles.row}>
                         <Icon name='add-outline' size={15} color="#777"/>
@@ -121,12 +115,6 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    guideline:{
-        margin: 10,
-    },
-    guidelineText:{
-        color: '#2D4183'
     },
     uploadText: {
         color: '#777',

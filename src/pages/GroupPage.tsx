@@ -7,8 +7,8 @@ import GroupItem from '../components/GroupItem';
 import Icon from "react-native-vector-icons/Ionicons";
 
 const groups = [
-    { title: '영화 한 편 때리기', category: '번개', date: '2025.04.06. 22:00' },
-    { title: '오늘 비실이 한 대 때리기', category: '번개', date: '2025.04.06. 22:00' },
+    { title: '영화 한 편 보기', category: '번개', date: '2025.04.06. 22:00' },
+    { title: '내일 점심 먹기', category: '번개', date: '2025.04.06. 22:00' },
     { title: '같이 반수할 사람', category: '스터디' },
     { title: '토익 공부하실 분', category: '스터디' },
 ];

@@ -16,7 +16,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity onPress={() => {navigation.goBack()}}>
                         <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() =>{navigation.navigate('EditProfile')}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('EditProfile')}}>
                         <Text style={styles.editButton}>내 정보 수정</Text>
                     </TouchableOpacity>
                 </View>
@@ -33,7 +33,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.list}> {/*최대 3개?*/}
+                <View style={styles.list}>
                     <TouchableOpacity onPress={() => {}}>
                         <View style={styles.row}>
                             <Text style={styles.text}>에어팟 프로</Text>

@@ -9,7 +9,7 @@ import MeetPostItem from "../components/MeetPostItem";
 
 const meetPosts = [
     {
-        title: '오늘 영화 한 편 때리실 분',
+        title: '오늘 영화 같이 보실 분!',
         dDay: 'D-DAY',
         members: '5/10',
         details: '마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!! 마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!! 마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!!',
@@ -17,12 +17,12 @@ const meetPosts = [
         location: '장소 : 전대 메가박스'
     },
     {
-        title: '오늘 비실이 한 대 때리실 분',
+        title: '내일 점심 같이 먹을 분 구해요',
         dDay: 'D-1',
         members: '2/3',
-        details: '퉁퉁이 닮은 사람이면 더 좋습니다 아무거나 들고 오세요',
+        details: '메뉴는 만나서 같이 정해요 전 다 좋습니다',
         date: '시간 : 내일 11시',
-        location: '장소 : 비실이 집 앞'
+        location: '장소 : 후문'
     },    
 ];
 

@@ -27,6 +27,9 @@ export type RootStackParamList = {
     KeywordPage: undefined;
     EditProfile: undefined;
     GroupPage: undefined;
+
+    ChatList: undefined;
+    ChatPage: undefined;
   };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;
