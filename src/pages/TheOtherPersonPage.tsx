@@ -1,11 +1,12 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
 import { TabProps } from '../types';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
 const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation();
+    const [isModalVisible, setModalVisible] = useState(false);
     return (
         <View style={styles.mainContainer}>
             <View style={styles.head}>
@@ -28,7 +29,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             <Icon name='thumbs-up' size={20} color='#000' />
                             <Text style={styles.likeText}>24</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.dislikeButton}>
+                        <TouchableOpacity style={styles.dislikeButton} onPress={() => setModalVisible(true)}>
                             <Icon name='thumbs-down' size={20} color='#000' />
                             <Text style={styles.dislikeText}>02</Text>
                         </TouchableOpacity>
@@ -36,6 +37,26 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                     </View>
                 </View>
             </View>
+            <Modal
+                transparent={true}
+                visible={isModalVisible}
+                onRequestClose={() => setModalVisible(false)}
+            >
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+                            <Icon name='close' size={25} color='#233b6d' />
+                        </TouchableOpacity>
+                        <View style={styles.modalHeader}>
+                            <Image source={require('../assets/profile.png')} style={styles.modalProfileImage} />
+                            <Text style={styles.modalText}>이 학생을 비추천하시겠습니까?</Text>
+                        </View>
+                        <TouchableOpacity style={styles.confirmButton} onPress={() => setModalVisible(false)}>
+                            <Text style={styles.confirmButtonText}>확인</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 };
@@ -55,8 +76,7 @@ const styles = StyleSheet.create({
     backgroundCard: {
         flex: 1,
         backgroundColor: '#FFFFFF',
-        borderTopLeftRadius: 30,
-        borderTopRightRadius: 30,
+        borderRadius: 30,
         paddingTop: 140,
         marginTop: 180,
         paddingHorizontal: 20,
@@ -127,6 +147,51 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginLeft: 10,
         color: '#000',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'flex-end',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0,0,0,0.3)',
+    },
+    modalContent: {
+        width: '90%',
+        backgroundColor: '#ffffff',
+        borderRadius:30,
+        padding: 20,
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    modalHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    modalProfileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 30,
+        marginRight: 10,
+        borderWidth: 2,
+        borderColor: '#95CEFF',
+    },
+    modalText: {
+        fontSize: 18,
+        color: '#555',
+    },
+    closeButton: {
+        alignSelf: 'flex-end',
+        marginBottom: 20,
+    },
+    confirmButton: {
+        backgroundColor: '#233b6d',
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+        borderRadius: 20,
+    },
+    confirmButtonText: {
+        color: '#ffffff',
+        fontSize: 18,
     },
 });
 
