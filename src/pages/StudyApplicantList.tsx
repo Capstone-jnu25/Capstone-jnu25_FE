@@ -10,7 +10,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
 
     // 샘플 데이터
     const applicants = [
-        { id: '1', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대' },
+        { id: '1', nickname: '닉네임', message: '열심히 하겠습니다.서울대.열심히 하겠습니다.서울대' },
         { id: '2', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
         { id: '3', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
         { id: '4', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},

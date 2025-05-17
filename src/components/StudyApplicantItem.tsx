@@ -15,8 +15,8 @@ const StudyApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, o
             <View style={styles.infoContainer}>
                 <Text style={styles.nickname}>{nickname}</Text>
                 <Text style={styles.message}>{message}</Text>
-            </View>
-            <View style={styles.buttonContainer}>
+
+                <View style={styles.buttonContainer}>
                 <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
                     <Text style={styles.buttonText}>삭제</Text>
                 </TouchableOpacity>
@@ -24,6 +24,8 @@ const StudyApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, o
                     <Text style={styles.buttonText}>수락</Text>
                 </TouchableOpacity>
             </View>
+            </View>
+            
         </View>
     );
 };
@@ -64,29 +66,28 @@ const styles = StyleSheet.create({
         color: '#666',
         marginBottom: 5,
     },
-    school: {
-        fontSize: 12,
-        color: '#888',
-    },
     buttonContainer: {
         flexDirection: 'row',
         gap: 10,
+        marginTop: 5,
+        alignSelf: 'flex-end',
     },
     deleteButton: {
-        backgroundColor: '#e0e0e0',
+        backgroundColor: '#f0f0f0',
         paddingVertical: 5,
         paddingHorizontal: 15,
-        borderRadius: 15,
+        borderRadius: 20,
+        marginRight: 10,
     },
     acceptButton: {
-        backgroundColor: '#e0e0e0',
+        backgroundColor: '#f0f0f0',
         paddingVertical: 5,
         paddingHorizontal: 15,
-        borderRadius: 15,
+        borderRadius: 20,
     },
     buttonText: {
         fontSize: 14,
-        color: '#666',
+        color: '#555',
     },
 });
 
