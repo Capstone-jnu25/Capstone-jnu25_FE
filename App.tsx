@@ -20,9 +20,11 @@ import TradePostAdd from './src/pages/TradePostAdd';
 import StudyPage from './src/pages/StudyPage';
 import StudyPostAdd from './src/pages/StudyPostAdd';
 import StudyPostDetail from './src/pages/StudyPostDetail';
+import StudyApplicantList from './src/pages/StudyApplicantList';
 
 import MeetPage from './src/pages/MeetPage';
 import MeetPostAdd from './src/pages/MeetPostAdd';
+import MeetApplicantList from './src/pages/MeetApplicantList';
 
 import NotificationPage from './src/pages/NotificationPage';
 import MyPage from './src/pages/MyPage';
@@ -31,7 +33,7 @@ import EditProfile from './src/pages/EditProfile';
 import GroupPage from './src/pages/GroupPage';
 import ChatList from './src/pages/ChatList';
 import ChatPage from './src/pages/ChatPage';
-import StudyApplicantList from './src/pages/StudyApplicantList';
+
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -104,6 +106,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="StudyApplicantList">
           {(props) => <StudyApplicantList {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="MeetApplicantList">
+          {(props) => <MeetApplicantList {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

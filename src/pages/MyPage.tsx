@@ -41,7 +41,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         </View>
                     </TouchableOpacity>
                     <View style={styles.separator} />
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity onPress={() => {navigation.navigate('MeetApplicantList')}}>
                         <View style={styles.row}>
                             <Text style={styles.text}>에어팟 프로</Text>
                             <Category label={'번개'}/>

@@ -3,19 +3,19 @@ import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native
 import { TabProps, NavigationProp } from "../types";
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import StudyApplicantItem from '../components/ApplicantItem';
+import ApplicantItem from '../components/ApplicantItem';
 
-const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
+const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation();
 
     // 샘플 데이터
     const applicants = [
-        { id: '1', nickname: '닉네임', message: '열심히 하겠습니다.서울대.열심히 하겠습니다.서울대열심히 하겠습니다.서울대.열심히 하겠습니다.서울대.열심히 하겠습니다.서울대.열심히 하겠습니다.서울대' },
-        { id: '2', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
-        { id: '3', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
-        { id: '4', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
-        { id: '5', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
-        { id: '6', nickname: '닉네임', message: '열심히 하겠습니다.\n서울대'},
+        { id: '1', nickname: '닉네임',},
+        { id: '2', nickname: '닉네임',},
+        { id: '3', nickname: '닉네임',},
+        { id: '4', nickname: '닉네임',},
+        { id: '5', nickname: '닉네임',},
+        { id: '6', nickname: '닉네임',},
     ];
     
 
@@ -28,14 +28,13 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
 
                 <View style={styles.itemContainer}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>같이 반수할 사람</Text>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>오늘 영화 한 편 보실 분</Text>
                         </View>
                  <FlatList
                     data={applicants}
                     renderItem={({ item }) => (
-                    <StudyApplicantItem
+                    <ApplicantItem
                         nickname={item.nickname}
-                        message={item.message}
                         onAccept={() => {}}
                         onDelete={() => {}}
                     />
@@ -73,4 +72,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default StudyApplicantList;
+export default MeetApplicantList;

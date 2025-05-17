@@ -22,6 +22,7 @@ export type RootStackParamList = {
     StudyApplicantList: undefined;
 
     MeetPostAdd: undefined;
+    MeetApplicantList: undefined;
 
     NotificationPage: undefined;
     MyPage: undefined;
