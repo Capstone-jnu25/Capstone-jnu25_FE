@@ -31,9 +31,10 @@ import MyPage from './src/pages/MyPage';
 import KeywordPage from './src/pages/KeywordPage';
 import EditProfile from './src/pages/EditProfile';
 import GroupPage from './src/pages/GroupPage';
+
 import ChatList from './src/pages/ChatList';
 import ChatPage from './src/pages/ChatPage';
-
+import TheOtherPersonPage from './src/pages/TheOtherPersonPage';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -109,6 +110,9 @@ const App: React.FC = () => {
         </Stack.Screen>
         <Stack.Screen name="MeetApplicantList">
           {(props) => <MeetApplicantList {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
+        </Stack.Screen>
+        <Stack.Screen name="TheOtherPersonPage">
+          {(props) => <TheOtherPersonPage {...props} currentTab={currentTab} setCurrentTab={setCurrentTab} />}
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

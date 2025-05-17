@@ -29,7 +29,8 @@ const ChatList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                                 profileImage={item.profileImage}
                                 nickname={item.nickname}
                                 lastMessage={item.lastMessage}
-                                onPress={() => {navigation.navigate('ChatPage')}}
+                                onItemPress={() => {navigation.navigate('ChatPage')}}
+                                onNicknamePress={() => {navigation.navigate('TheOtherPersonPage')}}
                             />
                         )}
                         keyExtractor={(item) => item.id.toString()}

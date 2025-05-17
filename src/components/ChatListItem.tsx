@@ -5,16 +5,19 @@ interface ChatListItemProps {
     profileImage: any;
     nickname: string;
     lastMessage: string;
-    onPress: () => void;
+    onItemPress: () => void;
+    onNicknamePress: () => void;
 }
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ profileImage, nickname, lastMessage, onPress }) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({ profileImage, nickname, lastMessage, onItemPress, onNicknamePress }) => {
     return (
         <View>
-        <TouchableOpacity style={styles.container} onPress={onPress}>
+        <TouchableOpacity style={styles.container} onPress={onItemPress}>
             <Image source={profileImage} style={styles.profileImage} />
             <View style={styles.textContainer}>
-                <Text style={styles.nickname}>{nickname}</Text>
+                <TouchableOpacity onPress={onNicknamePress}>
+                    <Text style={styles.nickname}>{nickname}</Text>
+                </TouchableOpacity>
                 <Text style={styles.message} numberOfLines={1}>{lastMessage}</Text>
             </View>
             
