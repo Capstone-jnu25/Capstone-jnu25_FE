@@ -64,7 +64,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             {selectedMarkerId !== null && (
               <View style={styles.detailContainer}>
                 <TouchableOpacity onPress={() => setSelectedMarkerId(null)}>
-                  <Icon name='close' size={25} style={{ marginBottom: 10 }}/>
+                  <Icon name='close' size={25} style={{ marginBottom: 10 }} color="#233b6d" />
                 </TouchableOpacity>
                 
                 <View style={styles.headerRow}>

@@ -26,8 +26,8 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>중고거래 게시판</Text>
           <View style={styles.searchContainer}>
-            <Icon1 name="search" size={25} onPress={() =>{}}/>
-            <Icon2 name="image-plus" size={25} onPress={() =>{}}/>  
+            <Icon1 name="search" size={25} color="#233b6d" onPress={() =>{}}/>
+            <Icon2 name="image-plus" size={25} color="#233b6d" onPress={() =>{}}/>  
           </View>
         </View>
         

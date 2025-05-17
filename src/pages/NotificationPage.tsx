@@ -27,7 +27,7 @@ const NotificationPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => 
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                    <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
+                    <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
                 </TouchableOpacity>
                 
                 <View style={styles.itemContainer}>

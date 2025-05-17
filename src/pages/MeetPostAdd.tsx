@@ -15,7 +15,7 @@ const MeetPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.headerRow}>
                     <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                        <Icon name='close-outline' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
+                        <Icon name='close-outline' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d"/>
                     </TouchableOpacity>
                 </View>
 

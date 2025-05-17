@@ -35,7 +35,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.headerText}>스터디 게시판</Text>
-                        <Icon name="search" size={25} onPress={() =>{}}/>
+                        <Icon name="search" size={25} color="#233b6d" onPress={() =>{}}/>
                 </View>
                 <View style={styles.buttonContainer}>
                     <CircleButton iconName="pencil" onPress={() => {navigation.navigate('StudyPostAdd')}} />

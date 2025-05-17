@@ -23,7 +23,7 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <View style={styles.contentContainer}>
                 <View style={styles.headerRow}>
                     <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                        <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} />
+                        <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
                     </TouchableOpacity>
                     <Text>키워드 설정</Text>
                     <Text/>

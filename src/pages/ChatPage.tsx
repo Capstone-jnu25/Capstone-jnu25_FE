@@ -26,7 +26,7 @@ const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <View style={styles.container}>
                 <View style={styles.headerContainer}>
                     <TouchableOpacity style={styles.backButton} onPress={() => {navigation.goBack()}}> 
-                        <Icon1 name='arrow-back' size={25} />
+                        <Icon1 name='arrow-back' size={25} color="#233b6d" />
                     </TouchableOpacity>
                     <Text style={styles.nickname}>닉네임 1</Text>
                     <View style={styles.placeholder} />
