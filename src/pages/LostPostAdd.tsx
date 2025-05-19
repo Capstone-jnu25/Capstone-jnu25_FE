@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { Text } from "react-native-gesture-handler";
 import CustomButton from "../components/CustomButton";
+import ModalWithMap from "../components/ModalWithMap";
 
 const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
@@ -15,6 +16,8 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         { label: "분실", value: "분실" },
         { label: "습득", value: "습득" }
     ]);
+
+    const [modalVisible, setModalVisible] = useState(false);
 
     return(
         <View style={styles.mainContainer}>
@@ -34,8 +37,9 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     placeholderTextColor={'#777'} 
                     multiline 
                     style = {styles.textArea} />
-                <TouchableOpacity style={styles.location} onPress={()=>{}}>
+                <TouchableOpacity style={styles.location} onPress={()=> setModalVisible(true)}>
                     <Text style={styles.uploadText}>분실/습득한 장소를 선택하세요</Text>
+                    <ModalWithMap visible={modalVisible} onClose={() => setModalVisible(false)} />
                 </TouchableOpacity>
                 <TextInput
                     placeholder="상세 위치를 작성하세요"
