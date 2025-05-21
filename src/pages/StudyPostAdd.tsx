@@ -10,6 +10,7 @@ import CustomCheckbox from "../components/CustomCheckBox";
 const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
     const [isSelected, setIsSelected] = useState(false);
+    const [selectedGender, setSelectedGender] = useState<string | null>(null);
 
     return(
         <View style={styles.mainContainer}>
@@ -52,9 +53,35 @@ const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <View style={styles.separator} />
                     <View style={styles.row}>
                         <Text style= {styles.text}>성별: </Text>
-                        <CustomButton title='남성' style={styles.buttonSex} onPress={() => {}}/>
-                        <CustomButton title='여성' style={styles.buttonSex} onPress={() => {}}/>
-                        <CustomButton title='무관' style={styles.buttonSex} onPress={() => {}}/>
+                        <CustomButton
+                            title="남성"
+                            onPress={() => setSelectedGender("남성")}
+                            style={[
+                            styles.buttonSex,
+                            ...(selectedGender === "남성" ? [{ backgroundColor: "#fff5c4"  }] : []),
+                            ]}
+                            textStyle={{ color: "black" }}
+                        />
+
+                        <CustomButton
+                            title="여성"
+                            onPress={() => setSelectedGender("여성")}
+                            style={[
+                            styles.buttonSex,
+                            ...(selectedGender === "여성" ? [{ backgroundColor: "#fff5c4" }] : []),
+                            ]}
+                            textStyle={{ color: "black" }}
+                        />
+
+                        <CustomButton
+                            title="무관"
+                            onPress={() => setSelectedGender("무관")}
+                            style={[
+                            styles.buttonSex,
+                            ...(selectedGender === "무관" ? [{ backgroundColor: "#fff5c4" }] : []),
+                            ]}
+                            textStyle={{ color: "black" }}
+                        />
                     </View>
                     <View style={styles.separator} />
                         <Text style= {styles.text}>기타</Text>
@@ -144,7 +171,7 @@ const styles = StyleSheet.create({
         width:'25%',
         marginBottom:0,
         marginRight:5,
-        backgroundColor:'#a9a9a9',
+        backgroundColor:'#ededed',
     },
     separator: {
         height: 1,
