@@ -71,6 +71,14 @@ const SignUpPage = () => {
         }
     };
 
+    const checkPasswordMatch = () => {
+        if (password === passwordConfirm) {
+            Alert.alert("✅ 확인", "비밀번호가 일치합니다.");
+        } else {
+            Alert.alert("❌ 오류", "비밀번호가 일치하지 않습니다.");
+        }
+    };
+
     return (
         <View style={styles.container}>
         <Logo />
@@ -116,7 +124,7 @@ const SignUpPage = () => {
                     value={passwordConfirm}
                     onChangeText={setPasswordConfirm}
                 />
-                <TouchableOpacity style={styles.checkButton}>
+                <TouchableOpacity style={styles.checkButton} onPress={checkPasswordMatch}>
                     <Text style={styles.button}>확인</Text>
                 </TouchableOpacity>
             </View>
