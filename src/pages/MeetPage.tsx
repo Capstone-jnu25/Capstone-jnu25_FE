@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CircleButton from "../components/CircleButton";
 import MeetPostItem from "../components/MeetPostItem";
 
-const meetPosts = [
+const posts = [
     {
         title: '오늘 영화 같이 보실 분!',
         dDay: 'D-DAY',
@@ -29,18 +29,34 @@ const meetPosts = [
 const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
 
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredPosts = posts.filter((post) =>
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.details.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.headerText}>번개 게시판</Text>
-                        <Icon name="search" size={25} color="#233b6d" onPress={() =>{}}/>
+                        <Icon name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
                 </View>
+                {isSearching && (
+                            <TextInput
+                            placeholder="검색어를 입력하세요"
+                            value={searchQuery}
+                            onChangeText={setSearchQuery}
+                            style={styles.searchInput}
+                            />
+                        )}
                 <View style={styles.buttonContainer}>
                     <CircleButton iconName="pencil" onPress={() => {navigation.navigate('MeetPostAdd')}} />
                 </View>
                 <FlatList
-                    data={meetPosts}
+                    data={posts}
                     renderItem={({ item }) => (
                         <MeetPostItem 
                             title={item.title}
@@ -86,6 +102,13 @@ const styles = StyleSheet.create({
         bottom: 20,
         right: 20,
         zIndex: 1,
+    },
+    searchInput: {
+      backgroundColor: '#fff',
+      padding: 10,
+      borderRadius: 30,
+      marginBottom: 10,
+      marginTop: 10,
     },
 })
 

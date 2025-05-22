@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -8,7 +8,7 @@ import CircleButton from "../components/CircleButton";
 import StudyPostItem from "../components/StudyPostItem";
 
 
-const studyPosts = [
+const posts = [
     {
         title: '같이 반수할 사람',
         dDay: 'D-DAY',
@@ -30,18 +30,34 @@ const studyPosts = [
 const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
 
+    const [isSearching, setIsSearching] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+
+    const filteredPosts = posts.filter((post) =>
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.details.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.headerText}>스터디 게시판</Text>
-                        <Icon name="search" size={25} color="#233b6d" onPress={() =>{}}/>
+                        <Icon name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
                 </View>
+                {isSearching && (
+                    <TextInput
+                    placeholder="검색어를 입력하세요"
+                    value={searchQuery}
+                    onChangeText={setSearchQuery}
+                    style={styles.searchInput}
+                    />
+                )}
                 <View style={styles.buttonContainer}>
                     <CircleButton iconName="pencil" onPress={() => {navigation.navigate('StudyPostAdd')}} />
                 </View>
                 <FlatList
-                    data={studyPosts}
+                    data={posts}
                     renderItem={({ item }) => (
                         <StudyPostItem 
                             title={item.title}
@@ -92,6 +108,13 @@ const styles = StyleSheet.create({
     },
     listContainer: {
         alignItems: 'center',
+    },
+    searchInput: {
+      backgroundColor: '#fff',
+      padding: 10,
+      borderRadius: 30,
+      marginBottom: 10,
+      marginTop: 10,
     },
 })
 

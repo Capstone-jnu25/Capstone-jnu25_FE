@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
@@ -20,16 +20,32 @@ const posts = [
 const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
  const navigation = useNavigation<NavigationProp>();
 
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+ 
+   const filteredPosts = posts.filter((post) =>
+     post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+     post.content.toLowerCase().includes(searchQuery.toLowerCase())
+   );
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>중고거래 게시판</Text>
           <View style={styles.searchContainer}>
-            <Icon1 name="search" size={25} color="#233b6d" onPress={() =>{}}/>
+            <Icon1 name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
             <Icon2 name="image-plus" size={25} color="#233b6d" onPress={() =>{}}/>  
           </View>
         </View>
+        {isSearching && (
+          <TextInput
+            placeholder="검색어를 입력하세요"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+          />
+        )}
         
           <View style={styles.buttonContainer}>
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('TradePostAdd')}} />
@@ -82,7 +98,14 @@ const styles = StyleSheet.create({
       bottom: 20,
       right: 20,
       zIndex: 1,
-    }
+    },
+    searchInput: {
+      backgroundColor: '#fff',
+      padding: 10,
+      borderRadius: 30,
+      marginTop: 10,
+      marginBottom: 10,
+    },
   });
 
 

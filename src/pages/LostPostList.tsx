@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
@@ -9,7 +9,7 @@ import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 
 const posts = [
-    { id: '1', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '1', title: 'adidas', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
     { id: '2', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
     { id: '3', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
     { id: '4', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
@@ -21,16 +21,33 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<NavigationProp>();
 
   const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const filteredPosts = posts.filter((post) =>
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>분실/습득 게시판</Text>
           <View style={styles.searchContainer}>
-            <Icon1 name="search" size={25} color="#233b6d" onPress={() =>{}}/>
+            <Icon1 name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
             <Icon2 name="image-plus" size={25} color="#233b6d" onPress={() =>{}}/>  
           </View>
         </View>
+        {isSearching && (
+          <TextInput
+            placeholder="검색어를 입력하세요"
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            style={styles.searchInput}
+          />
+        )}
+
         <View style={styles.tabContainer}>
           <TouchableOpacity onPress={() => setActiveTab('lost')}>
             <Text style={[styles.tabText, activeTab === 'lost' ? styles.activeText : styles.inActiveText]}>분실</Text>
@@ -46,11 +63,11 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <View style={styles.buttonContainer}>
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('LostPostAdd')}} />
           </View>
-          <FlatList
-            data={posts}
-            renderItem={({ item }) => <LostPostItem post={item} />}
-            keyExtractor={(item) => item.id}
-          />
+           <FlatList
+              data={searchQuery.length > 0 ? filteredPosts : posts}
+              renderItem={({ item }) => <LostPostItem post={item} />}
+              keyExtractor={(item) => item.id}
+            />
       </View>
       
       <View style={styles.menuBarContainer}>
@@ -114,7 +131,14 @@ const styles = StyleSheet.create({
       bottom: 20,
       right: 20,
       zIndex: 1,
-    }
+    },
+    searchInput: {
+      backgroundColor: '#fff',
+      padding: 10,
+      borderRadius: 30,
+      marginTop: 10,
+      marginBottom: 10,
+    },
   });
 
 export default LostPostList;
