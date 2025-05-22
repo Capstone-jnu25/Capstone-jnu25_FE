@@ -9,12 +9,12 @@ import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 
 const posts = [
-    { id: '1', title: 'adidas', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '2', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '3', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '4', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '5', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '6', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '1', type: 'lost', title: 'adidas', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '2', type: 'found', title: '아디다스 11111', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '3', type: 'found', title: '아디다스 22222', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '4', type: 'found', title: '아디다스 33333', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '5', type: 'lost', title: '아디다스 44444', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
+    { id: '6', type: 'lost', title: '아디다스 55555', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
   ];
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -25,8 +25,11 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    post.type === activeTab &&
+    (
+      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchQuery.toLowerCase())
+    )
   );
 
   return (
@@ -64,10 +67,10 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('LostPostAdd')}} />
           </View>
            <FlatList
-              data={searchQuery.length > 0 ? filteredPosts : posts}
-              renderItem={({ item }) => <LostPostItem post={item} />}
-              keyExtractor={(item) => item.id}
-            />
+            data={filteredPosts}
+            renderItem={({ item }) => <LostPostItem post={item} />}
+            keyExtractor={(item) => item.id}
+          />
       </View>
       
       <View style={styles.menuBarContainer}>
