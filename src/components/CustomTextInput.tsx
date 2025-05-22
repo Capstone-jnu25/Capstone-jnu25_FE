@@ -3,17 +3,17 @@ import { TextInput, StyleSheet } from 'react-native';
 
 type CustomTextInputProps = {
   placeholder: string;
-//  value: string;
-//  onChangeText: (text: string) => void;
+  value: string;
+  onChangeText: (text: string) => void;
   secureTextEntry?: boolean;
-  keyboardType?: 'default' | 'numeric';
+  keyboardType?: 'default' | 'numeric' | 'email-address';
   style?: object;
 };
 
 const CustomTextInput: React.FC<CustomTextInputProps> = ({
   placeholder,
-//  value,
-//  onChangeText,
+  value,
+  onChangeText,
   secureTextEntry = false,
   keyboardType = 'default',
   style
@@ -22,8 +22,8 @@ const CustomTextInput: React.FC<CustomTextInputProps> = ({
     <TextInput
       style={[styles.input, style]}
       placeholder={placeholder}
-    //  value={value}
-    //  onChangeText={onChangeText}
+      value={value}
+      onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}
       autoCapitalize="none"
