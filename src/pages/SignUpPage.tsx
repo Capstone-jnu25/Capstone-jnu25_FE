@@ -117,7 +117,7 @@ const SignUpPage = () => {
             <Logo />
 
             <CustomTextInput
-                placeholder="학교 입력력"
+                placeholder="학교 입력"
                 value={univName}
                 onChangeText={handleUnivNameChange}
             />
