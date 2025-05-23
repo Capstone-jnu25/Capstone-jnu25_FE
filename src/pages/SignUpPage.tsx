@@ -4,13 +4,13 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
-    Alert,
     FlatList
 } from "react-native";
 import axios from "axios";
 import CustomButton from "../components/CustomButton";
 import Logo from "../components/Logo";
 import CustomTextInput from "../components/CustomTextInput";
+import CustomAlert from "../components/CustomAlert";
 
 const SignUpPage = () => {
     const [univName, setUnivName] = useState("");      
@@ -21,11 +21,14 @@ const SignUpPage = () => {
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [nickname, setNickname] = useState("");
     const [studentId, setStudentId] = useState("");
-    const [schoolSuggestions, setSchoolSuggestions] = useState([]);
+    const [schoolSuggestions, setSchoolSuggestions] = useState<string[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
 
-    const fetchSchoolSuggestions = async (keyword:string) => {
+    const fetchSchoolSuggestions = async (keyword: string) => {
         if (!keyword) {
             setSchoolSuggestions([]);
             return;
@@ -45,8 +48,9 @@ const SignUpPage = () => {
             });
 
             const results = response.data.dataSearch?.content || [];
-            const names = results.map((item:any) => item.schoolName);
-            setSchoolSuggestions(names);
+            const names: string[]= results.map((item: any) => item.schoolName);
+            const uniqueNames: string[] = Array.from(new Set(names));
+            setSchoolSuggestions(uniqueNames);
             setShowSuggestions(true);
         } catch (error) {
             console.error("학교 검색 에러:", error);
@@ -57,7 +61,9 @@ const SignUpPage = () => {
 
     const handleSendCode = async () => {
         if (!univName || !email) {
-            Alert.alert("오류", "학교와 이메일을 모두 입력하세요.");
+            setAlertTitle("오류");
+            setAlertMessage("학교와 이메일을 모두 입력하세요.");
+            setAlertVisible(true);
             return;
         }
 
@@ -70,19 +76,24 @@ const SignUpPage = () => {
             });
 
             if (response.data.success) {
-                Alert.alert("성공", "인증코드가 전송되었습니다.");
+                setAlertTitle("성공");
+                setAlertMessage("인증코드가 전송되었습니다.");
             } else {
-                Alert.alert("실패", response.data.message || "인증코드 전송 실패");
+                setAlertTitle("실패");
+                setAlertMessage(response.data.message || "인증코드 전송 실패");
             }
+            setAlertVisible(true);
         } catch (error) {
             console.error("API 호출 에러:", error);
-            Alert.alert("네트워크 오류", "잠시 후 다시 시도해주세요.");
+            setAlertTitle("네트워크 오류");
+            setAlertMessage("잠시 후 다시 시도해주세요.");
+            setAlertVisible(true);
         }
     };
 
     const handleUnivNameChange = (text: string) => {
         setUnivName(text);
-        fetchSchoolSuggestions(text); // 타이머 없이 즉시 호출
+        fetchSchoolSuggestions(text);
     };
 
     const handleVerifyCode = async () => {
@@ -95,21 +106,29 @@ const SignUpPage = () => {
 
             if (response.data.success) {
                 setIsVerified(true);
-                Alert.alert("성공", "이메일 인증이 완료되었습니다.");
+                setAlertTitle("성공");
+                setAlertMessage("이메일 인증이 완료되었습니다.");
             } else {
-                Alert.alert("실패", response.data.message || "인증코드가 올바르지 않습니다.");
+                setAlertTitle("실패");
+                setAlertMessage(response.data.message || "인증코드가 올바르지 않습니다.");
             }
+            setAlertVisible(true);
         } catch (error) {
-            Alert.alert("네트워크 오류", "잠시 후 다시 시도해주세요.");
+            setAlertTitle("네트워크 오류");
+            setAlertMessage("잠시 후 다시 시도해주세요.");
+            setAlertVisible(true);
         }
     };
 
     const checkPasswordMatch = () => {
         if (password === passwordConfirm) {
-            Alert.alert("✅ 확인", "비밀번호가 일치합니다.");
+            setAlertTitle("확인");
+            setAlertMessage("비밀번호가 일치합니다.");
         } else {
-            Alert.alert("❌ 오류", "비밀번호가 일치하지 않습니다.");
+            setAlertTitle("오류");
+            setAlertMessage("비밀번호가 일치하지 않습니다.");
         }
+        setAlertVisible(true);
     };
 
     return (
@@ -199,12 +218,22 @@ const SignUpPage = () => {
                 title="회원가입"
                 onPress={() => {
                     if (!isVerified) {
-                        Alert.alert("이메일 인증 필요", "이메일 인증을 완료해주세요.");
+                        setAlertTitle("이메일 인증 필요");
+                        setAlertMessage("이메일 인증을 완료해주세요.");
+                        setAlertVisible(true);
                         return;
                     }
-
-                    Alert.alert("회원가입 성공", "이제 로그인이 가능합니다!");
+                    setAlertTitle("회원가입 성공");
+                    setAlertMessage("이제 로그인이 가능합니다!");
+                    setAlertVisible(true);
                 }}
+            />
+
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                onClose={() => setAlertVisible(false)}
             />
         </View>
     );
@@ -247,7 +276,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         zIndex: 999,
         maxHeight: 150,
-        width:200,
+        width: 200,
     },
     suggestionItem: {
         padding: 10,
