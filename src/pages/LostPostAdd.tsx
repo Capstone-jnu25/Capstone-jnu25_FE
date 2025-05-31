@@ -18,6 +18,8 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     ]);
 
     const [modalVisible, setModalVisible] = useState(false);
+    const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+
 
     return(
         <View style={styles.mainContainer}>
@@ -39,7 +41,14 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     style = {styles.textArea} />
                 <TouchableOpacity style={styles.location} onPress={()=> setModalVisible(true)}>
                     <Text style={styles.uploadText}>분실/습득한 장소를 선택하세요</Text>
-                    <ModalWithMap visible={modalVisible} onClose={() => setModalVisible(false)} />
+                    <ModalWithMap
+                        visible={modalVisible}
+                        onClose={() => setModalVisible(false)}
+                        onConfirm={(coords) => {
+                            setSelectedCoords(coords);
+                            setModalVisible(false);
+                        }}
+                        />
                 </TouchableOpacity>
                 <TextInput
                     placeholder="상세 위치를 작성하세요"

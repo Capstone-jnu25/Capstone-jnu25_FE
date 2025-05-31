@@ -41,7 +41,6 @@ const SignUpPage = () => {
             let address = "";
 
             if (schoolName === "전남대학교") {
-            // 전남대는 광주캠퍼스로 고정
             address = "광주광역시 북구 용봉로 77";
             } else {
             const res = await axios.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
@@ -69,11 +68,11 @@ const SignUpPage = () => {
             const geoRes = await axios.get("https://dapi.kakao.com/v2/local/search/address.json", {
             params: { query: address },
             headers: {
-                Authorization: "KakaoAK f958d2a57846011e2462194fb63cd48c", // ✅ KakaoAK 꼭 포함
+                Authorization: "KakaoAK f958d2a57846011e2462194fb63cd48c",
             },
             });
 
-            const geoData = geoRes.data.documents?.[0]; // ✅ 최신 구조는 documents
+            const geoData = geoRes.data.documents?.[0];
             if (!geoData) throw new Error("좌표 데이터를 찾을 수 없습니다.");
 
             console.log("📍 위도:", geoData.y, "경도:", geoData.x);

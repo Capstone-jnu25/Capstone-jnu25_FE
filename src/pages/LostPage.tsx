@@ -91,10 +91,10 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               domStorageEnabled={true}
               cacheEnabled={false}
               onMessage={(event) => {
-  const msg = event.nativeEvent.data;
-  const id = parseInt(msg);
-  if (!isNaN(id)) setSelectedMarkerId(id);
-}}
+              const msg = event.nativeEvent.data;
+              const id = parseInt(msg);
+              if (!isNaN(id)) setSelectedMarkerId(id);
+            }}
               onError={(e) => console.log("❌ WebView 에러", e.nativeEvent)}
               onHttpError={(e) => console.log("❌ HTTP 에러", e.nativeEvent)}
             />
