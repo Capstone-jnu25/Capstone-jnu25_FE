@@ -5,7 +5,7 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
-    FlatList
+    FlatList,
 } from "react-native";
 import { TabProps, NavigationProp } from "../types";
 import axios from "axios";
@@ -16,21 +16,77 @@ import CustomAlert from "../components/CustomAlert";
 
 const SignUpPage = () => {
     const navigation = useNavigation<NavigationProp>();
-    
+
     const [univName, setUnivName] = useState("");      
     const [email, setEmail] = useState("");            
-    const [code, setCode] = useState("");              
+    const [code, setCode] = useState("");
+
     const [isVerified, setIsVerified] = useState(false);
     const [password, setPassword] = useState("");
     const [passwordConfirm, setPasswordConfirm] = useState("");
     const [nickname, setNickname] = useState("");
     const [studentId, setStudentId] = useState("");
-    const [schoolSuggestions, setSchoolSuggestions] = useState<string[]>([]);
+
+    const [latitude, setLatitude] = useState<number | null>(null);
+    const [longitude, setLongitude] = useState<number | null>(null);
+    const [schoolSuggestions, setSchoolSuggestions] = useState<{ name: string; address: string }[]>([]);
     const [showSuggestions, setShowSuggestions] = useState(false);
 
     const [alertVisible, setAlertVisible] = useState(false);
     const [alertTitle, setAlertTitle] = useState("");
     const [alertMessage, setAlertMessage] = useState("");
+
+    const fetchAddressAndCoords = async (schoolName: string) => {
+        try {
+            let address = "";
+
+            if (schoolName === "전남대학교") {
+            // 전남대는 광주캠퍼스로 고정
+            address = "광주광역시 북구 용봉로 77";
+            } else {
+            const res = await axios.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
+                params: {
+                apiKey: "de9825b1c596b2bcd0cbbe3c166b0b08",
+                svcType: "api",
+                svcCode: "SCHOOL",
+                contentType: "json",
+                gubun: "univ_list",
+                searchSchulNm: schoolName,
+                },
+            });
+
+            const contentList = res.data.dataSearch?.content || [];
+            const content = contentList.find(
+                (item: any) => item.schoolName === schoolName && !item.adres.includes("여수")
+            );
+
+            if (!content?.adres) throw new Error("주소를 찾을 수 없습니다.");
+            address = content.adres;
+            }
+
+            console.log("📍 변환된 학교 주소:", address);
+
+            const geoRes = await axios.get("https://dapi.kakao.com/v2/local/search/address.json", {
+            params: { query: address },
+            headers: {
+                Authorization: "KakaoAK f958d2a57846011e2462194fb63cd48c", // ✅ KakaoAK 꼭 포함
+            },
+            });
+
+            const geoData = geoRes.data.documents?.[0]; // ✅ 최신 구조는 documents
+            if (!geoData) throw new Error("좌표 데이터를 찾을 수 없습니다.");
+
+            console.log("📍 위도:", geoData.y, "경도:", geoData.x);
+
+            setLatitude(parseFloat(geoData.y));
+            setLongitude(parseFloat(geoData.x));
+        } catch (err) {
+            console.error("주소/좌표 변환 오류:", err);
+            setLatitude(null);
+            setLongitude(null);
+        }
+        };
+
 
     const fetchSchoolSuggestions = async (keyword: string) => {
         if (!keyword) {
@@ -41,7 +97,7 @@ const SignUpPage = () => {
         try {
             const response = await axios.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
                 params: {
-                    apiKey: "de9825b1c596b2bcd0cbbe3c166b0b08", 
+                    apiKey: "de9825b1c596b2bcd0cbbe3c166b0b08",
                     type: "json",
                     svcType: "api",
                     svcCode: "SCHOOL",
@@ -52,9 +108,18 @@ const SignUpPage = () => {
             });
 
             const results = response.data.dataSearch?.content || [];
-            const names: string[]= results.map((item: any) => item.schoolName);
-            const uniqueNames: string[] = Array.from(new Set(names));
-            setSchoolSuggestions(uniqueNames);
+
+            const seen = new Set<string>();
+            const suggestions: { name: string; address: string }[] = [];
+
+            for (const item of results) {
+                if (!seen.has(item.schoolName)) {
+                    seen.add(item.schoolName);
+                    suggestions.push({ name: item.schoolName, address: item.adres });
+                }
+            }
+
+            setSchoolSuggestions(suggestions);
             setShowSuggestions(true);
         } catch (error) {
             console.error("학교 검색 에러:", error);
@@ -63,70 +128,131 @@ const SignUpPage = () => {
         }
     };
 
-    // 인증코드 전송
+    const handleUnivNameChange = (text: string) => {
+        setUnivName(text);
+        setLatitude(null);
+        setLongitude(null);
+        setShowSuggestions(true);
+
+        if (text.length >= 2) {
+            fetchSchoolSuggestions(text);
+        }
+    };
+
     const handleSendCode = async () => {
-    if (!univName || !email) {
-        setAlertTitle("오류");
-        setAlertMessage("학교와 이메일을 모두 입력하세요.");
+        if (!univName || !email) {
+            setAlertTitle("오류");
+            setAlertMessage("학교와 이메일을 모두 입력하세요.");
+            setAlertVisible(true);
+            return;
+        }
+
+        try {
+            await axios.post("http://13.124.71.212:8080/api/users/verify-email", {
+                email,
+                univName,
+            });
+
+            setAlertTitle("성공");
+            setAlertMessage("인증코드가 전송되었습니다.");
+            setAlertVisible(true);
+        } catch (error: any) {
+            console.error("🔥 인증 요청 실패!", error);
+            setAlertTitle("실패");
+            setAlertMessage("인증 요청 중 문제가 발생했습니다. (Network)");
+            setAlertVisible(true);
+        } 
+    };
+
+    const handleVerifyCode = async () => {
+        try {
+            await axios.post("http://13.124.71.212:8080/api/users/verify-code", {
+                email,
+                univName,
+                code,
+            });
+
+            setIsVerified(true);
+            setAlertTitle("성공");
+            setAlertMessage("이메일 인증이 완료되었습니다.");
+        } catch (error: any) {
+            console.error("🔥 인증 요청 실패!", error);
+            setAlertTitle("실패");
+            setAlertMessage(error.response?.data?.message || "인증코드가 올바르지 않습니다.");
+        }
+        setAlertVisible(true);
+    };
+
+    const handleSignUp = async () => {
+    // 필수 입력값 체크
+    if (!univName || !email || !password || !nickname || !studentId) {
+        setAlertTitle("입력 오류");
+        setAlertMessage("모든 항목을 빠짐없이 입력해주세요.");
         setAlertVisible(true);
         return;
     }
 
-    try {
-        await axios.post("http://13.124.71.212:8080/api/users/verify-email", {
-            "email": email,
-            "univName": univName,
-        });
-
-        setAlertTitle("성공");
-        setAlertMessage("인증코드가 전송되었습니다.");
+    if (password !== passwordConfirm) {
+        setAlertTitle("비밀번호 불일치");
+        setAlertMessage("비밀번호가 일치하지 않습니다.");
         setAlertVisible(true);
-    } catch (error: any) {
-            console.error("🔥 인증 요청 실패!", error);
-        if (error.response) {
-            console.log("📦 서버 응답 있음", error.response);
-        } else if (error.request) {
-            console.log("📡 서버 응답 없음, 요청은 전송됨", error.request);
+        return;
+    }
+
+    if (latitude === null || longitude === null) {
+            setAlertTitle("학교 위치 정보 없음");
+            setAlertMessage("학교 주소로부터 위치 정보를 불러오지 못했습니다.");
+            setAlertVisible(true);
+            return;
+        }
+
+    try {
+        // 이메일 인증 상태 확인
+        const verifyRes = await axios.post("http://13.124.71.212:8080/api/users/email/status", { email });
+
+        if (verifyRes.data.message.includes("인증되어")) {
+            const payload = {
+                univName,
+                latitude,
+                longitude,
+                email,
+                password,
+                nickname,
+                studentNum: parseInt(studentId),
+            };
+
+            console.log("🚀 회원가입 요청 데이터:", payload);
+
+            await axios.post("http://13.124.71.212:8080/api/users/signup", payload);
+
+            setAlertTitle("회원가입 성공");
+            setAlertMessage(`${nickname}님, 환영합니다!`);
+            setAlertVisible(true);
+            setTimeout(() => {
+                navigation.navigate("LoginPage");
+            }, 1500);
         } else {
-            console.log("❌ 에러 설정 자체 문제", error.message);
+            setAlertTitle("이메일 인증 필요");
+            setAlertMessage("이메일 인증이 완료되지 않았습니다.");
+            setAlertVisible(true);
+        }
+    } catch (err: any) {
+        console.error("회원가입 실패:", err);
+
+        let message = "회원가입 중 오류가 발생했습니다.";
+        if (err.response) {
+            message = err.response.data?.message || "서버 응답 오류";
+        } else if (err.request) {
+            message = "서버로부터 응답이 없습니다.";
+        } else {
+            message = "요청 설정 중 오류가 발생했습니다.";
         }
 
         setAlertTitle("실패");
-        setAlertMessage("인증 요청 중 문제가 발생했습니다. (Network)");
+        setAlertMessage(message);
         setAlertVisible(true);
-    } 
-    };
-
-
-    const handleUnivNameChange = (text: string) => {
-        setUnivName(text);
-        fetchSchoolSuggestions(text);
-    };
-
-        // 인증코드 확인
-    const handleVerifyCode = async () => {
-    try {
-        await axios.post("http://13.124.71.212:8080/api/users/verify-code", {
-            "email": email,
-            "univName":univName,
-            "code": code,
-        },{
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
-
-        setIsVerified(true);
-        setAlertTitle("성공");
-        setAlertMessage("이메일 인증이 완료되었습니다.");
-    } catch (error: any) {
-        console.error("🔥 인증 요청 실패!", error);
-        setAlertTitle("실패");
-        setAlertMessage(error.response?.data?.message || "인증코드가 올바르지 않습니다.");
     }
-    setAlertVisible(true);
-    };
-
+};
 
     const checkPasswordMatch = () => {
         if (password === passwordConfirm) {
@@ -157,13 +283,14 @@ const SignUpPage = () => {
                     renderItem={({ item }) => (
                         <TouchableOpacity
                             onPress={() => {
-                                setUnivName(item);
+                                setUnivName(item.name);
+                                fetchAddressAndCoords(item.name);
                                 setSchoolSuggestions([]);
                                 setShowSuggestions(false);
                             }}
                             style={styles.suggestionItem}
                         >
-                            <Text>{item}</Text>
+                            <Text>{item.name}</Text>
                         </TouchableOpacity>
                     )}
                 />
@@ -224,24 +351,7 @@ const SignUpPage = () => {
 
             <CustomButton
                 title="회원가입"
-                onPress={async() => {
-                    if (!isVerified) {
-                        setAlertTitle("이메일 인증 필요");
-                        setAlertMessage("이메일 인증을 완료해주세요.");
-                        setAlertVisible(true);
-                        return;
-                    }
-                    
-
-                        setAlertTitle("회원가입 성공");
-                        setAlertMessage(`${nickname}님, 환영합니다!`);
-
-                setAlertVisible(true);
-                setTimeout(() => {
-                    navigation.navigate("LoginPage");
-                }, 1500);
-
-                }}
+                onPress={handleSignUp}
             />
 
             <CustomAlert

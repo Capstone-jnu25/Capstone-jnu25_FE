@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
-import { NaverMapView, NaverMapMarkerOverlay } from  '@mj-studio/react-native-naver-map';
 import { TabProps, NavigationProp } from "../types";
+import { WebView } from 'react-native-webview';
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
 import Icon from 'react-native-vector-icons/Ionicons'
@@ -25,33 +25,82 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     );
 
     const [posts, setPosts] = useState([
-      { id: 1, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전', lat: 37.5759, lng: 126.9768, selected: false },
-      { id: 2, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전', lat: 37.5700, lng: 126.9760, selected: false },
+      { id: 1, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전', lat: 37.5666102, lng: 126.9783881, selected: false },
+      { id: 2, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 봉지', image: require('../assets/images.png'), time: '2분 전', lat: 37.5700, lng: 126.9760, selected: false },
       // 백엔드에서 받아온 게시글들
     ]);
     const selectedPost = posts.find(post => post.id === selectedMarkerId);
 
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <title>Kakao Map</title>
+          <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a105821f449b32a10e3a1f387619d465&autoload=false"></script>
+          <style>
+            html, body, #map {
+              height: 100%;
+              margin: 0;
+              padding: 0;
+            }
+          </style>
+        </head>
+        <body>
+          <div id="map"></div>
+          <script>
+            document.addEventListener("DOMContentLoaded", function () {
+              kakao.maps.load(function () {
+                const container = document.getElementById('map');
+                const options = {
+                  center: new kakao.maps.LatLng(37.5666102, 126.9783881),
+                  level: 5
+                };
+                const map = new kakao.maps.Map(container, options);
+
+                const markers = ${JSON.stringify(posts)};
+                markers.forEach(post => {
+                  const marker = new kakao.maps.Marker({
+                    position: new kakao.maps.LatLng(post.lat, post.lng),
+                    map: map
+                  });
+
+                  kakao.maps.event.addListener(marker, 'click', function () {
+                    window.ReactNativeWebView.postMessage(post.id.toString());
+                  });
+                });
+
+                window.ReactNativeWebView.postMessage("✅ Kakao Map loaded");
+              });
+            });
+          </script>
+        </body>
+      </html>
+      `;
+
+
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
-            <NaverMapView
-              style={{ width: '100%', height: '100%' }}
-              initialCamera={INITIAL_CAMERA}
-            >
-              {posts.map(post => (
-                <NaverMapMarkerOverlay
-                  key={post.id}
-                  latitude={post.lat}
-                  longitude={post.lng}
-                  onTap={() => setSelectedMarkerId(post.id)}
-                  image={post.id === selectedMarkerId ? require('../assets/RedMarker.png') : require('../assets/Marker.png')}
-                  width={19}
-                  height={27}
-                >
-                  
-                </NaverMapMarkerOverlay>
-              ))}
-            </NaverMapView>
+            <WebView
+              source={{ html: htmlContent }}
+              originWhitelist={['*']}
+              javaScriptEnabled={true}
+              domStorageEnabled={true}
+              cacheEnabled={false}
+              onMessage={(event) => {
+  const msg = event.nativeEvent.data;
+  const id = parseInt(msg);
+  if (!isNaN(id)) setSelectedMarkerId(id);
+}}
+              onError={(e) => console.log("❌ WebView 에러", e.nativeEvent)}
+              onHttpError={(e) => console.log("❌ HTTP 에러", e.nativeEvent)}
+            />
+
+
+
             <View style={styles.buttonContainer}>
               <CircleButton iconName="list" onPress={() => {navigation.navigate('LostPostList')}} />
             </View>
@@ -102,8 +151,6 @@ const styles = StyleSheet.create({
     },
     contentContainer: {
       flex: 1, // 텍스트는 위에 배치
-      justifyContent: 'center',
-      alignItems: 'center',
     },
     text: {
       fontSize: 18,

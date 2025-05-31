@@ -1314,6 +1314,11 @@
     "@types/yargs" "^17.0.8"
     chalk "^4.0.0"
 
+"@jiggag/react-native-kakao-maps@^0.0.12":
+  version "0.0.12"
+  resolved "https://registry.npmjs.org/@jiggag/react-native-kakao-maps/-/react-native-kakao-maps-0.0.12.tgz"
+  integrity sha512-iyY0T54OkNCzJp4CrH4xPB66tL/PKbeRzhCcL33FxiP+EtKhSixBubJFCqzzkd7hllKm3stoZnBXXtHaWlwz3w==
+
 "@jridgewell/gen-mapping@^0.3.5":
   version "0.3.8"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.8.tgz"
@@ -3947,7 +3952,7 @@ internal-slot@^1.1.0:
     hasown "^2.0.2"
     side-channel "^1.1.0"
 
-invariant@^2.2.4:
+invariant@^2.2.4, invariant@2.2.4:
   version "2.2.4"
   resolved "https://registry.npmjs.org/invariant/-/invariant-2.2.4.tgz"
   integrity sha512-phJfQVBuaJM5raOpJjSfkiD6BpbCE4Ns//LaXl6wGYtUBY83nWS6Rf9tXm2e8VaK60JEjYldbPif/A2B1C2gNA==
@@ -5706,6 +5711,14 @@ react-native-vector-icons@^10.2.0:
   dependencies:
     prop-types "^15.7.2"
     yargs "^16.1.1"
+
+react-native-webview@^13.13.5:
+  version "13.13.5"
+  resolved "https://registry.npmjs.org/react-native-webview/-/react-native-webview-13.13.5.tgz"
+  integrity sha512-MfC2B+woL4Hlj2WCzcb1USySKk+SteXnUKmKktOk/H/AQy5+LuVdkPKm8SknJ0/RxaxhZ48WBoTRGaqgR137hw==
+  dependencies:
+    escape-string-regexp "^4.0.0"
+    invariant "2.2.4"
 
 react-native@*, react-native@^0.79.0, "react-native@>= 0.59", "react-native@>= 0.62":
   version "0.79.0"
