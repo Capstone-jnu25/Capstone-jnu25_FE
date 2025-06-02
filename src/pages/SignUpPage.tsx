@@ -208,8 +208,10 @@ const SignUpPage = () => {
     try {
         // 이메일 인증 상태 확인
         const verifyRes = await axios.post("http://13.124.71.212:8080/api/users/email/status", { email });
+        console.log("📥 이메일 인증 상태 응답:", verifyRes.data);
+        const message = verifyRes.data;
 
-        if (verifyRes.data.message.includes("인증되어")) {
+        if (typeof message === "string" && message.includes("인증되어")) {
             const payload = {
                 univName,
                 latitude,
@@ -232,9 +234,10 @@ const SignUpPage = () => {
             }, 1500);
         } else {
             setAlertTitle("이메일 인증 필요");
-            setAlertMessage("이메일 인증이 완료되지 않았습니다.");
+            setAlertMessage(typeof message === "string" ? message : "이메일 인증이 완료되지 않았습니다.");
             setAlertVisible(true);
         }
+
     } catch (err: any) {
         console.error("회원가입 실패:", err);
 
