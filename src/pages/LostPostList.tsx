@@ -1,35 +1,54 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { TabProps, NavigationProp } from "../types";
+import { TabProps, NavigationProp, Post } from "../types";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 
-const posts = [
-    { id: '1', type: 'lost', title: 'adidas', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '2', type: 'found', title: '아디다스 11111', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '3', type: 'found', title: '아디다스 22222', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '4', type: 'found', title: '아디다스 33333', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '5', type: 'lost', title: '아디다스 44444', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '6', type: 'lost', title: '아디다스 55555', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전' },
-  ];
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<NavigationProp>();
-
   const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState<Post[]>([]);
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const isLost = activeTab === 'lost';
+        const response = await axios.get(`http://13.124.71.212:8080/api/lostboards?isLost=${isLost}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = isLost ? response.data.data : response.data;
+        const mapped = data.map((item: any) => ({
+          id: item.postId,
+          type: isLost ? 'lost' : 'found',
+          title: item.place,
+          content: item.contents,
+          image: { uri: item.photo },
+          location: `${item.lostLatitude || ''}, ${item.lostLongitude || ''}`,
+          time: item.relativeTime,
+        }));
+        setPosts(mapped);
+      } catch (error) {
+        console.error("❌ 게시글 불러오기 실패:", error);
+      }
+    };
+
+    fetchPosts();
+  }, [activeTab]);
 
   const filteredPosts = posts.filter((post) =>
-    post.type === activeTab &&
-    (
-      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      post.content.toLowerCase().includes(searchQuery.toLowerCase())
-    )
+    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -68,9 +87,15 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           </View>
            <FlatList
             data={filteredPosts}
-            renderItem={({ item }) => <LostPostItem post={item} />}
-            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <LostPostItem
+                post={item}
+                onPress={() => navigation.navigate('LostPostDetail', { postId: item.id })}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()} // 숫자도 string으로
           />
+
       </View>
       
       <View style={styles.menuBarContainer}>

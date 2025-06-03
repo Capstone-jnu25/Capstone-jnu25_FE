@@ -1,33 +1,34 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../types';
 
 type Post = {
-  id: string;
+  id: number; // ← number도 허용
   title: string;
   content: string;
   location: string;
-  image: any;
+  image: string | { uri: string }; // ← 서버 이미지 대응
   time: string;
 };
 
 interface LostPostItemProps {
   post: Post;
+  onPress: () => void;
 }
 
-const LostPostItem: React.FC<LostPostItemProps> = ({ post }) => {
-  const navigation = useNavigation<NavigationProp>();
+const LostPostItem: React.FC<LostPostItemProps> = ({ post, onPress }) => {
 
-  return (
-    <TouchableOpacity style={styles.postItem} onPress={() => navigation.navigate('LostPostDetail')}>
+   return (
+    <TouchableOpacity style={styles.postItem} onPress={onPress}>
       <View style={styles.postHeader}>
         <View style={styles.textContainer}>
           <Text style={styles.postTitle}>{post.title}</Text>
           <Text style={styles.postContent}>{post.content}</Text>
         </View>
-        <Image source={post.image} style={styles.postImage} />
+        <Image
+          source={typeof post.image === 'string' ? { uri: post.image } : post.image}
+          style={styles.postImage}
+        />
       </View>
 
       <View style={styles.postFooter}>

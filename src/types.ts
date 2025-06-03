@@ -42,3 +42,12 @@ export type TabProps = {
   currentTab: string;
   setCurrentTab: (tab: string) => void;
 };
+
+export type Post = {
+  id: number;
+  title: string;
+  content: string;
+  location: string;
+  image: string | { uri: string };
+  time: string;
+};
