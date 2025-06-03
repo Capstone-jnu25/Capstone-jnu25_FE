@@ -4,6 +4,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomButton from '../components/CustomButton';
 import Logo from '../components/Logo'
 import CustomTextInput from "../components/CustomTextInput";
@@ -37,8 +38,9 @@ const LoginPage = () => {
 
             const { token, userId, nickname, latitude, longitude } = response.data;
 
-            // 👇 추후 토큰 저장 가능
-            // await AsyncStorage.setItem("token", token);
+            await AsyncStorage.setItem("token", token);
+            await AsyncStorage.setItem("latitude", latitude.toString());
+            await AsyncStorage.setItem("longitude", longitude.toString());
 
             setAlertTitle("로그인 성공");
             setAlertMessage(`${nickname}님, 환영합니다!`);

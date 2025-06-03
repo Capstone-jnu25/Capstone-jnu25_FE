@@ -1,22 +1,18 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Text, TouchableOpacity, Image } from "react-native";
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { TabProps, NavigationProp } from "../types";
 import { WebView } from 'react-native-webview';
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
 import Icon from 'react-native-vector-icons/Ionicons'
 
-const INITIAL_CAMERA = {
-  latitude: 37.5666102,  // 서울 중심부 위도
-  longitude: 126.9783881,  // 서울 중심부 경도
-  zoom: 12,  // 줌 레벨
-};
-
 const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
-    
     const [selectedMarkerId, setSelectedMarkerId] = useState<number | null>(null);
+    const [camera, setCamera] = useState<{ latitude: number; longitude: number; } | null>(null);
 
     useFocusEffect(
       React.useCallback(() => {
@@ -24,14 +20,29 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       }, [])
     );
 
+    useEffect(() => {
+    const fetchCameraPosition = async () => {
+      const lat = await AsyncStorage.getItem("latitude");
+      const lng = await AsyncStorage.getItem("longitude");
+      if (lat && lng) {
+        setCamera({
+          latitude: parseFloat(lat),
+          longitude: parseFloat(lng),
+        });
+      }
+    };
+    fetchCameraPosition();
+  }, []);
+
     const [posts, setPosts] = useState([
-      { id: 1, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 백도 앞', image: require('../assets/images.png'), time: '2분 전', lat: 37.5666102, lng: 126.9783881, selected: false },
-      { id: 2, title: '아디다스 바람막이', content: '상세내용상세내용상세내용', location: '광주 북구 용봉로 77 전남대학교 봉지', image: require('../assets/images.png'), time: '2분 전', lat: 37.5700, lng: 126.9760, selected: false },
-      // 백엔드에서 받아온 게시글들
+      // 추후 axios.get("/api/lostboards/found/map")로 대체
+      { id: 1, title: '잃어버린 에어팟', content: '하얀색 케이스입니다.', location: '전남대 도서관 앞', image: require('../assets/images.png'), time: '2분 전', lat: 35.1749, lng: 126.9087, selected: false },
     ]);
+
     const selectedPost = posts.find(post => post.id === selectedMarkerId);
 
-    const htmlContent = `
+
+    const htmlContent =  camera ? `
       <!DOCTYPE html>
       <html>
         <head>
@@ -40,11 +51,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <title>Kakao Map</title>
           <script type="text/javascript" src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a105821f449b32a10e3a1f387619d465&autoload=false"></script>
           <style>
-            html, body, #map {
-              height: 100%;
-              margin: 0;
-              padding: 0;
-            }
+            html, body, #map { height: 100%; margin: 0; padding: 0; }
           </style>
         </head>
         <body>
@@ -54,8 +61,8 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               kakao.maps.load(function () {
                 const container = document.getElementById('map');
                 const options = {
-                  center: new kakao.maps.LatLng(37.5666102, 126.9783881),
-                  level: 5
+                  center: new kakao.maps.LatLng(${camera.latitude}, ${camera.longitude}),
+                  level: 4
                 };
                 const map = new kakao.maps.Map(container, options);
 
@@ -65,7 +72,6 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     position: new kakao.maps.LatLng(post.lat, post.lng),
                     map: map
                   });
-
                   kakao.maps.event.addListener(marker, 'click', function () {
                     window.ReactNativeWebView.postMessage(post.id.toString());
                   });
@@ -77,28 +83,29 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           </script>
         </body>
       </html>
-      `;
+    ` : '';
 
 
 
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
-            <WebView
-              source={{ html: htmlContent }}
-              originWhitelist={['*']}
-              javaScriptEnabled={true}
-              domStorageEnabled={true}
-              cacheEnabled={false}
-              onMessage={(event) => {
-              const msg = event.nativeEvent.data;
-              const id = parseInt(msg);
-              if (!isNaN(id)) setSelectedMarkerId(id);
-            }}
-              onError={(e) => console.log("❌ WebView 에러", e.nativeEvent)}
-              onHttpError={(e) => console.log("❌ HTTP 에러", e.nativeEvent)}
-            />
-
+            {camera && ( 
+              <WebView
+                source={{ html: htmlContent }}
+                originWhitelist={['*']}
+                javaScriptEnabled={true}
+                domStorageEnabled={true}
+                cacheEnabled={false}
+                onMessage={(event) => {
+                const msg = event.nativeEvent.data;
+                const id = parseInt(msg);
+                if (!isNaN(id)) setSelectedMarkerId(id);
+              }}
+                onError={(e) => console.log("❌ WebView 에러", e.nativeEvent)}
+                onHttpError={(e) => console.log("❌ HTTP 에러", e.nativeEvent)}
+              />
+            )}
 
 
             <View style={styles.buttonContainer}>

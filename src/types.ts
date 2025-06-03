@@ -11,18 +11,18 @@ export type RootStackParamList = {
     MeetPage: undefined;
 
     LostPostList: undefined;
-    LostPostDetail: undefined;
+    LostPostDetail: { postId: number };
     LostPostAdd: undefined;
     
-    TradePostDetail: undefined;
+    TradePostDetail: { postId: number };
     TradePostAdd: undefined;
     
     StudyPostAdd: undefined;
     StudyPostDetail: undefined;
-    StudyApplicantList: undefined;
+    StudyApplicantList: { postId: number };
 
     MeetPostAdd: undefined;
-    MeetApplicantList: undefined;
+    MeetApplicantList: { postId: number };
 
     NotificationPage: undefined;
     MyPage: undefined;
