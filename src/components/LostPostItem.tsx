@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { Post } from '../types';
+import { LostPost } from '../types';
 
 interface LostPostItemProps {
-  post: Post;
+  post: LostPost;
   onPress: () => void;
 }
 

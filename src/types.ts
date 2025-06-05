@@ -43,11 +43,20 @@ export type TabProps = {
   setCurrentTab: (tab: string) => void;
 };
 
-export type Post = {
+export type LostPost = {
   id: number;
   title: string;
   content: string;
   location: string;
+  image: string | { uri: string };
+  time: string;
+};
+
+export type TradePost = {
+  id: number;
+  title: string;
+  content: string;
+  price: number;
   image: string | { uri: string };
   time: string;
 };

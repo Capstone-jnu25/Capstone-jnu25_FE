@@ -1,28 +1,53 @@
-import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
-import { TabProps, NavigationProp } from "../types";
+import { TabProps, NavigationProp, TradePost } from "../types";
+import axios from "axios";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import CircleButton from "../components/CircleButton";
 import TradePostItem from "../components/TradePostItem";
 
-const posts = [
-    { id: '1', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '2', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '3', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '4', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '5', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-    { id: '6', title: '아디다스 바람막이', content: '상세내용상세내용상세내용', price: '15000원', image: require('../assets/images.png'), time: '2분 전' },
-  ];
-
 const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
  const navigation = useNavigation<NavigationProp>();
 
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [posts, setPosts] = useState<TradePost[]>([]);
+  const isFocused = useIsFocused(); // 화면 포커스 감지
  
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(`http://13.124.71.212:8080/api/secondhand`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = response.data.data;
+        const mapped = data.map((item: any) => ({
+          id: item.postId,
+          title: item.title,      
+          content: item.contents,
+          image: { uri: item.photo },
+          price: item.price,  
+          time: item.relativeTime,
+        }));
+        setPosts(mapped);
+        console.log("✅ mapped posts:", mapped);
+
+      } catch (error) {
+        console.error("❌ 게시글 불러오기 실패:", error);
+      }
+    };
+    if (isFocused) {
+        fetchPosts();
+      }
+    }, [isFocused]);
+
+
    const filteredPosts = posts.filter((post) =>
      post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
      post.content.toLowerCase().includes(searchQuery.toLowerCase())
@@ -51,9 +76,14 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('TradePostAdd')}} />
           </View>
           <FlatList
-            data={posts}
-            renderItem={({ item }) => <TradePostItem post={item} />}
-            keyExtractor={(item) => item.id}
+            data={filteredPosts}
+            renderItem={({ item }) => (
+              <TradePostItem
+                post={item}
+                onPress={() => navigation.navigate('TradePostDetail', { postId: item.id })}
+              />
+            )}
+            keyExtractor={(item) => item.id.toString()} // 숫자도 string으로
           />
       </View>
       

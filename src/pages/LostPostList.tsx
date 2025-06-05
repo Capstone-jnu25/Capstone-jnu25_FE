@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation, useIsFocused, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { TabProps, NavigationProp, Post, RootStackParamList } from "../types";
+import { TabProps, NavigationProp, LostPost } from "../types";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
@@ -16,8 +16,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [activeTab, setActiveTab] = useState<'lost' | 'found'>('lost');
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [posts, setPosts] = useState<Post[]>([]);
-  const route = useRoute<RouteProp<RootStackParamList, 'LostPostList'>>();
+  const [posts, setPosts] = useState<LostPost[]>([]);
   const isFocused = useIsFocused(); // 화면 포커스 감지
 
   useEffect(() => {
@@ -105,7 +104,6 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             )}
             keyExtractor={(item) => item.id.toString()} // 숫자도 string으로
           />
-
       </View>
       
       <View style={styles.menuBarContainer}>
