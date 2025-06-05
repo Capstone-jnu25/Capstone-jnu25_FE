@@ -6,9 +6,9 @@ import { ImageSourcePropType } from 'react-native';
 export type PostData = {
   id: number;
   nickname: string;
-  date: string;
+  time: string;
   title: string;
-  description: string;
+  content: string;
   image: ImageSourcePropType;
   location: string;
 };
@@ -23,14 +23,14 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
         />
         <View>
           <Text style={styles.postTitle}>{post.nickname}</Text>
-          <Text style={styles.postDate}>{post.date}</Text>
+          <Text style={styles.postDate}>{post.time}</Text>
         </View>
         <Icon name="share-social" size={20} style={styles.iconRight} color="#233b6d"/>
         <Icon name="ellipsis-vertical" size={20} color="#233b6d"/>
       </View>
 
       <Text style={styles.postTitle}>{post.title}</Text>
-      <Text style={styles.postContent}>{post.description}</Text>
+      <Text style={styles.postContent}>{post.content}</Text>
 
       <Image source={post.image} style={styles.postImage} />
 

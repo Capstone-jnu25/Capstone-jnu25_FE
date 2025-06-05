@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useIsFocused, useRoute, RouteProp } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { TabProps, NavigationProp, Post } from "../types";
+import { TabProps, NavigationProp, Post, RootStackParamList } from "../types";
 import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
@@ -17,6 +17,8 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState<Post[]>([]);
+  const route = useRoute<RouteProp<RootStackParamList, 'LostPostList'>>();
+  const isFocused = useIsFocused(); // 화면 포커스 감지
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -27,29 +29,37 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           headers: { Authorization: `Bearer ${token}` },
         });
 
-        const data = isLost ? response.data.data : response.data;
+        const data = response.data.data;
         const mapped = data.map((item: any) => ({
           id: item.postId,
           type: isLost ? 'lost' : 'found',
-          title: item.place,
+          title: item.title,      
           content: item.contents,
           image: { uri: item.photo },
-          location: `${item.lostLatitude || ''}, ${item.lostLongitude || ''}`,
+          location: item.place,  
           time: item.relativeTime,
         }));
         setPosts(mapped);
+        console.log("✅ mapped posts:", mapped);
+
       } catch (error) {
         console.error("❌ 게시글 불러오기 실패:", error);
       }
     };
+    if (isFocused) {
+        fetchPosts();
+      }
+    }, [activeTab, isFocused]);
 
-    fetchPosts();
-  }, [activeTab]);
-
-  const filteredPosts = posts.filter((post) =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.content.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredPosts = posts.filter((post) => {
+  const title = typeof post.title === 'string' ? post.title : '';
+  const content = typeof post.content === 'string' ? post.content : '';
+  return (
+    title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    content.toLowerCase().includes(searchQuery.toLowerCase())
   );
+});
+
 
   return (
     <View style={styles.mainContainer}>

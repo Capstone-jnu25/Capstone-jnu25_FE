@@ -7,65 +7,56 @@ interface MapSelectModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: (coords: { latitude: number; longitude: number }) => void;
+  initialCoords: { latitude: number; longitude: number }; 
 }
 
-const INITIAL_POSITION = {
-  latitude: 37.5666102,
-  longitude: 126.9783881,
-};
-
-const ModalWithMap: React.FC<MapSelectModalProps> = ({ visible, onClose, onConfirm }) => {
-  const [markerPosition, setMarkerPosition] = useState(INITIAL_POSITION);
+const ModalWithMap: React.FC<MapSelectModalProps> = ({ visible, onClose, onConfirm, initialCoords }) => {
+  const [markerPosition, setMarkerPosition] = useState(initialCoords);
 
   const htmlContent = `
-  <!DOCTYPE html>
-  <html>
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>Kakao Map</title>
-      <style>
-        html, body, #map {
-          width: 100%;
-          height: 100%;
-          margin: 0;
-          padding: 0;
-        }
-      </style>
-      <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a105821f449b32a10e3a1f387619d465&autoload=true"></script>
-    </head>
-    <body>
-      <div id="map"></div>
-      <script>
-        const container = document.getElementById('map');
-        const options = {
-          center: new kakao.maps.LatLng(37.5666102, 126.9783881),
-          level: 3
-        };
-        const map = new kakao.maps.Map(container, options);
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Kakao Map</title>
+        <style>
+          html, body, #map { width: 100%; height: 100%; margin: 0; padding: 0; }
+        </style>
+        <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=a105821f449b32a10e3a1f387619d465&autoload=true"></script>
+      </head>
+      <body>
+        <div id="map"></div>
+        <script>
+          const centerLat = ${initialCoords.latitude};
+          const centerLng = ${initialCoords.longitude};
 
-        const marker = new kakao.maps.Marker({
-          position: map.getCenter(),
-          map: map
-        });
+          const container = document.getElementById('map');
+          const options = {
+            center: new kakao.maps.LatLng(centerLat, centerLng),
+            level: 3
+          };
+          const map = new kakao.maps.Map(container, options);
 
-        kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
-          const latlng = mouseEvent.latLng;
-          marker.setPosition(latlng);
-          window.ReactNativeWebView?.postMessage(JSON.stringify({
-            latitude: latlng.getLat(),
-            longitude: latlng.getLng()
-          }));
-        });
+          const marker = new kakao.maps.Marker({
+            position: map.getCenter(),
+            map: map
+          });
 
-        window.ReactNativeWebView?.postMessage("✅ Kakao Map Loaded");
-      </script>
-    </body>
-  </html>
-`;
+          kakao.maps.event.addListener(map, 'click', function(mouseEvent) {
+            const latlng = mouseEvent.latLng;
+            marker.setPosition(latlng);
+            window.ReactNativeWebView?.postMessage(JSON.stringify({
+              latitude: latlng.getLat(),
+              longitude: latlng.getLng()
+            }));
+          });
 
-
-
+          window.ReactNativeWebView?.postMessage("✅ Kakao Map Loaded");
+        </script>
+      </body>
+    </html>
+  `
 
   return (
     <Modal

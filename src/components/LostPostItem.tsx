@@ -1,15 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
-
-type Post = {
-  id: number; // ← number도 허용
-  title: string;
-  content: string;
-  location: string;
-  image: string | { uri: string }; // ← 서버 이미지 대응
-  time: string;
-};
+import { Post } from '../types';
 
 interface LostPostItemProps {
   post: Post;

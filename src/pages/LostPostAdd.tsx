@@ -1,191 +1,289 @@
-import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
-import DropDownPicker from 'react-native-dropdown-picker';
-import { Text } from "react-native-gesture-handler";
+import DropDownPicker from "react-native-dropdown-picker";
 import CustomButton from "../components/CustomButton";
+import CustomAlert from "../components/CustomAlert";
 import ModalWithMap from "../components/ModalWithMap";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "react-native-image-picker";
 
-const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-    const navigation = useNavigation<NavigationProp>();
-    const [open, setOpen] = useState(false);
-    const [value, setValue] = useState("분실");
-    const [items, setItems] = useState([
-        { label: "분실", value: "분실" },
-        { label: "습득", value: "습득" }
-    ]);
+const LostPostAdd = () => {
+  const navigation = useNavigation<NavigationProp>();
 
-    const [modalVisible, setModalVisible] = useState(false);
-    const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [title, setTitle] = useState('');
+  const [contents, setContents] = useState('');
+  const [place, setPlace] = useState('');
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
+  const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [camera, setCamera] = useState<{ latitude: number; longitude: number } | null>(null);
 
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
-    return(
-        <View style={styles.mainContainer}>
-            <View style={styles.contentContainer}>
-                <View style={styles.headerRow}>
-                    <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                        <Icon name='close-outline' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
-                    </TouchableOpacity>
-                </View>
+  const [open, setOpen] = useState(false);
+  const [value, setValue] = useState("분실");
+  const [items, setItems] = useState([
+    { label: "분실", value: "분실" },
+    { label: "습득", value: "습득" }
+  ]);
 
-                <TextInput
-                    placeholder="물품 이름" 
-                    placeholderTextColor={'#777'} 
-                    style = {styles.input} />
-                <TextInput
-                    placeholder="물품과 관련된 정보를 입력하세요"
-                    placeholderTextColor={'#777'} 
-                    multiline 
-                    style = {styles.textArea} />
-                <TouchableOpacity style={styles.location} onPress={()=> setModalVisible(true)}>
-                    <Text style={styles.uploadText}>분실/습득한 장소를 선택하세요</Text>
-                    <ModalWithMap
-                        visible={modalVisible}
-                        onClose={() => setModalVisible(false)}
-                        onConfirm={(coords) => {
-                            setSelectedCoords(coords);
-                            setModalVisible(false);
-                        }}
-                        />
-                </TouchableOpacity>
-                <TextInput
-                    placeholder="상세 위치를 작성하세요"
-                    placeholderTextColor={'#777'} 
-                    style = {styles.inputLocation} />
-                <TouchableOpacity style={styles.upload} onPress={()=>{}}>
-                    <View style={styles.row}>
-                        <Icon name='add-outline' size={15} color="#777"/>
-                        <Text style={styles.uploadText}> 물품 사진을 업로드하세요 </Text>
-                    </View>
-                </TouchableOpacity>
-                
-                <DropDownPicker
-                    open={open}
-                    setOpen={setOpen}
-                    value={value}
-                    setValue={setValue}
-                    items={items}
-                    setItems={setItems}
-                    style={styles.dropdown}
-                    containerStyle={styles.dropdownContainer}
-                    dropDownContainerStyle={styles.dropdownList}
-                />
+  const [modalVisible, setModalVisible] = useState(false);
 
-                <CustomButton title='완료' style={styles.button} onPress={() => {}}/>
-            </View>
-        </View>
-    )
-}
-const styles = StyleSheet.create({
-    mainContainer: {
-      flex: 1,
-      backgroundColor : '#C6E4FF',
-    },
-    contentContainer: {
-        flex:1,
-        padding:20,
-    },
-    headerRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-     },
-     input : {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 15,
-        marginBottom: 15,
-        fontSize: 16,
-     },
-     inputLocation:{
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 15,
-        marginBottom: 15,
-        fontSize: 16,
-        textAlign: 'center', 
-     },
-     textArea: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 15,
-        paddingTop: 20,
-        marginBottom: 15,
-        height: 300,
-        fontSize: 16,
-        textAlignVertical: 'top',
-    },
-    location: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 15,
-        marginBottom: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    uploadText: {
-        color: '#777',
-        fontSize: 16,
-    },
-    upload: {
-        width: '100%',
-        backgroundColor: '#f3f4f6',
-        borderRadius: 20,
-        padding: 30,
-        borderStyle: 'dotted',
-        borderWidth: 1,
-        borderColor: '#bbb',
-        marginBottom: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    row:{
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    dropdownContainer: {
-        width: '40%',
-        marginBottom: 15,
-        alignSelf: 'flex-end',
-    },
-    dropdown: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        borderWidth: 0,
-        paddingHorizontal: 20,
-    },
-    dropdownList: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingHorizontal: 10,
-        borderColor: 'transparent',
-        marginTop: -5,
-        alignSelf: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 2,
-    },
-    button: {
-        position: 'absolute',
-        bottom: 30,
-        right: 30,
-        width: '30%',
-        backgroundColor: '#233b6d',
-        borderRadius: 20,
-        paddingVertical: 10,
-        alignItems: 'center',
-        alignSelf: 'flex-end',
-        borderWidth: 0,
+  useEffect(() => {
+    const fetchCameraPosition = async () => {
+      const lat = await AsyncStorage.getItem("latitude");
+      const lng = await AsyncStorage.getItem("longitude");
+      if (lat && lng) {
+        setCamera({ latitude: parseFloat(lat), longitude: parseFloat(lng) });
+      }
+    };
+    fetchCameraPosition();
+  }, []);
+
+  const handleImagePick = async () => {
+    const result = await ImagePicker.launchImageLibrary({
+      mediaType: "photo",
+      quality: 0.8
+    });
+
+    if (result.assets && result.assets.length > 0) {
+      setPhotoUri(result.assets[0].uri || null);
     }
-})
+  };
+
+  const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
+    try {
+      const response = await axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`, {
+        headers: { Authorization: `KakaoAK f958d2a57846011e2462194fb63cd48c` }, // 🔁 카카오 REST API 키 입력
+      });
+
+      const address = response.data.documents?.[0]?.address?.address_name;
+      return address || '';
+    } catch {
+      return '';
+    }
+  };
+
+  const handleSubmit = async () => {
+     if (!title.trim()) {
+      setAlertMessage("제목을 입력해주세요.");
+      setAlertVisible(true);
+      return;
+    }
+
+    if (!selectedCoords) {
+      setAlertMessage("위치를 선택해주세요.");
+      setAlertVisible(true);
+      return;
+    }
+
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const isLost = value === "분실";
+
+      let resolvedAddress = '';
+      if (selectedCoords) {
+        resolvedAddress = await reverseGeocode(selectedCoords.latitude, selectedCoords.longitude);
+      }
+
+      const payload = {
+        title,
+        contents,
+        place: resolvedAddress + " " + place,
+        photo: photoUri,
+        lost: isLost,
+        lostLatitude: selectedCoords?.latitude,
+        lostLongitude: selectedCoords?.longitude
+      };
+
+      const response = await axios.post("http://13.124.71.212:8080/api/lostboards", payload, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      console.log("✅ 작성 성공", response.data);
+      navigation.navigate('LostPostList');
+    } catch (error) {
+      console.error("❌ 작성 실패", error);
+    }
+  };
+
+  return (
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <View style={styles.mainContainer}>
+        <View style={styles.contentContainer}>
+          <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() => navigation.goBack()}>
+              <Icon name="close-outline" size={25} color="#233b6d" />
+            </TouchableOpacity>
+          </View>
+
+          <TextInput
+            placeholder="물품 이름"
+            style={styles.input}
+            value={title}
+            onChangeText={setTitle}
+          />
+          <TextInput
+            placeholder="물품과 관련된 정보를 입력하세요"
+            multiline
+            style={styles.textArea}
+            value={contents}
+            onChangeText={setContents}
+          />
+          <TouchableOpacity
+            style={[
+              styles.location,
+              selectedCoords && { borderColor: 'black', borderWidth: 2 } // ✅ 선택되면 테두리 표시
+            ]}
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.uploadText}>분실/습득한 장소를 선택하세요</Text>
+          </TouchableOpacity>
+          {camera && (
+            <ModalWithMap
+              visible={modalVisible}
+              onClose={() => setModalVisible(false)}
+              onConfirm={(coords) => {
+                setSelectedCoords(coords);
+                setModalVisible(false);
+              }}
+              initialCoords={camera}
+            />
+          )}
+          <TextInput
+            placeholder="상세 위치를 작성하세요"
+            style={styles.inputLocation}
+            value={place}
+            onChangeText={setPlace}
+          />
+          <TouchableOpacity 
+            style={[styles.upload, 
+            photoUri && {borderColor:'black', borderWidth: 2}
+            ]} 
+            onPress={handleImagePick}
+            >
+            <View style={styles.row}>
+              <Icon name="add-outline" size={15} color="#777" />
+              <Text style={styles.uploadText}>물품 사진을 올려주세요</Text>
+            </View>
+          </TouchableOpacity>
+
+          <DropDownPicker
+            open={open}
+            setOpen={setOpen}
+            value={value}
+            setValue={setValue}
+            items={items}
+            setItems={setItems}
+            style={styles.dropdown}
+            containerStyle={styles.dropdownContainer}
+            dropDownContainerStyle={styles.dropdownList}
+          />
+
+          <CustomButton title="완료" style={styles.button} onPress={handleSubmit} />
+        </View>
+      </View>
+    </KeyboardAvoidingView>
+  );
+};
+
+const styles = StyleSheet.create({
+  mainContainer: {
+    flex: 1,
+    backgroundColor: '#C6E4FF',
+  },
+  contentContainer: {
+    padding: 20,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    marginBottom: 10,
+  },
+  input: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  textArea: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 15,
+    height: 200,
+    fontSize: 16,
+    textAlignVertical: 'top',
+  },
+  inputLocation: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 15,
+    fontSize: 16,
+  },
+  location: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    padding: 15,
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  upload: {
+    backgroundColor: '#f3f4f6',
+    borderRadius: 20,
+    padding: 30,
+    borderStyle: 'dotted',
+    borderWidth: 1,
+    borderColor: '#bbb',
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  uploadText: {
+    color: '#777',
+    fontSize: 16,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  dropdownContainer: {
+    width: '40%',
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  dropdown: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+    paddingHorizontal: 20,
+  },
+  dropdownList: {
+    backgroundColor: 'white',
+    borderRadius: 20,
+  },
+  button: {
+    backgroundColor: '#233b6d',
+    borderRadius: 20,
+    paddingVertical: 12,
+    alignItems: 'center',
+    alignSelf: 'flex-end',   
+    width: 120,
+  },
+});
 
 export default LostPostAdd;
