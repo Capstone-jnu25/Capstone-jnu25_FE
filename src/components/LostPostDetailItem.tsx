@@ -45,6 +45,7 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
 const styles = StyleSheet.create({
   postItem: {
     backgroundColor: '#fff',
+    marginTop: 20,
     marginBottom: 10,
     padding: 15,
     borderRadius: 12,

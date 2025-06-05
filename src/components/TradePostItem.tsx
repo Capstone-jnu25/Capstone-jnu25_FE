@@ -23,8 +23,9 @@ const TradePostItem: React.FC<TradePostItemProps> = ({ post, onPress }) => {
 
       <View style={styles.postFooter}>
         
-        <Text style={styles.priceText}>{post.price}</Text>
-        
+        <Text style={styles.priceText}>
+                {Number(post.price).toLocaleString()}원
+              </Text>
         <Text style={styles.timeAgo}>{post.time}</Text>
       </View>
 

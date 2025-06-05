@@ -1,71 +1,157 @@
-import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
-import { View, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
-import { TabProps, NavigationProp } from "../types";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+  Text
+} from "react-native";
+import { useNavigation } from "@react-navigation/native";
+import { NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Text } from "react-native-gesture-handler";
 import CustomButton from "../components/CustomButton";
+import CustomAlert from "../components/CustomAlert";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as ImagePicker from "react-native-image-picker";
 
-const TradePostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
+const TradePostAdd = () => {
     const navigation = useNavigation<NavigationProp>();
+    const [title, setTitle] = useState('');
+    const [contents, setContents] = useState('');
+    const [place, setPlace] = useState('');
+    const [price, setPrice] = useState('');
+    const [photoUri, setPhotoUri] = useState<string | null>(null);
     
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertMessage, setAlertMessage] = useState("");
+
+    const handleImagePick = async () => {
+        const result = await ImagePicker.launchImageLibrary({
+        mediaType: "photo",
+        quality: 0.8
+        });
+
+        if (result.assets && result.assets.length > 0) {
+        setPhotoUri(result.assets[0].uri || null);
+        }
+    };
+
+    const handleSubmit = async () => {
+        if (!title.trim()) {
+        setAlertTitle("확인");
+        setAlertMessage("제목을 입력해주세요.");
+        setAlertVisible(true);
+        return;
+        }
+
+        if (!price) {
+        setAlertTitle("확인");
+        setAlertMessage("가격을 입력력해주세요.");
+        setAlertVisible(true);
+        return;
+        }
+
+        try {
+        const token = await AsyncStorage.getItem("token");
+
+        const payload = {
+            title,
+            contents,
+            place,
+            photo: photoUri,
+            price,
+        };
+
+        const response = await axios.post("http://13.124.71.212:8080/api/secondhand", payload, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+
+        console.log("✅ 작성 성공", response.data);
+        navigation.navigate('TradePage');
+        } catch (error) {
+        console.error("❌ 작성 실패", error);
+        }
+    };
+
     return(
-        <View style={styles.mainContainer}>
-            <View style={styles.contentContainer}>
-                <View style={styles.headerRow}>
-                    <TouchableOpacity onPress={() => {navigation.goBack()}}>
-                        <Icon name='close-outline' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d"/>
-                    </TouchableOpacity>
-                </View>
-
-                <TextInput
-                    placeholder="물품 이름" 
-                    placeholderTextColor={'#777'} 
-                    style = {styles.input} />
-                <TextInput
-                    placeholder="물품과 관련된 정보를 입력하세요"
-                    placeholderTextColor={'#777'} 
-                    multiline 
-                    style = {styles.textArea} />
-                <TextInput 
-                    placeholder="거래 장소를 입력하세요"
-                    placeholderTextColor={'#777'} 
-                    style = {styles.inputCenter}
-                />
-                
-                <TouchableOpacity style={styles.upload} onPress={()=>{}}>
-                    <View style={styles.row}>
-                        <Icon name='add-outline' size={15} color="#777"/>
-                        <Text style={styles.uploadText}> 물품 사진을 업로드하세요 </Text>
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+            <View style={styles.mainContainer}>
+                <View style={styles.contentContainer}>
+                    <View style={styles.headerRow}>
+                        <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                            <Icon name='close-outline' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d"/>
+                        </TouchableOpacity>
                     </View>
-                </TouchableOpacity>
 
-                <TextInput 
-                    placeholder="가격을 입력하세요"
-                    placeholderTextColor={'#777'} 
-                    keyboardType="numeric"
-                    style = {styles.inputCenter}
-                />
-                
-                <CustomButton title='완료' style={styles.button} onPress={() => {}}/>
+                    <TextInput
+                        placeholder="물품 이름"
+                        style={styles.input}
+                        value={title}
+                        onChangeText={setTitle}
+                        />
+                    <TextInput
+                        placeholder="물품과 관련된 정보를 입력하세요"
+                        multiline
+                        style={styles.textArea}
+                        value={contents}
+                        onChangeText={setContents}
+                        />
+                    <TextInput 
+                        placeholder="거래 장소를 입력하세요"
+                        style = {styles.inputCenter}
+                        value={place}
+                        onChangeText={setPlace}
+                    />
+                    
+                    <TouchableOpacity 
+                        style={[styles.upload, 
+                        photoUri && {borderColor:'black', borderWidth: 2}
+                        ]} 
+                        onPress={handleImagePick}
+                        >
+                        <View style={styles.row}>
+                            <Icon name="add-outline" size={15} color="#777" />
+                            <Text style={styles.uploadText}>물품 사진을 올려주세요</Text>
+                        </View>
+                    </TouchableOpacity>
+            
+
+                    <TextInput 
+                        placeholder="가격을 입력하세요"
+                        style = {styles.inputCenter}
+                        value={price}
+                        onChangeText={setPrice}
+                    />
+                    
+                    <CustomButton title='완료' style={styles.button} onPress={handleSubmit} />
+                </View>
             </View>
-        </View>
-    )
-}
+            <CustomAlert
+            visible={alertVisible}
+            title={alertTitle}
+            message={alertMessage}
+            onClose={() => setAlertVisible(false)}
+            />
+            </KeyboardAvoidingView>
+    );
+};
+
 const styles = StyleSheet.create({
     mainContainer: {
       flex: 1,
       backgroundColor : '#C6E4FF',
     },
     contentContainer: {
-        flex:1,
         padding:20,
     },
     headerRow: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-     },
+        marginBottom: 10,
+    },
      input : {
         width: '100%',
         backgroundColor: 'white',
@@ -94,21 +180,6 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlignVertical: 'top',
     },
-    location: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        padding: 15,
-        marginBottom: 15,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    guideline:{
-        margin: 10,
-    },
-    guidelineText:{
-        color: '#2D4183'
-    },
     uploadText: {
         color: '#777',
         fontSize: 16,
@@ -129,43 +200,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
     },
-    dropdownContainer: {
-        width: '40%',
-        marginBottom: 15,
-        alignSelf: 'flex-end',
-    },
-    dropdown: {
-        backgroundColor: 'white',
-        borderRadius: 20,
-        borderWidth: 0,
-        paddingHorizontal: 20,
-    },
-    dropdownList: {
-        width: '100%',
-        backgroundColor: 'white',
-        borderRadius: 20,
-        paddingHorizontal: 10,
-        borderColor: 'transparent',
-        marginTop: -5,
-        alignSelf: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-        elevation: 2,
-    },
     button: {
-        position: 'absolute',
-        bottom: 30,
-        right: 30,
-        width: '30%',
         backgroundColor: '#233b6d',
         borderRadius: 20,
-        paddingVertical: 10,
+        paddingVertical: 12,
         alignItems: 'center',
-        alignSelf: 'flex-end',
-        borderWidth: 0,
-    }
+        alignSelf: 'flex-end',   
+        width: 120,
+    },
 })
 
 export default TradePostAdd;

@@ -4,14 +4,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   TextInput,
-  Image,
   KeyboardAvoidingView,
   Platform,
-  ScrollView,
   Text
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { TabProps, NavigationProp } from "../types";
+import { NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomButton from "../components/CustomButton";
@@ -31,6 +29,7 @@ const LostPostAdd = () => {
   const [selectedCoords, setSelectedCoords] = useState<{ latitude: number; longitude: number } | null>(null);
   const [camera, setCamera] = useState<{ latitude: number; longitude: number } | null>(null);
 
+  const [alertTitle, setAlertTitle] = useState("");
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
@@ -80,12 +79,14 @@ const LostPostAdd = () => {
 
   const handleSubmit = async () => {
      if (!title.trim()) {
+      setAlertTitle("확인");
       setAlertMessage("제목을 입력해주세요.");
       setAlertVisible(true);
       return;
     }
 
     if (!selectedCoords) {
+      setAlertTitle("확인");
       setAlertMessage("위치를 선택해주세요.");
       setAlertVisible(true);
       return;
@@ -197,6 +198,12 @@ const LostPostAdd = () => {
           <CustomButton title="완료" style={styles.button} onPress={handleSubmit} />
         </View>
       </View>
+       <CustomAlert
+          visible={alertVisible}
+          title={alertTitle}
+          message={alertMessage}
+          onClose={() => setAlertVisible(false)}
+      />
     </KeyboardAvoidingView>
   );
 };

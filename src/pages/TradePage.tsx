@@ -48,11 +48,14 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     }, [isFocused]);
 
 
-   const filteredPosts = posts.filter((post) =>
-     post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-     post.content.toLowerCase().includes(searchQuery.toLowerCase())
-   );
-
+  const filteredPosts = posts.filter((post) => {
+  const title = typeof post.title === 'string' ? post.title : '';
+  const content = typeof post.content === 'string' ? post.content : '';
+  return (
+    title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    content.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+});
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>

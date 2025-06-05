@@ -6,9 +6,9 @@ import { ImageSourcePropType } from 'react-native';
 export type PostData = {
   id: number;
   nickname: string;
-  date: string;
+  time: string;
   title: string;
-  description: string;
+  content: string;
   image: ImageSourcePropType;
   price: string;
   location: string;
@@ -19,26 +19,28 @@ const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
         <Image 
-                  source={require('../assets/profile.png')} // 고정된 프로필 이미지
-                  style={styles.profileImage} 
-                />
+            source={require('../assets/profile.png')} // 고정된 프로필 이미지
+            style={styles.profileImage} 
+          />
         <View>
           <Text style={styles.postTitle}>{post.nickname}</Text>
-          <Text style={styles.postDate}>{post.date}</Text>
+          <Text style={styles.postDate}>{post.time}</Text>
         </View>
         <Icon name="share-social" size={20} style={styles.iconRight} color="#233b6d"/>
         <Icon name="ellipsis-vertical" size={20} color="#233b6d"/>
       </View>
 
       <Text style={styles.postTitle}>{post.title}</Text>
-      <Text style={styles.postContent}>{post.description}</Text>
+      <Text style={styles.postContent}>{post.content}</Text>
 
       <Image source={ post.image } style={styles.postImage} />
       <View style={styles.locationRow}>
           <Icon name="location-sharp" size={16} color="#777" />
           <Text style={styles.locationText}>{post.location}</Text>
       </View>
-      <Text style={styles.priceText}>{post.price}</Text>
+      <Text style={styles.priceText}>
+        {Number(post.price).toLocaleString()}원
+      </Text>
     </View>
   );
 };
@@ -46,6 +48,7 @@ const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
 const styles = StyleSheet.create({
   postItem: {
     backgroundColor: '#fff',
+    marginTop: 20,
     marginBottom: 10,
     padding: 15,
     borderRadius: 12,
@@ -88,7 +91,8 @@ const styles = StyleSheet.create({
   },
   priceText: {
     fontSize: 12,
-    color: '#666',
+    color: '#000',
+    marginTop: 5,
     marginLeft: 5,
   },
   locationRow: {
