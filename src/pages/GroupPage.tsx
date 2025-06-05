@@ -23,7 +23,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity onPress={() => {navigation.goBack()}}>
                         <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
                     </TouchableOpacity>
-                    <Text>내 그룹</Text>
+                    <Text style={styles.textTitle}>내 그룹</Text>
                     <Text/>
                 </View>
 
@@ -65,6 +65,11 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom:20,
+    },
+    textTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginVertical: 10,
     },
     
 })

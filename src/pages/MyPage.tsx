@@ -1,13 +1,78 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
 import Icon from "react-native-vector-icons/Ionicons";
 import Category from "../components/Category";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface PostItem {
+  postId: number;
+  title: string;
+  boardType: string;
+}
+
 
 const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
+    const [recentPosts, setRecentPosts] = useState<PostItem[]>([]);
+
+    useEffect(() => {
+    const fetchRecentPosts = async () => {
+        try {
+        const token = await AsyncStorage.getItem("token");
+        if (!token) throw new Error("토큰 없음");
+
+        const response = await axios.get("http://13.124.71.212:8080/api/posts/my-grouped", {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const groupedPosts = response.data as Record<string, PostItem[]>;
+
+        // 모든 게시글 flat하게 합치고 최신 순 정렬 (postId가 클수록 최신이라고 가정)
+        const allPosts = Object.values(groupedPosts).flat();
+        const sorted = allPosts.sort((a, b) => b.postId - a.postId);
+
+        // 앞에서 3개만 추출
+        setRecentPosts(sorted.slice(0, 3));
+        } catch (e) {
+        console.error("❌ 최근 게시글 불러오기 실패", e);
+        }
+    };
+
+    fetchRecentPosts();
+    }, []);
+
+    const getCategoryLabel = (type: string) => {
+        switch (type) {
+            case "STUDY": return "스터디";
+            case "MEETUP": return "번개";
+            case "SECONDHAND": return "중고";
+            case "LOST": return "분실물";
+            default: return type;
+        }
+    };
+
+    const handleNavigate = (post: PostItem) => {
+        switch (post.boardType) {
+            case "STUDY":
+                navigation.navigate("StudyApplicantList", { postId: post.postId });
+                break;
+            case "MEETUP":
+                navigation.navigate("MeetApplicantList", { postId: post.postId });
+                break;
+            case "SECONDHAND":
+                navigation.navigate("TradePostDetail", { postId: post.postId });
+                break;
+            case "LOST":
+                navigation.navigate("LostPostDetail", { postId: post.postId });
+                break;
+            default:
+                break;
+        }
+    };
 
     return(
         <View style={styles.mainContainer}>
@@ -33,20 +98,20 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     </TouchableOpacity>
                 </View>
 
-                <View style={styles.list}>
-                    <TouchableOpacity onPress={() => {navigation.navigate('StudyApplicantList')}}>
+               <View style={styles.list}>
+                {recentPosts.length === 0 ? (
+                    <Text style={styles.text}>작성한 글이 없습니다.</Text>
+                ) : (
+                    recentPosts.map((post) => (
+                    <TouchableOpacity key={post.postId} onPress={() => handleNavigate(post)}>
                         <View style={styles.row}>
-                            <Text style={styles.text}>에어팟 프로</Text>
-                            <Category label={'분실물'}/>
+                        <Text style={styles.text}>{post.title}</Text>
+                        <Category label={getCategoryLabel(post.boardType)} />
                         </View>
+                        <View style={styles.separator} />
                     </TouchableOpacity>
-                    <View style={styles.separator} />
-                    <TouchableOpacity onPress={() => {navigation.navigate('MeetApplicantList')}}>
-                        <View style={styles.row}>
-                            <Text style={styles.text}>에어팟 프로</Text>
-                            <Category label={'번개'}/>
-                        </View>
-                    </TouchableOpacity>
+                    ))
+                )}
                 </View>
 
                 <View style={styles.option}>

@@ -56,7 +56,7 @@ const MyPostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         switch (type) {
             case "STUDY": return "스터디";
             case "MEETUP": return "번개";
-            case "SECONDHAND": return "중고거래";
+            case "SECONDHAND": return "중고";
             case "LOST": return "분실물";
             default: return type;
         }
@@ -88,12 +88,9 @@ const MyPostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity onPress={() => { navigation.goBack(); }}>
                         <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
                     </TouchableOpacity>
-                </View>
-
-                <View style={styles.row}>
                     <Text style={styles.textTitle}>내가 쓴 글</Text>
+                    <Text/>
                 </View>
-
                 <View style={styles.list}>
                    <ScrollView>
                         {posts.length === 0 ? (
@@ -151,7 +148,8 @@ const styles = StyleSheet.create({
     },
     textTitle: {
         fontSize: 18,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        marginVertical: 10,
     },
     row: {
         padding: 15,
@@ -165,7 +163,7 @@ const styles = StyleSheet.create({
         marginBottom: 15,
         width: '100%',
         backgroundColor: 'white',
-        maxHeight: 400,
+        flex:1,
     },
     separator: {
         height: 1,
