@@ -1,83 +1,106 @@
-import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
-import { TabProps, NavigationProp } from "../types";
+import React, { useState, useEffect } from "react";
+import { useNavigation, useIsFocused } from '@react-navigation/native';
+import { View, Text, FlatList, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import { TabProps, NavigationProp, StudyPost } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CircleButton from "../components/CircleButton";
 import StudyPostItem from "../components/StudyPostItem";
-
-
-const posts = [
-    {
-        title: '같이 반수할 사람',
-        dDay: 'D-DAY',
-        members: '5/10',
-        details: '원하는 대학이나 짧은 각오 같은거 작성해주세요',
-        date: '시간 : 수요일 6시',
-        location: '장소 : 디도, 카페'
-    },
-    {
-        title: '같이 토익할 사람',
-        dDay: 'D-1',
-        members: '2/3',
-        details: '원하는 대학이나 짧은 각오 같은거 작성해주세요',
-        date: '시간 : 금요일마다',
-        location: '장소 : 디도'
-    },    
-];
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
 const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
-
     const [isSearching, setIsSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [posts, setPosts] = useState<StudyPost[]>([]);
+    const isFocused = useIsFocused();
 
-    const filteredPosts = posts.filter((post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.details.toLowerCase().includes(searchQuery.toLowerCase())
+    useEffect(() => {
+    const fetchStudyPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem("accessToken");
+        const response = await axios.get(`http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = response.data.data;
+        const mapped = data.map((item: any) => ({
+          postId: item.postId,
+          title: item.title,
+          contents: item.contents,
+          place: item.place,
+          time: item.time,
+          maxParticipants: item.maxParticipants,
+          currentParticipants: item.currentParticipants,
+          dday: item.dday,
+        }));
+
+        setPosts(mapped);
+        console.log("✅ 스터디 posts:", mapped);
+      } catch (error) {
+        console.error("❌ 스터디 게시글 불러오기 실패:", error);
+      }
+    };
+
+    if (isFocused) {
+      fetchStudyPosts();
+    }
+  }, [isFocused]);
+
+  const filteredPosts = posts.filter((post) => {
+    const title = typeof post.title === 'string' ? post.title : '';
+    const contents = typeof post.contents === 'string' ? post.contents : '';
+    return (
+      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      contents.toLowerCase().includes(searchQuery.toLowerCase())
     );
+  });
 
     return (
         <View style={styles.mainContainer}>
             <View style={styles.contentContainer}>
                 <View style={styles.headerContainer}>
                     <Text style={styles.headerText}>스터디 게시판</Text>
-                        <Icon name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
+                    <Icon name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)} />
                 </View>
                 {isSearching && (
                     <TextInput
-                    placeholder="검색어를 입력하세요"
-                    value={searchQuery}
-                    onChangeText={setSearchQuery}
-                    style={styles.searchInput}
+                        placeholder="검색어를 입력하세요"
+                        value={searchQuery}
+                        onChangeText={setSearchQuery}
+                        style={styles.searchInput}
                     />
                 )}
                 <View style={styles.buttonContainer}>
-                    <CircleButton iconName="pencil" onPress={() => {navigation.navigate('StudyPostAdd')}} />
+                    <CircleButton iconName="pencil" onPress={() => { navigation.navigate('StudyPostAdd') }} />
                 </View>
-                <FlatList
-                    data={posts}
+
+               <FlatList
+                    data={filteredPosts}
+                    keyExtractor={(item) => item.postId.toString()}
                     renderItem={({ item }) => (
-                        <StudyPostItem 
-                            title={item.title}
-                            dDay={item.dDay}
-                            members={item.members}
-                            details={item.details}
-                            date={item.date}
-                            location={item.location}
-                            onPress={() => {navigation.navigate('StudyPostDetail')}}
+                        <StudyPostItem
+                        title={item.title}
+                        dDay={item.dday}
+                        members={`${item.currentParticipants}/${item.maxParticipants}`}
+                        details={item.contents}
+                        date={`시간: ${item.time}`}
+                        location={`장소: ${item.place}`}
+                        onPress={() => {
+                            navigation.navigate('StudyPostDetail', { postId: item.postId });
+                        }}
                         />
                     )}
-                    numColumns={2}  
+                    numColumns={2}
                     showsVerticalScrollIndicator={false}
-                    contentContainerStyle={styles.listContainer} 
-                />
+                    contentContainerStyle={styles.listContainer}
+                    />
             </View>
             <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
         </View>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     mainContainer: {

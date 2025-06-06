@@ -6,7 +6,8 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Platform,
-  Text
+  Text,
+  ScrollView
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { NavigationProp } from "../types";
@@ -124,6 +125,9 @@ const LostPostAdd = () => {
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+      <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled">
       <View style={styles.mainContainer}>
         <View style={styles.contentContainer}>
           <View style={styles.headerRow}>
@@ -204,6 +208,7 @@ const LostPostAdd = () => {
           message={alertMessage}
           onClose={() => setAlertVisible(false)}
       />
+      </ScrollView>
     </KeyboardAvoidingView>
   );
 };

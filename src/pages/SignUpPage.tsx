@@ -6,6 +6,9 @@ import {
     TouchableOpacity,
     Text,
     FlatList,
+    ScrollView,
+    Platform,
+    KeyboardAvoidingView
 } from "react-native";
 import { TabProps, NavigationProp } from "../types";
 import axios from "axios";
@@ -268,6 +271,10 @@ const SignUpPage = () => {
     };
 
     return (
+        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+                     <ScrollView
+                        contentContainerStyle={{ flexGrow: 1 }}
+                        keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
             <Logo />
 
@@ -363,6 +370,8 @@ const SignUpPage = () => {
                 onClose={() => setAlertVisible(false)}
             />
         </View>
+        </ScrollView>
+        </KeyboardAvoidingView>
     );
 };
 

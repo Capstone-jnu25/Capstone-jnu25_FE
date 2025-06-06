@@ -51,7 +51,7 @@ const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <TradePostDetailItem
             post={{
               id: post.postId,
-              nickname: post.authorNickname,
+              nickname: post.nickname,
               title: post.title,
               content: post.contents,
               image: { uri: post.photo },

@@ -18,7 +18,7 @@ export type RootStackParamList = {
     TradePostAdd: undefined;
     
     StudyPostAdd: undefined;
-    StudyPostDetail: undefined;
+    StudyPostDetail: { postId: number };
     StudyApplicantList: { postId: number };
 
     MeetPostAdd: undefined;
@@ -59,4 +59,19 @@ export type TradePost = {
   price: number;
   image: string | { uri: string };
   time: string;
+};
+
+export type StudyPost = {
+  postId: number;
+  title: string;
+  contents: string;
+  place: string;
+  time: string;
+  dueDate: string;
+  gender: string;
+  maxParticipants: number;
+  currentParticipants: number;
+  boardType: string;
+  closed: boolean;
+  dday: string;
 };
