@@ -33,7 +33,6 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [keywords, setKeywords] = useState<Keyword[]>([]);
   const [token, setToken] = useState<string | null>(null);
 
-  // ✅ CustomAlert 상태
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertTitle, setAlertTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
