@@ -32,7 +32,7 @@ const StudyPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
     const handleSubmit = async () => {
         try {
-            const token = await AsyncStorage.getItem("accessToken");
+            const token = await AsyncStorage.getItem("token");
             const payload = {
                 title,
                 time,

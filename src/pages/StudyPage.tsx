@@ -19,7 +19,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     useEffect(() => {
     const fetchStudyPosts = async () => {
       try {
-        const token = await AsyncStorage.getItem("accessToken");
+        const token = await AsyncStorage.getItem("token");
         const response = await axios.get(`http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`, {
           headers: { Authorization: `Bearer ${token}` },
         });
