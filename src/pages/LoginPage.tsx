@@ -38,6 +38,7 @@ const LoginPage = () => {
 
             const { token, userId, nickname, latitude, longitude } = response.data;
 
+            await AsyncStorage.setItem("userId", userId.toString());
             await AsyncStorage.setItem("token", token);
             await AsyncStorage.setItem("latitude", latitude.toString());
             await AsyncStorage.setItem("longitude", longitude.toString());
