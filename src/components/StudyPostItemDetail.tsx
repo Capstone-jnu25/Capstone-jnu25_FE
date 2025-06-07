@@ -3,38 +3,45 @@ import { View, Text, StyleSheet, TextInput } from 'react-native';
 import CustomButton from './CustomButton';
 
 interface StudyPostDetailItemProps {
-    title: string;
-    dDay: string;
-    time: string;
-    location: string;
-    description: string;
-    onSubmit: () => void;
+  title: string;
+  dday: string;
+  time: string;
+  place: string;
+  contents: string;
+  gender: string;
+  onSubmit: () => void;
+  application_text: string;
+  setApplication_text: (text: string) => void;
 }
 
-const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ title, dDay, time, location, description, onSubmit }) => {
+
+const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ title, dday, time, place, contents, gender, onSubmit, application_text, setApplication_text }) => {
     return (
         <View style={styles.container}>
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.dDay}>{dDay}</Text>
+                <Text style={styles.dDay}>{dday}</Text>
             </View>
 
             {/* 시간 및 장소 */}
             <View style={styles.info}>
                 <Text style={styles.infoText}>시간 : {time}</Text>
-                <Text style={styles.infoText}>장소 : {location}</Text>
+                <Text style={styles.infoText}>장소 : {place}</Text>
+                <Text style={styles.infoText}>성별 : {gender}</Text>
             </View>
 
             {/* 설명 */}
             <Text style={styles.description}>
-                {description}
+                {contents}
             </Text>
 
             {/* 입력란 */}
             <TextInput 
                 multiline 
                 style={styles.textArea} 
+                value={application_text}
+                onChangeText={setApplication_text}
             />
 
             {/* 제출 버튼 */}
