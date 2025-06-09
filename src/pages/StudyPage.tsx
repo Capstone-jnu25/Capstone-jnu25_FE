@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
-import { TabProps, NavigationProp, StudyPost } from "../types";
+import { TabProps, NavigationProp, Post } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CircleButton from "../components/CircleButton";
@@ -13,7 +13,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
     const [isSearching, setIsSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
-    const [posts, setPosts] = useState<StudyPost[]>([]);
+    const [posts, setPosts] = useState<Post[]>([]);
     const isFocused = useIsFocused();
 
     useEffect(() => {
@@ -81,15 +81,15 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     keyExtractor={(item) => item.postId.toString()}
                     renderItem={({ item }) => (
                         <StudyPostItem
-                        title={item.title}
-                        dDay={item.dday}
-                        members={`${item.currentParticipants}/${item.maxParticipants}`}
-                        details={item.contents}
-                        date={`시간: ${item.time}`}
-                        location={`장소: ${item.place}`}
-                        onPress={() => {
-                            navigation.navigate('StudyPostDetail', { postId: item.postId });
-                        }}
+                          title={item.title}
+                          dDay={item.dday}
+                          members={`${item.currentParticipants}/${item.maxParticipants}`}
+                          details={item.contents}
+                          date={`시간: ${item.time}`}
+                          location={`장소: ${item.place}`}
+                          onPress={() => {
+                              navigation.navigate('StudyPostDetail', { postId: item.postId });
+                          }}
                         />
                     )}
                     numColumns={2}

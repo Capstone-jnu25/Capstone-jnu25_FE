@@ -61,7 +61,7 @@ export type TradePost = {
   time: string;
 };
 
-export type StudyPost = {
+export type Post = {
   postId: number;
   title: string;
   contents: string;

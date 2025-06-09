@@ -1,41 +1,83 @@
-import React, { useState } from "react";
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useEffect } from "react";
+import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
-import { TabProps, NavigationProp } from "../types";
+import { TabProps, NavigationProp, Post } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';
 import CircleButton from "../components/CircleButton";
+import CustomAlert from "../components/CustomAlert";
 import MeetPostItem from "../components/MeetPostItem";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios from 'axios';
 
-const posts = [
-    {
-        title: '오늘 영화 같이 보실 분!',
-        dDay: 'D-DAY',
-        members: '5/10',
-        details: '마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!! 마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!! 마인크래프트 무비 볼거에요. 끝나고 PC방에서 마크도 합시다!!!',
-        date: '시간 : 오늘 16:30',
-        location: '장소 : 전대 메가박스'
-    },
-    {
-        title: '내일 점심 같이 먹을 분 구해요',
-        dDay: 'D-1',
-        members: '2/3',
-        details: '메뉴는 만나서 같이 정해요 전 다 좋습니다',
-        date: '시간 : 내일 11시',
-        location: '장소 : 후문'
-    },    
-];
 
 const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
 
     const [isSearching, setIsSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
+    const [posts, setPosts] = useState<Post[]>([]);
+    const isFocused = useIsFocused();
 
-    const filteredPosts = posts.filter((post) =>
-        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        post.details.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
+
+    const showAlert = (title: string, message: string) => {
+        setAlertTitle(title);
+        setAlertMessage(message);
+        setAlertVisible(true);
+    };
+
+    useEffect(() => {
+    const fetchStudyPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(`http://13.124.71.212:8080/api/gathering?boardType=MEETUP&page=0&size=10`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const data = response.data.data;
+        const mapped = data.map((item: any) => ({
+          postId: item.postId,
+          title: item.title,
+          contents: item.contents,
+          place: item.place,
+          time: item.time,
+          maxParticipants: item.maxParticipants,
+          currentParticipants: item.currentParticipants,
+          dday: item.dday,
+        }));
+
+        setPosts(mapped);
+        console.log("✅ 번개 모임 posts:", mapped);
+      } catch (error) {
+        console.error("❌ 번개 모임 게시글 불러오기 실패:", error);
+      }
+    };
+
+    if (isFocused) {
+      fetchStudyPosts();
+    }
+  }, [isFocused]);
+
+    const [appliedPostIds, setAppliedPostIds] = useState<number[]>([]);
+
+    const handleApply = async (postId: number) => {
+        const token = await AsyncStorage.getItem("token");
+            try {
+                await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, null, {
+                headers: { Authorization: `Bearer ${token}` },
+                });
+                // 성공 시 버튼 상태 변경
+                setAppliedPostIds(prev => [...prev, postId]);
+            } catch (error) {
+                console.error("❌ 신청 실패:", error);
+                if (axios.isAxiosError(error) && error.response?.status === 400) {
+                    showAlert("신청", "이미 신청한 게시글입니다.");
+                }
+            }
+    };
 
     return (
         <View style={styles.mainContainer}>
@@ -60,18 +102,26 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     renderItem={({ item }) => (
                         <MeetPostItem 
                             title={item.title}
-                            dDay={item.dDay}
-                            members={item.members}
-                            details={item.details}
-                            date={item.date}
-                            location={item.location}
-                            onPress={() => {}}
+                            dDay={item.dday}
+                            members={`${item.currentParticipants}/${item.maxParticipants}`}
+                            details={item.contents}
+                            date={`시간: ${item.time}`}
+                            location={`장소: ${item.place}`}
+                            isApplied={appliedPostIds.includes(item.postId)} // ❗ 현재 컴포넌트에서 관리
+                                onApply={() => handleApply(item.postId)}
+                                />
+                            )}
+                            keyExtractor={item => item.postId.toString()}
+                            showsVerticalScrollIndicator={false}
                         />
-                    )}
-                    showsVerticalScrollIndicator={false}
-                />
             </View>
             <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                onClose={() => setAlertVisible(false)}
+            />
         </View>
     )
 }

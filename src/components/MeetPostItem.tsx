@@ -9,10 +9,11 @@ interface MeetPostItemProps {
     details: string;
     date: string;
     location: string;
-    onPress: () => void;
+    isApplied: boolean;
+    onApply: () => void;
 }
 
-const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, onPress }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, isApplied, onApply }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -27,7 +28,15 @@ const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, detai
                 
             </View>
             <View style={styles.buttonContainer}>
-                <CustomButton title='신청' style={styles.button} onPress={() => {}}/>  
+               {isApplied ? (
+                    <View style={[styles.buttonBase, styles.disabledButton]}>
+                        <Text style={styles.buttonText}>신청 완료</Text>
+                    </View>
+                    ) : (
+                    <TouchableOpacity style={[styles.buttonBase, styles.activeButton]} onPress={onApply}>
+                        <Text style={styles.buttonText}>신청</Text>
+                    </TouchableOpacity>
+                    )}
             </View>
             
         </View>
@@ -88,11 +97,25 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end', // 오른쪽 정렬
         marginTop: 10,
     },
-    button: {
-        width: '25%',
+    buttonBase: {
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 20,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 100,
+    },
+    activeButton: {
         backgroundColor: '#233b6d',
-        marginBottom:0,
-    }
+    },
+    disabledButton: {
+        backgroundColor: '#ccc',
+    },
+    buttonText: {
+        color: '#FFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
 });
 
 export default MeetPostItem;
