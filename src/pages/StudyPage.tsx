@@ -34,7 +34,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           maxParticipants: item.maxParticipants,
           currentParticipants: item.currentParticipants,
           dday: item.dday,
-        }));
+        })).sort((a: Post, b:Post) => b.postId - a.postId);
 
         setPosts(mapped);
         console.log("✅ 스터디 posts:", mapped);

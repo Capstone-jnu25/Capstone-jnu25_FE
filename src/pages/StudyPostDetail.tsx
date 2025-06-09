@@ -53,8 +53,9 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             }
             );
 
-            showAlert("완료", "지원이 완료되었습니다.");
+            showAlert("완료", "신청이 완료되었습니다.");
             setApplication_text(''); // 입력 초기화
+            navigation.goBack();
         } catch (error) {
             console.error("❌ 지원 실패:", error);
             showAlert("에러", "문제가 발생하였습니다.");

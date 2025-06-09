@@ -69,20 +69,13 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
                 });
-                setPosts(prevPosts =>
-                  prevPosts.map(post =>
-                    post.postId === postId
-                      ? { ...post, currentParticipants: post.currentParticipants + 1 }
-                      : post
-                  )
-                );
                 setAppliedPostIds(prev => [...prev, postId]);
                 showAlert("완료", "신청이 완료되었습니다.");
                 // 성공 시 버튼 상태 변경
             } catch (error) {
                 console.error("❌ 신청 실패:", error);
                 if (axios.isAxiosError(error) && error.response?.status === 400) {
-                    showAlert("신청", "이미 신청한 게시글입니다.");
+                    showAlert("실패", "이미 신청한 게시글입니다.");
                 }
             }
     };
