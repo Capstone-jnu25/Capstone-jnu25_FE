@@ -1,20 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation } from '@react-navigation/native';
 import { View, StyleSheet, TouchableOpacity, Text, ScrollView } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
 import GroupItem from '../components/GroupItem';
 import Icon from "react-native-vector-icons/Ionicons";
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const groups = [
-    { title: '영화 한 편 보기', category: '번개', date: '2025.04.06. 22:00' },
-    { title: '내일 점심 먹기', category: '번개', date: '2025.04.06. 22:00' },
-    { title: '같이 반수할 사람', category: '스터디' },
-    { title: '토익 공부하실 분', category: '스터디' },
-];
+interface Group {
+  postId: number;
+  title: string;
+  boardType: 'STUDY' | 'MEETUP';
+}
 
 const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
+    const [groups, setGroups] = useState<Group[]>([]);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            try {
+            const token = await AsyncStorage.getItem("token");
+            const response = await axios.get("http://13.124.71.212:8080/api/group", {
+                headers: {
+                Authorization: `Bearer ${token}`,
+                },
+            });
+            const sorted = response.data.data.sort((a: Group, b: Group) => b.postId - a.postId);
+            setGroups(sorted);
+            } catch (error) {
+            console.error("❌ 그룹 목록 불러오기 실패:", error);
+            }
+        };
+
+        fetchGroups();
+    }, []);
 
     return(
         <View style={styles.mainContainer}>
@@ -28,16 +49,15 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 </View>
 
                 <ScrollView>
-                    {groups.map((group, index) => (
+                    {groups.map((group) => (
                         <GroupItem 
-                            key={index} 
-                            title={group.title} 
-                            category={group.category} 
-                            date={group.date}
-                            onPress={() => console.log(group.title)}
+                        key={group.postId}
+                        title={group.title}
+                        category={group.boardType === "STUDY" ? "스터디" : "번개"}
+                        onPress={() => console.log(group.title)}
                         />
                     ))}
-            </ScrollView>
+                    </ScrollView>
             </View>
             <View style={styles.menuBarContainer}>
               <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
