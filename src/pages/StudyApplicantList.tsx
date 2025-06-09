@@ -23,7 +23,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                 Authorization: `Bearer ${token}`
                 }
             });
-            setApplicants(res.data.data.content); // content만 가져오기
+            setApplicants(res.data.data.content);
             } catch (error) {
             console.error("❌ 지원자 목록 불러오기 실패:", error);
             }
@@ -36,7 +36,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setPostTitle(res.data.data.title); // 게시글 제목만 저장
+            setPostTitle(res.data.data.title);
             } catch (error) {
             console.error("❌ 게시글 제목 불러오기 실패:", error);
             }

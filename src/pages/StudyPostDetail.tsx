@@ -54,7 +54,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             );
 
             showAlert("완료", "신청이 완료되었습니다.");
-            setApplication_text(''); // 입력 초기화
+            setApplication_text('');
             navigation.goBack();
         } catch (error) {
             console.error("❌ 지원 실패:", error);
@@ -72,7 +72,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-            setPost(res.data.data);  // ✅ 실제 게시글 데이터만 저장
+            setPost(res.data.data); 
             } catch (e) {
             console.error("❌ 스터디 게시글 상세 조회 실패", e);
             }

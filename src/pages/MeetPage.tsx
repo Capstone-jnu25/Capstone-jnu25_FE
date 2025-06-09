@@ -108,7 +108,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             details={item.contents}
                             date={`시간: ${item.time}`}
                             location={`장소: ${item.place}`}
-                            isApplied={appliedPostIds.includes(item.postId)} // ❗ 현재 컴포넌트에서 관리
+                            isApplied={appliedPostIds.includes(item.postId)}
                             isFull={item.currentParticipants >= item.maxParticipants}
                             onApply={() => handleApply(item.postId)}
                           />
