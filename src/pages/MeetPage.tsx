@@ -47,7 +47,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           maxParticipants: item.maxParticipants,
           currentParticipants: item.currentParticipants,
           dday: item.dday,
-        }));
+        })).sort((a: Post, b:Post) => b.postId - a.postId);
 
         setPosts(mapped);
         console.log("✅ 번개 모임 posts:", mapped);
@@ -64,13 +64,21 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const [appliedPostIds, setAppliedPostIds] = useState<number[]>([]);
 
     const handleApply = async (postId: number) => {
-        const token = await AsyncStorage.getItem("token");
+         const token = await AsyncStorage.getItem("token");
             try {
-                await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, null, {
+                await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
                 });
-                // 성공 시 버튼 상태 변경
+                setPosts(prevPosts =>
+                  prevPosts.map(post =>
+                    post.postId === postId
+                      ? { ...post, currentParticipants: post.currentParticipants + 1 }
+                      : post
+                  )
+                );
                 setAppliedPostIds(prev => [...prev, postId]);
+                showAlert("완료", "신청이 완료되었습니다.");
+                // 성공 시 버튼 상태 변경
             } catch (error) {
                 console.error("❌ 신청 실패:", error);
                 if (axios.isAxiosError(error) && error.response?.status === 400) {
@@ -108,8 +116,9 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             date={`시간: ${item.time}`}
                             location={`장소: ${item.place}`}
                             isApplied={appliedPostIds.includes(item.postId)} // ❗ 현재 컴포넌트에서 관리
-                                onApply={() => handleApply(item.postId)}
-                                />
+                            isFull={item.currentParticipants >= item.maxParticipants}
+                            onApply={() => handleApply(item.postId)}
+                          />
                             )}
                             keyExtractor={item => item.postId.toString()}
                             showsVerticalScrollIndicator={false}

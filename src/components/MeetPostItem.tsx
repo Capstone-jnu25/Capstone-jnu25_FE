@@ -10,10 +10,11 @@ interface MeetPostItemProps {
     date: string;
     location: string;
     isApplied: boolean;
+    isFull: boolean;
     onApply: () => void;
 }
 
-const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, isApplied, onApply }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, isApplied, isFull, onApply }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -28,9 +29,13 @@ const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, detai
                 
             </View>
             <View style={styles.buttonContainer}>
-               {isApplied ? (
+               {isFull ? (
                     <View style={[styles.buttonBase, styles.disabledButton]}>
-                        <Text style={styles.buttonText}>신청 완료</Text>
+                            <Text style={styles.buttonText}>마감</Text>
+                        </View>
+               ) : isApplied ? (
+                    <View style={[styles.buttonBase, styles.disabledButton]}>
+                        <Text style={styles.buttonText}>완료</Text>
                     </View>
                     ) : (
                     <TouchableOpacity style={[styles.buttonBase, styles.activeButton]} onPress={onApply}>
