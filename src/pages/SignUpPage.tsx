@@ -276,34 +276,34 @@ const SignUpPage = () => {
                         contentContainerStyle={{ flexGrow: 1 }}
                         keyboardShouldPersistTaps="handled">
         <View style={styles.container}>
-            <Logo />
-
             <CustomTextInput
                 placeholder="학교 입력"
                 value={univName}
                 onChangeText={handleUnivNameChange}
+                style={{ marginBottom: showSuggestions ? 0 : 20 }}
             />
 
             {showSuggestions && schoolSuggestions.length > 0 && (
-                <FlatList
-                    data={schoolSuggestions}
-                    keyExtractor={(item, index) => index.toString()}
-                    style={styles.suggestionList}
-                    renderItem={({ item }) => (
+                <View style={styles.suggestionList}>
+                    <ScrollView style={{ maxHeight: 150 }}>
+                    {schoolSuggestions.map((item, index) => (
                         <TouchableOpacity
-                            onPress={() => {
-                                setUnivName(item.name);
-                                fetchAddressAndCoords(item.name);
-                                setSchoolSuggestions([]);
-                                setShowSuggestions(false);
-                            }}
-                            style={styles.suggestionItem}
+                        key={index}
+                        onPress={() => {
+                            setUnivName(item.name);
+                            fetchAddressAndCoords(item.name);
+                            setSchoolSuggestions([]);
+                            setShowSuggestions(false);
+                        }}
+                        style={styles.suggestionItem}
                         >
-                            <Text>{item.name}</Text>
+                        <Text>{item.name}</Text>
                         </TouchableOpacity>
-                    )}
-                />
-            )}
+                    ))}
+                    </ScrollView>
+                </View>
+                )}
+
 
             <CustomTextInput
                 placeholder="대학교 이메일 입력"
@@ -403,16 +403,14 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     suggestionList: {
-        position: 'absolute',
-        top: 350,
-        alignSelf: 'center',
         backgroundColor: '#fff',
         borderColor: '#ccc',
         borderWidth: 1,
-        borderRadius: 20,
-        zIndex: 999,
-        maxHeight: 150,
+        borderRadius:20,
         width: 200,
+        textAlign: 'center',
+        maxHeight: 100,
+        marginBottom: 20,
     },
     suggestionItem: {
         padding: 10,
