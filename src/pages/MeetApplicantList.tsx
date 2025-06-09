@@ -1,23 +1,50 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { TabProps, NavigationProp } from "../types";
-import { useNavigation } from '@react-navigation/native';
+import { TabProps, NavigationProp, RootStackParamList } from "../types";
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ApplicantItem from '../components/ApplicantItem';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation();
+    const route = useRoute<RouteProp<RootStackParamList, 'StudyApplicantList'>>();
+    const { postId } = route.params;
+    const [applicants, setApplicants] = useState<any[]>([]);
+    const [postTitle, setPostTitle] = useState('');
 
-    // 샘플 데이터
-    const applicants = [
-        { id: '1', nickname: '닉네임',},
-        { id: '2', nickname: '닉네임',},
-        { id: '3', nickname: '닉네임',},
-        { id: '4', nickname: '닉네임',},
-        { id: '5', nickname: '닉네임',},
-        { id: '6', nickname: '닉네임',},
-    ];
-    
+    useEffect(() => {
+        const fetchApplicants = async () => {
+            try {
+            const token = await AsyncStorage.getItem("token");
+            const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
+                headers: {
+                Authorization: `Bearer ${token}`
+                }
+            });
+            setApplicants(res.data.data.content); // content만 가져오기
+            } catch (error) {
+            console.error("❌ 지원자 목록 불러오기 실패:", error);
+            }
+        };
+
+        const fetchPostTitle = async () => {
+            try {
+            const token = await AsyncStorage.getItem("token");
+            const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            setPostTitle(res.data.data.title); // 게시글 제목만 저장
+            } catch (error) {
+            console.error("❌ 게시글 제목 불러오기 실패:", error);
+            }
+        };
+
+        fetchApplicants();
+        fetchPostTitle();
+    }, [postId]);
 
     return (
          <View style={styles.mainContainer}>
@@ -28,7 +55,7 @@ const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =>
 
                 <View style={styles.itemContainer}>
                     <View style={{ alignItems: 'center', justifyContent: 'center', marginBottom: 25 }}>
-                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>오늘 영화 한 편 보실 분</Text>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{postTitle}</Text>
                         </View>
                  <FlatList
                     data={applicants}
