@@ -33,7 +33,7 @@ export type RootStackParamList = {
     MyPostPage: undefined;
 
     ChatList: undefined;
-    ChatPage: undefined;
+    ChatPage: { chattingRoomId: number; chatTitle: string };
   };
 
 export type NavigationProp = StackNavigationProp<RootStackParamList>;

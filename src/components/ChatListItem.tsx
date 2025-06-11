@@ -2,18 +2,35 @@ import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 interface ChatListItemProps {
-    profileImage: any;
+    boardType: string;
     nickname: string;
     lastMessage: string;
     onItemPress: () => void;
     onNicknamePress: () => void;
 }
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ profileImage, nickname, lastMessage, onItemPress, onNicknamePress }) => {
+const getBoardImage = (boardType: string) => {
+  switch (boardType) {
+    case 'STUDY':
+      return require('../assets/Study.png');
+    case 'MEETUP':
+      return require('../assets/Meetup.png');
+    case 'LOST':
+      return require('../assets/Lost.png');
+    case 'SECONDHAND':
+      return require('../assets/Secondhand.png');
+    default:
+      return require('../assets/profile.png'); // 예외 처리
+  }
+};
+
+const ChatListItem: React.FC<ChatListItemProps> = ({ boardType, nickname, lastMessage, onItemPress, onNicknamePress }) => {
+    const boardImage = getBoardImage(boardType);
+
     return (
         <View>
         <TouchableOpacity style={styles.container} onPress={onItemPress}>
-            <Image source={profileImage} style={styles.profileImage} />
+           <Image source={boardImage} style={styles.profileImage} />
             <View style={styles.textContainer}>
                 <TouchableOpacity onPress={onNicknamePress}>
                     <Text style={styles.nickname}>{nickname}</Text>

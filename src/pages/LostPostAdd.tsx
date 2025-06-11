@@ -10,7 +10,7 @@ import {
   ScrollView
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { NavigationProp } from "../types";
+import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import DropDownPicker from "react-native-dropdown-picker";
 import CustomButton from "../components/CustomButton";
@@ -20,7 +20,7 @@ import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "react-native-image-picker";
 
-const LostPostAdd = () => {
+const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<NavigationProp>();
 
   const [title, setTitle] = useState('');

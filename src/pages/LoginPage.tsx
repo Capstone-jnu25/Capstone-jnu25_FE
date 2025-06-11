@@ -5,6 +5,7 @@ import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import messaging from '@react-native-firebase/messaging';
 import CustomButton from '../components/CustomButton';
 import Logo from '../components/Logo'
 import CustomTextInput from "../components/CustomTextInput";
@@ -42,6 +43,8 @@ const LoginPage = () => {
             await AsyncStorage.setItem("token", token);
             await AsyncStorage.setItem("latitude", latitude.toString());
             await AsyncStorage.setItem("longitude", longitude.toString());
+
+        
 
             setAlertTitle("로그인 성공");
             setAlertMessage(`${nickname}님, 환영합니다!`);

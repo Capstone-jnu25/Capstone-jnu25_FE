@@ -1,26 +1,105 @@
-import React, { useState } from 'react';
-import { useNavigation } from '@react-navigation/native';
-import { TabProps, NavigationProp } from "../types";
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { TabProps, NavigationProp, RootStackParamList } from "../types";
 import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'react-native';
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+interface ChatMessage {
+  id: number;
+  text: string;
+  isMyMessage: boolean;
+}
 
 const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
-    
-    const [messages, setMessages] = useState([
-        { id: 1, text: '안녕하세요!', isMyMessage: false },
-        { id: 2, text: '네, 반갑습니다!', isMyMessage: true },
-        { id: 3, text: '어디서 만날까요?', isMyMessage: false },
-    ]);
-    const [inputText, setInputText] = useState('');
+  const route = useRoute<RouteProp<RootStackParamList, 'ChatPage'>>();
+  const { chattingRoomId, chatTitle } = route.params;
 
-    const handleSend = () => {
-        if (inputText.trim() !== '') {
-            setMessages([...messages, { id: messages.length + 1, text: inputText, isMyMessage: true }]);
-            setInputText('');
-        }
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [inputText, setInputText] = useState('');
+  const stompClientRef = useRef<Client | null>(null);
+  const userIdRef = useRef<string>('');
+
+   useEffect(() => {
+    AsyncStorage.getItem('userId').then((id) => {
+      if (id) userIdRef.current = id;
+    });
+  }, []);
+
+   useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get(
+          `http://13.124.71.212:8080/api/chatrooms/${chattingRoomId}/messages?page=0&size=30`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        const messageList = response.data.data.data.map((msg: any) => ({
+          id: msg.messageId,
+          text: msg.detailMessage,
+          isMyMessage: msg.senderId === parseInt(userIdRef.current)
+        }));
+
+        setMessages(messageList);
+      } catch (error) {
+        console.error('❌ 메시지 불러오기 실패:', error);
+      }
     };
+
+    fetchMessages();
+  }, [chattingRoomId]);
+
+
+  useEffect(() => {
+    const socket = new SockJS("http://13.124.71.212:8080/ws");
+    const client = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+    });
+
+    client.onConnect = () => {
+      client.subscribe(`/topic/chatroom/${chattingRoomId}`, (message) => {
+        const msg = JSON.parse(message.body);
+        setMessages(prev => [...prev, {
+          id: msg.messageId,
+          text: msg.detailMessage,
+          isMyMessage: msg.senderId === parseInt(userIdRef.current),
+        }]);
+      });
+    };
+
+    client.activate();
+    stompClientRef.current = client;
+
+    return () => {
+      client.deactivate();
+    };
+  }, [chattingRoomId]);
+
+  const handleSend = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (stompClientRef.current && stompClientRef.current.connected) {
+      stompClientRef.current.publish({
+        destination: "/app/chat/send",
+        body: JSON.stringify({
+          token,
+          chattingRoomId,
+          detailMessage: inputText
+        })
+      });
+      setInputText('');
+    }
+  };
 
     return (
             <View style={styles.container}>

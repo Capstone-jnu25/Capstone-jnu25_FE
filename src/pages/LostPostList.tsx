@@ -6,7 +6,7 @@ import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
-import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
+import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 
@@ -67,7 +67,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <Text style={styles.headerText}>분실/습득 게시판</Text>
           <View style={styles.searchContainer}>
             <Icon1 name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
-            <Icon2 name="image-plus" size={25} color="#233b6d" onPress={() =>{}}/>  
+            <Icon2 name="image-search" size={25} color="#233b6d" onPress={() =>{}}/>  
           </View>
         </View>
         {isSearching && (

@@ -30,7 +30,3 @@ allprojects {
         maven { url "https://repository.map.naver.com/archive/maven" }  // Naver SDK Maven 저장소 추가
     }
 }
-
-plugins {
-    id 'com.google.gms.google-services' version '4.4.2' apply false
-}

@@ -4,11 +4,12 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 interface ApplicantItemProps {
     nickname: string;
     message?: string;
+    accepted: boolean;
     onAccept: () => void;
     onDelete: () => void;
 }
 
-const ApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, onAccept, onDelete }) => {
+const ApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, accepted, onAccept, onDelete }) => {
     return (
         <View style={styles.container}>
             <Image source={require('../assets/profile.png')} style={styles.profileImage} />
@@ -17,14 +18,18 @@ const ApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, onAcce
                     <Text style={styles.nickname}>{nickname}</Text>
                     <Text style={styles.message}>{message}</Text>
                     
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.deleteButton} onPress={onDelete}>
-                            <Text style={styles.buttonText}>삭제</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.acceptButton} onPress={onAccept}>
+                    {accepted ? (
+                        <Text style={styles.acceptedText}>수락 완료</Text>
+                    ) : (
+                        <View style={styles.buttonRow}>
+                        <TouchableOpacity onPress={onAccept} style={styles.button}>
                             <Text style={styles.buttonText}>수락</Text>
                         </TouchableOpacity>
-                    </View>
+                        <TouchableOpacity onPress={onDelete} style={styles.buttonDelete}>
+                            <Text style={styles.buttonText}>삭제</Text>
+                        </TouchableOpacity>
+                        </View>
+                    )}
                 </View>
                 
             </View>
@@ -56,10 +61,10 @@ const styles = StyleSheet.create({
         borderColor: '#95CEFF',
     },
     infoContainer: {
-    flex: 1,
-    flexDirection: 'column', // 세로 방향으로 수정
-    justifyContent: 'space-between',
-},
+        flex: 1,
+        flexDirection: 'column', // 세로 방향으로 수정
+        justifyContent: 'space-between',
+    },
     textContainer: {
         flexShrink: 1,
     },
@@ -74,28 +79,31 @@ const styles = StyleSheet.create({
         color: '#777',
         marginBottom: 10,
     },
-    buttonContainer: {
+    acceptedText: {
+        color: '#A30000',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    buttonRow: {
         flexDirection: 'row',
-        gap: 10,
-        alignItems: 'center',
         justifyContent: 'flex-end',
+        gap: 10,
     },
-    deleteButton: {
-        backgroundColor: '#f0f0f0',
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20,
-        marginRight: 10,
+    button: {
+        backgroundColor: '#233b6d',
+        borderRadius: 16,
+        paddingVertical: 6,
+        paddingHorizontal: 14,
     },
-    acceptButton: {
-        backgroundColor: '#f0f0f0',
-        paddingVertical: 5,
-        paddingHorizontal: 15,
-        borderRadius: 20,
+    buttonDelete: {
+        backgroundColor: '#ccc',
+        borderRadius: 16,
+        paddingVertical: 6,
+        paddingHorizontal: 14,
     },
     buttonText: {
-        fontSize: 14,
-        color: '#555',
+        color: 'white',
+        fontWeight: 'bold',
     },
 });
 

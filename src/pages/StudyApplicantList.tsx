@@ -4,6 +4,7 @@ import { TabProps, NavigationProp, RootStackParamList } from "../types";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import StudyApplicantItem from '../components/ApplicantItem';
+import CustomAlert from '../components/CustomAlert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
@@ -13,6 +14,11 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
     const { postId } = route.params;
     const [applicants, setApplicants] = useState<any[]>([]);
     const [postTitle, setPostTitle] = useState('');
+
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+
 
     useEffect(() => {
         const fetchApplicants = async () => {
@@ -24,6 +30,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                 }
             });
             setApplicants(res.data.data.content);
+            console.log("불러온 데이터:", res.data.data.content);
             } catch (error) {
             console.error("❌ 지원자 목록 불러오기 실패:", error);
             }
@@ -62,9 +69,41 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                     data={applicants}
                     renderItem={({ item }) => (
                         <StudyApplicantItem
-                        nickname={item.nickname}
-                        message={item.applicationText}
-                        onAccept={() => {}}
+                            nickname={item.nickname}
+                            message={item.applicationText}
+                            accepted={item.accepted}
+                            onAccept={async () => {
+                                try {
+                                    const token = await AsyncStorage.getItem("token");
+                                    await axios.post(
+                                        `http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}/accept`,
+                                        {},
+                                        {
+                                            headers: {
+                                            Authorization: `Bearer ${token}`,
+                                            },
+                                        }
+                                        );
+
+                                    // 수락 후 리스트 새로고침
+                                    const updated = await axios.get(
+                                    `http://13.124.71.212:8080/api/gathering/${postId}/applicants`,
+                                    {
+                                        headers: {
+                                        Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                    );
+                                    setApplicants(updated.data.data.content);
+                                    
+                                    setAlertTitle("수락");
+                                    setAlertMessage(`${item.nickname}님을 채팅방에 초대했습니다!`);
+                                    setAlertVisible(true);
+                                } catch (error) {
+                                    console.error("❌ 수락 실패:", error);
+                                }
+                            }}
+
                         onDelete={() => {}}
                         />
                     )}
@@ -72,8 +111,13 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                     showsVerticalScrollIndicator={false}
                     />
             </View>
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                onClose={() => setAlertVisible(false)}
+            />
             </View>
-            
         </View>
     );
 };
