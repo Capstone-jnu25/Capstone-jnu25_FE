@@ -5,7 +5,6 @@ import {
     StyleSheet,
     TouchableOpacity,
     Text,
-    FlatList,
     ScrollView,
     Platform,
     KeyboardAvoidingView
@@ -13,7 +12,6 @@ import {
 import { TabProps, NavigationProp } from "../types";
 import axios from "axios";
 import CustomButton from "../components/CustomButton";
-import Logo from "../components/Logo";
 import CustomTextInput from "../components/CustomTextInput";
 import CustomAlert from "../components/CustomAlert";
 

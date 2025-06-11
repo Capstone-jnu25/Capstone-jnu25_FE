@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
@@ -31,11 +31,9 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
         const groupedPosts = response.data as Record<string, PostItem[]>;
 
-        // 모든 게시글 flat하게 합치고 최신 순 정렬 (postId가 클수록 최신이라고 가정)
         const allPosts = Object.values(groupedPosts).flat();
         const sorted = allPosts.sort((a, b) => b.postId - a.postId);
 
-        // 앞에서 3개만 추출
         setRecentPosts(sorted.slice(0, 3));
         } catch (e) {
         console.error("❌ 최근 게시글 불러오기 실패", e);
@@ -118,7 +116,17 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity onPress={() => {}}>
                         <Text style={styles.textOption}>알림 설정</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity
+                        onPress={async () => {
+                            await AsyncStorage.removeItem("token");
+                            navigation.dispatch(
+                            CommonActions.reset({
+                                index: 0,
+                                routes: [{ name: 'MainPage' }],
+                            })
+                            );
+                        }}
+                        >
                         <Text style={styles.textOption}>로그아웃</Text>
                     </TouchableOpacity>
                     <TouchableOpacity onPress={() => {}}>

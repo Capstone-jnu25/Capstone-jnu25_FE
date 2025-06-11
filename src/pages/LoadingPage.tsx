@@ -1,13 +1,23 @@
 import React, { useEffect } from "react";
 import { View, StyleSheet } from "react-native";
 import Logo from '../components/Logo'
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoadingPage = ({ navigation }: any) => {
     useEffect(() => {
-      setTimeout(() => {
-        navigation.navigate('MainPage');
-      }, 3000); 
-    }, [navigation]);
+  const checkLogin = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token) {
+      navigation.replace('LostPage');  // 로그인 상태
+    } else {
+      navigation.replace('MainPage'); // 비로그인 상태
+    }
+  };
+
+  setTimeout(() => {
+    checkLogin();
+  }, 3000);  // 스플래시 시간은 자유롭게
+}, [navigation]);
 
     return (
         <View style={styles.container}>

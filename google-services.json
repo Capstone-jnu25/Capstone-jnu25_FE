@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "2750164615",
+    "project_id": "capstone2025-af76b",
+    "storage_bucket": "capstone2025-af76b.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2750164615:android:e4912f42f35cc9e6ea5222",
+        "android_client_info": {
+          "package_name": "com.findmap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSmRzP7KJo_FXogucxgt2K7Xz4P5e8xXk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
