@@ -157,7 +157,13 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               item.isMyMessage ? styles.myContainer : styles.otherContainer
             ]}>
               {!item.isMyMessage && (
-                <Text style={styles.nicknameText}>{item.senderNickname}</Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate('TheOtherPersonPage', { userId: item.senderId });
+                  }}
+                >
+                  <Text style={styles.nicknameText}>{item.senderNickname}</Text>
+                </TouchableOpacity>
               )}
               <View style={[
                 styles.messageBubble,
@@ -235,7 +241,7 @@ const styles = StyleSheet.create({
 
   dateContainer: {
     alignSelf: 'center', 
-    backgroundColor: '#e0e0e0', 
+    backgroundColor: '#ddd', 
     borderRadius: 20,
     paddingVertical: 4, 
     paddingHorizontal: 12, 

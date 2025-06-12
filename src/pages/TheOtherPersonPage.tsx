@@ -1,16 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-native';
-import { TabProps } from '../types';
-import { useNavigation } from '@react-navigation/native';
+import { TabProps, RootStackParamList } from '../types';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation();
+    const route = useRoute<RouteProp<RootStackParamList, 'TheOtherPersonPage'>>();
+    const { userId } = route.params;
+
     const [isModalVisible, setModalVisible] = useState(false);
+    const [profile, setProfile] = useState({
+        nickname: '',
+        email: '',
+        department: '',
+        studentNum: '',
+        goodCount: 0,
+        badCount: 0,
+    });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = await AsyncStorage.getItem("token");
+                const res = await axios.get(`http://13.124.71.212:8080/api/users/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+                const data = res.data;
+                setProfile({
+                    nickname: data.nickname,
+                    email: data.email,
+                    department: data.department || '미입력',
+                    studentNum: data.studentNum,
+                    goodCount: data.goodCount,
+                    badCount: data.badCount,
+                });
+            } catch (error) {
+                console.error("❌ 프로필 조회 실패:", error);
+            }
+        };
+
+        fetchProfile();
+    }, [userId]);
+
+    const handleEvaluate = async (type: 'good' | 'bad') => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            await axios.post(`http://13.124.71.212:8080/api/users/${userId}/${type}`, {}, {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+            setProfile(prev => ({
+                ...prev,
+                goodCount: type === 'good' ? prev.goodCount + 1 : prev.goodCount,
+                badCount: type === 'bad' ? prev.badCount + 1 : prev.badCount,
+            }));
+            setModalVisible(false);
+        } catch (error) {
+            console.error(`❌ ${type} 평가 실패:`, error);
+        }
+    };
+
     return (
         <View style={styles.mainContainer}>
             <View style={styles.head}>
-                <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                <TouchableOpacity onPress={() => navigation.goBack()}>
                     <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
                 </TouchableOpacity>
                 <View style={styles.backgroundCard}>
@@ -19,21 +74,20 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             <Image source={require('../assets/profile.png')} style={styles.profileImage} />
                         </View>
                     </View>
-                <View style={styles.contentContainer}>
-                    <View style={styles.cardContainer}>
-                        <Text style={styles.nickname}>닉네임</Text>
-                    </View>
-
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.likeButton}>
-                            <Icon name='thumbs-up' size={20} color='#000' />
-                            <Text style={styles.likeText}>24</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.dislikeButton} onPress={() => setModalVisible(true)}>
-                            <Icon name='thumbs-down' size={20} color='#000' />
-                            <Text style={styles.dislikeText}>02</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <View style={styles.contentContainer}>
+                        <View style={styles.cardContainer}>
+                            <Text style={styles.nickname}>{profile.nickname}</Text>
+                        </View>
+                        <View style={styles.buttonContainer}>
+                            <TouchableOpacity style={styles.likeButton} onPress={() => handleEvaluate('good')}>
+                                <Icon name='thumbs-up' size={20} color='#000' />
+                                <Text style={styles.likeText}>{profile.goodCount}</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.dislikeButton} onPress={() => setModalVisible(true)}>
+                                <Icon name='thumbs-down' size={20} color='#000' />
+                                <Text style={styles.dislikeText}>{profile.badCount}</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
                 </View>
             </View>
@@ -51,7 +105,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             <Image source={require('../assets/profile.png')} style={styles.modalProfileImage} />
                             <Text style={styles.modalText}>이 학생을 비추천하시겠습니까?</Text>
                         </View>
-                        <TouchableOpacity style={styles.confirmButton} onPress={() => setModalVisible(false)}>
+                        <TouchableOpacity style={styles.confirmButton} onPress={() => handleEvaluate('bad')}>
                             <Text style={styles.confirmButtonText}>확인</Text>
                         </TouchableOpacity>
                     </View>
