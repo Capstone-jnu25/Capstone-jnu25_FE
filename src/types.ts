@@ -29,7 +29,7 @@ export type RootStackParamList = {
     KeywordPage: undefined;
     EditProfile: undefined;
     GroupPage: undefined;
-    TheOtherPersonPage: undefined;
+    TheOtherPersonPage: { userId: number };
     MyPostPage: undefined;
 
     ChatList: undefined;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { TabProps, NavigationProp, RootStackParamList } from "../types";
-import { View, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, TouchableOpacity,Text } from 'react-native';
 import ChatListItem from '../components/ChatListItem';
 import MenuBar from "../components/MenuBar";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -46,14 +46,13 @@ const ChatList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Icon
-            name="arrow-back"
-            size={25}
-            style={{ marginTop: 16, marginBottom: 10 }}
-            color="#233b6d"
-          />
-        </TouchableOpacity>
+        <View style={styles.headerRow}>
+            <TouchableOpacity onPress={() => {navigation.goBack()}}>
+                <Icon name='arrow-back' size={25}  color="#233b6d" />
+            </TouchableOpacity>
+            <Text style={styles.textTitle}>채팅</Text>
+            <Text/>
+            </View>
 
         <View style={styles.itemContainer}>
           <FlatList
@@ -61,7 +60,7 @@ const ChatList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             renderItem={({ item }) => (
               <ChatListItem
                 boardType={item.boardType}
-                nickname={item.chatTitle}
+                title={item.chatTitle}
                 lastMessage={item.lastMessage}
                 onItemPress={() =>
                   navigation.navigate('ChatPage', {
@@ -69,7 +68,6 @@ const ChatList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     chatTitle: item.chatTitle,
                   })
                 }
-                onNicknamePress={() => navigation.navigate('TheOtherPersonPage')}
               />
             )}
             keyExtractor={(item) => item.chattingRoomId.toString()}
@@ -93,6 +91,17 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
+  headerRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom:10,
+    },
+    textTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginVertical: 10,
+    },
   itemContainer: {
     flex: 1,
     backgroundColor: '#fff',

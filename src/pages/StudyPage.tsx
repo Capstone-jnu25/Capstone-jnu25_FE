@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TextInput, ActivityIndicator } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import { TabProps, NavigationProp, Post } from "../types";
 import MenuBar from '../components/MenuBar';
 import Icon from 'react-native-vector-icons/Ionicons';

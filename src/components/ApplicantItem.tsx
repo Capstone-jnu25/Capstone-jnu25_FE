@@ -7,6 +7,7 @@ interface ApplicantItemProps {
     accepted: boolean;
     onAccept: () => void;
     onDelete: () => void;
+    onProfilePress: () => void;
 }
 
 const ApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, accepted, onAccept, onDelete }) => {

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { TabProps, NavigationProp, RootStackParamList } from "../types";
+import { TabProps, RootStackParamList } from "../types";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import StudyApplicantItem from '../components/ApplicantItem';
@@ -104,7 +104,32 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                                 }
                             }}
 
-                        onDelete={() => {}}
+                        onDelete={async () => {
+                            try {
+                                const token = await AsyncStorage.getItem("token");
+
+                                await axios.delete(`http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}`, {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                                });
+
+                                // 삭제 후 목록 다시 불러오기
+                                const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
+                                headers: { Authorization: `Bearer ${token}` },
+                                });
+                                setApplicants(res.data.data.content);
+
+                                setAlertTitle("삭제");
+                                setAlertMessage(`${item.nickname}님의 지원을 삭제했습니다.`);
+                                setAlertVisible(true);
+                            } catch (error) {
+                                console.error("❌ 지원자 삭제 실패:", error);
+                            }
+                            }}
+                        onProfilePress={() => {
+                            
+                            }}
                         />
                     )}
                     keyExtractor={(item) => item.applicantId.toString()}

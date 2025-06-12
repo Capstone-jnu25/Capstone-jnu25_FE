@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
 interface ChatListItemProps {
     boardType: string;
-    nickname: string;
+    title: string;
     lastMessage: string;
     onItemPress: () => void;
-    onNicknamePress: () => void;
 }
 
 const getBoardImage = (boardType: string) => {
@@ -24,7 +23,7 @@ const getBoardImage = (boardType: string) => {
   }
 };
 
-const ChatListItem: React.FC<ChatListItemProps> = ({ boardType, nickname, lastMessage, onItemPress, onNicknamePress }) => {
+const ChatListItem: React.FC<ChatListItemProps> = ({ boardType, title, lastMessage, onItemPress }) => {
     const boardImage = getBoardImage(boardType);
 
     return (
@@ -32,9 +31,7 @@ const ChatListItem: React.FC<ChatListItemProps> = ({ boardType, nickname, lastMe
         <TouchableOpacity style={styles.container} onPress={onItemPress}>
            <Image source={boardImage} style={styles.profileImage} />
             <View style={styles.textContainer}>
-                <TouchableOpacity onPress={onNicknamePress}>
-                    <Text style={styles.nickname}>{nickname}</Text>
-                </TouchableOpacity>
+                <Text style={styles.title}>{title}</Text>
                 <Text style={styles.message} numberOfLines={1}>{lastMessage}</Text>
             </View>
             
@@ -66,7 +63,7 @@ const styles = StyleSheet.create({
     textContainer: {
         flex: 1,
     },
-    nickname: {
+    title: {
         fontWeight: 'bold',
         fontSize: 16,
         marginBottom: 5,
