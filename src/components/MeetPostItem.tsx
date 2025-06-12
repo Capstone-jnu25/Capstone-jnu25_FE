@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import CustomButton from './CustomButton';
 
 interface MeetPostItemProps {
     title: string;
@@ -9,12 +8,13 @@ interface MeetPostItemProps {
     details: string;
     date: string;
     location: string;
+    gender: string;
     isApplied: boolean;
     isFull: boolean;
     onApply: () => void;
 }
 
-const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, isApplied, isFull, onApply }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, gender, isApplied, isFull, onApply }) => {
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -25,6 +25,7 @@ const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, detai
                 <Text style={styles.title} numberOfLines={1}>{title}</Text>
                 <Text style={styles.details}>{date}</Text>
                 <Text style={styles.details}>{location}</Text>
+                <Text style={styles.details}>{gender}</Text>
                 <Text style={styles.details} numberOfLines={3}>{details}</Text>     
                 
             </View>

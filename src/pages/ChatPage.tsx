@@ -6,12 +6,17 @@ import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons'
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Client } from '@stomp/stompjs';
 
 interface ChatMessage {
-  id: number;
-  text: string;
+  messageId: number;
+  senderId: number;
+  senderNickname: string;
+  detailMessage: string;
+  sendTime: string; // ISO8601 문자열
   isMyMessage: boolean;
 }
+
 
 const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
@@ -20,12 +25,12 @@ const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  const socketRef = useRef<WebSocket | null>(null);
-  const userIdRef = useRef<string>('');
+  const socketRef = useRef<Client | null>(null);
+  const userIdRef = useRef<number | null>(null);
 
    useEffect(() => {
     AsyncStorage.getItem('userId').then((id) => {
-      if (id) userIdRef.current = id;
+      if (id) userIdRef.current = parseInt(id);
     });
   }, []);
 
@@ -43,11 +48,15 @@ const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         );
 
         const messageList = response.data.data.data.map((msg: any) => ({
-          id: msg.messageId,
-          text: msg.detailMessage,
-          isMyMessage: msg.senderId === parseInt(userIdRef.current)
+          messageId: msg.messageId,
+          senderId: msg.senderId,
+          senderNickname: msg.senderNickname,
+          detailMessage: msg.detailMessage,
+          sendTime: msg.sendTime,
+          isMyMessage: msg.senderId === userIdRef.current,
         }));
 
+        //console.log("메시지 불러오기", messageList);
         setMessages(messageList);
       } catch (error) {
         console.error('❌ 메시지 불러오기 실패:', error);
@@ -59,56 +68,73 @@ const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
 
   useEffect(() => {
-    const socket = new WebSocket("ws://13.124.71.212:8080/ws");
-    socketRef.current = socket;
+    const client = new Client({
+    brokerURL: 'ws://13.124.71.212:8080/ws', // ✅ 기본 WebSocket 주소
+    reconnectDelay: 5000,
+    debug: str => console.log("🐛 STOMP DEBUG:", str),
 
-    socket.onopen = () => {
-      console.log("✅ WebSocket 연결됨");
-    };
+    onConnect: () => {
+    console.log("✅ STOMP 연결됨");
+    client.subscribe(`/topic/chatroom/${chattingRoomId}`, message => {
+      const msg = JSON.parse(message.body);
 
-    socket.onmessage = (event) => {
-      const msg = JSON.parse(event.data);
-      console.log("📩 메시지 수신:", msg);
+          console.log("📩 수신 메시지:", msg);
+          setMessages((prev) => [
+            ...prev,
+            {
+              messageId: msg.messageId,
+              senderId: msg.senderId,
+              senderNickname: msg.senderNickname,
+              detailMessage: msg.detailMessage,
+              sendTime: msg.sendTime,
+              isMyMessage: msg.senderId === userIdRef.current,
+            },
+          ]);
+        });
+      },
 
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: msg.messageId || new Date().getTime(), // 서버에서 메시지Id가 없다면 임시로 timestamp
-          text: msg.detailMessage,
-          isMyMessage: msg.senderId === parseInt(userIdRef.current),
-        },
-      ]);
-    };
+      onStompError: (frame) => {
+        console.error("❌ STOMP 오류:", frame.headers['message']);
+      }
+    });
 
-    socket.onerror = (error) => {
-      console.error("❌ WebSocket 에러:", error);
-    };
-
-    socket.onclose = () => {
-      console.log("🔌 WebSocket 연결 종료됨");
-    };
+    client.activate(); // 연결 시작
+    socketRef.current = client; // 기존처럼 참조 보관 (send용)
 
     return () => {
-      socket.close();
+      client.deactivate(); // 컴포넌트 언마운트 시 연결 종료
     };
   }, [chattingRoomId]);
 
 
+
   const handleSend = async () => {
     const token = await AsyncStorage.getItem("token");
+
     const message = {
       token,
       chattingRoomId,
       detailMessage: inputText,
     };
 
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify(message));
+    if (socketRef.current && socketRef.current.connected) {
+      socketRef.current.publish({
+        destination: '/app/chat/send',
+        body: JSON.stringify({
+          token,
+          chattingRoomId,
+          detailMessage: inputText,
+        }),
+      });
+
       setInputText('');
     } else {
-      console.warn("⚠️ WebSocket이 아직 연결되지 않았습니다.");
+      console.warn("⚠️ STOMP 연결이 아직 완료되지 않았습니다.");
     }
+
   };
+
+
 
     return (
             <View style={styles.container}>
@@ -116,17 +142,17 @@ const ChatPage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <TouchableOpacity style={styles.backButton} onPress={() => {navigation.goBack()}}> 
                         <Icon1 name='arrow-back' size={25} color="#233b6d" />
                     </TouchableOpacity>
-                    <Text style={styles.nickname}>닉네임 1</Text>
+                    <Text style={styles.nickname}>{chatTitle}</Text>
                     <View style={styles.placeholder} />
                 </View>
                 <FlatList
                     data={messages}
                     renderItem={({ item }) => (
                         <View style={[styles.messageBubble, item.isMyMessage ? styles.myMessage : styles.otherMessage]}>
-                            <Text>{item.text}</Text>
+                            <Text>{item.detailMessage}</Text>
                         </View>
                     )}
-                    keyExtractor={(item) => item.id.toString()}
+                    keyExtractor={(item) => item.messageId.toString()}
                     contentContainerStyle={styles.messageList}
                 />
                 <View style={styles.inputContainer}>

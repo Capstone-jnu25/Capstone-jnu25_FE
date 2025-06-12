@@ -19,46 +19,42 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [posts, setPosts] = useState<LostPost[]>([]);
   const isFocused = useIsFocused(); // 화면 포커스 감지
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const isLost = activeTab === 'lost';
-        const response = await axios.get(`http://13.124.71.212:8080/api/lostboards?isLost=${isLost}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+ useEffect(() => {
+  const fetchPosts = async () => {
+    try {
+      const token = await AsyncStorage.getItem("token");
+      const isLost = activeTab === 'lost';
+      const endpoint = isSearching && searchQuery
+        ? `http://13.124.71.212:8080/api/lostboards/search?query=${encodeURIComponent(searchQuery)}&isLost=${isLost}`
+        : `http://13.124.71.212:8080/api/lostboards?isLost=${isLost}`;
 
-        const data = response.data.data;
-        const mapped = data.map((item: any) => ({
-          id: item.postId,
-          type: isLost ? 'lost' : 'found',
-          title: item.title,      
-          content: item.contents,
-          image: { uri: item.photo },
-          location: item.place,  
-          time: item.relativeTime,
-        }));
-        setPosts(mapped);
-        console.log("✅ mapped posts:", mapped);
+      const response = await axios.get(endpoint, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
 
-      } catch (error) {
-        console.error("❌ 게시글 불러오기 실패:", error);
-      }
-    };
-    if (isFocused) {
-        fetchPosts();
-      }
-    }, [activeTab, isFocused]);
+      const data = response.data.data;
+      const mapped = data.map((item: any) => ({
+        id: item.postId,
+        type: isLost ? 'lost' : 'found',
+        title: item.title ?? '',              // 닉네임만 올 수 있으니 fallback
+        nickname: item.nickname ?? '',
+        content: item.contents,
+        image: { uri: item.photo },
+        location: item.place,
+        time: item.relativeTime,
+      }));
+      setPosts(mapped);
+      console.log("✅ mapped posts:", mapped);
 
-  const filteredPosts = posts.filter((post) => {
-  const title = typeof post.title === 'string' ? post.title : '';
-  const content = typeof post.content === 'string' ? post.content : '';
-  return (
-    title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-});
+    } catch (error) {
+      console.error("❌ 게시글 불러오기 실패:", error);
+    }
+  };
 
+  if (isFocused) {
+    fetchPosts();
+  }
+}, [activeTab, isFocused, searchQuery, isSearching]);
 
   return (
     <View style={styles.mainContainer}>
@@ -95,7 +91,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('LostPostAdd')}} />
           </View>
            <FlatList
-            data={filteredPosts}
+            data={posts}
             renderItem={({ item }) => (
               <LostPostItem
                 post={item}

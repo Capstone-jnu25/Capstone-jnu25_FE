@@ -29,11 +29,29 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         setAlertVisible(true);
     };
 
+    const getGenderLabel = (gender: string): string => {
+        switch (gender) {
+            case "F":
+            return "여성";
+            case "M":
+            return "남성";
+            case "ANY":
+            default:
+            return "무관";
+        }
+    };
+
     useEffect(() => {
     const fetchStudyPosts = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`http://13.124.71.212:8080/api/gathering?boardType=MEETUP&page=0&size=10`, {
+        const isSearchingWithQuery = isSearching && searchQuery.trim().length > 0;
+
+        const endpoint = isSearchingWithQuery
+        ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=MEETUP&page=0&size=10`
+        : `http://13.124.71.212:8080/api/gathering?boardType=MEETUP&page=0&size=10`
+
+        const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -43,6 +61,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           title: item.title,
           contents: item.contents,
           place: item.place,
+          gender: item.gender,
           time: item.time,
           maxParticipants: item.maxParticipants,
           currentParticipants: item.currentParticipants,
@@ -59,7 +78,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     if (isFocused) {
       fetchStudyPosts();
     }
-  }, [isFocused]);
+}, [isFocused, isSearching, searchQuery]);
 
     const [appliedPostIds, setAppliedPostIds] = useState<number[]>([]);
 
@@ -108,6 +127,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             details={item.contents}
                             date={`시간: ${item.time}`}
                             location={`장소: ${item.place}`}
+                            gender={`성별: ${getGenderLabel(item.gender)}`}
                             isApplied={appliedPostIds.includes(item.postId)}
                             isFull={item.currentParticipants >= item.maxParticipants}
                             onApply={() => handleApply(item.postId)}

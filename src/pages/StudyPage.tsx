@@ -20,7 +20,13 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const fetchStudyPosts = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`, {
+        const isSearchingWithQuery = isSearching && searchQuery.trim().length > 0;
+
+        const endpoint = isSearchingWithQuery
+          ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=STUDY&page=0&size=10`
+          : `http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`;
+
+        const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -46,16 +52,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     if (isFocused) {
       fetchStudyPosts();
     }
-  }, [isFocused]);
-
-  const filteredPosts = posts.filter((post) => {
-    const title = typeof post.title === 'string' ? post.title : '';
-    const contents = typeof post.contents === 'string' ? post.contents : '';
-    return (
-      title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      contents.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-  });
+ }, [isFocused, isSearching, searchQuery]);
 
     return (
         <View style={styles.mainContainer}>
@@ -77,7 +74,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 </View>
 
                <FlatList
-                    data={filteredPosts}
+                    data={posts}
                     keyExtractor={(item) => item.postId.toString()}
                     renderItem={({ item }) => (
                         <StudyPostItem

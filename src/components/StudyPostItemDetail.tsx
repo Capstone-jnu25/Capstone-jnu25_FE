@@ -1,23 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import CustomButton from './CustomButton';
 
 interface StudyPostDetailItemProps {
-  title: string;
-  dday: string;
-  time: string;
-  place: string;
-  contents: string;
-  gender: string;
-  onSubmit: () => void;
-  application_text: string;
-  setApplication_text: (text: string) => void;
+    nickname: string,
+    title: string;
+    dday: string;
+    time: string;
+    place: string;
+    contents: string;
+    gender: string;
+    onSubmit: () => void;
+    application_text: string;
+    setApplication_text: (text: string) => void;
 }
 
 
-const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ title, dday, time, place, contents, gender, onSubmit, application_text, setApplication_text }) => {
+const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ nickname, title, dday, time, place, contents, gender, onSubmit, application_text, setApplication_text }) => {
     return (
         <View style={styles.container}>
+            <TouchableOpacity onPress={()=>{}}>
+                <Text>{nickname}</Text>
+            </TouchableOpacity>
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>

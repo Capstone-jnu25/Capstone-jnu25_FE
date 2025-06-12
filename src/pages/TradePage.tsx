@@ -22,7 +22,12 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const fetchPosts = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(`http://13.124.71.212:8080/api/secondhand`, {
+        const isSearchingWithQuery = isSearching && searchQuery.trim().length > 0;
+        const endpoint = isSearchingWithQuery
+          ? `http://13.124.71.212:8080/api/secondhand/search?query=${encodeURIComponent(searchQuery)}`
+          : `http://13.124.71.212:8080/api/secondhand`; 
+
+        const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -45,17 +50,9 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     if (isFocused) {
         fetchPosts();
       }
-    }, [isFocused]);
+}, [isFocused, isSearching, searchQuery]);
 
 
-  const filteredPosts = posts.filter((post) => {
-  const title = typeof post.title === 'string' ? post.title : '';
-  const content = typeof post.content === 'string' ? post.content : '';
-  return (
-    title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    content.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-});
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
@@ -79,7 +76,7 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <CircleButton iconName="pencil" onPress={() => {navigation.navigate('TradePostAdd')}} />
           </View>
           <FlatList
-            data={filteredPosts}
+            data={posts}
             renderItem={({ item }) => (
               <TradePostItem
                 post={item}
