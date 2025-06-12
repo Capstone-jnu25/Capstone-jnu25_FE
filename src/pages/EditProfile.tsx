@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, CommonActions } from '@react-navigation/native';
 import { View, StyleSheet, TouchableOpacity, Text, Image, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
@@ -115,6 +115,31 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     showAlert("성공", "정보가 성공적으로 수정되었습니다.");
     };
 
+    const handleDeleteAccount = async () => {
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const userId = await AsyncStorage.getItem("userId");
+
+    if (!token || !userId) throw new Error("로그인 정보 없음");
+
+    await axios.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    // 로그아웃 후 메인으로 이동
+    await AsyncStorage.removeItem("token");
+    await AsyncStorage.removeItem("userId");
+    navigation.dispatch(
+      CommonActions.reset({
+        index: 0,
+        routes: [{ name: 'MainPage' }],
+      })
+    );
+  } catch (error) {
+    console.error("❌ 탈퇴 실패:", error);
+  }
+};
+
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
@@ -125,7 +150,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={() => {}}>
+              <TouchableOpacity onPress={handleDeleteAccount}>
                 <Text style={styles.deleteButton}>탈퇴하기</Text>
               </TouchableOpacity>
             </View>

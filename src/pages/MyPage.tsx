@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import Category from "../components/Category";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import CustomAlert from "../components/CustomAlert";
 
 interface PostItem {
   postId: number;
@@ -14,10 +15,10 @@ interface PostItem {
   boardType: string;
 }
 
-
 const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
     const [recentPosts, setRecentPosts] = useState<PostItem[]>([]);
+    const [alertVisible, setAlertVisible] = useState(false);
 
     useEffect(() => {
     const fetchRecentPosts = async () => {
@@ -71,6 +72,32 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 break;
         }
     };
+
+    const handleDeleteAccount = async () => {
+        try {
+            const token = await AsyncStorage.getItem("token");
+            const userId = await AsyncStorage.getItem("userId");
+
+            if (!token || !userId) throw new Error("로그인 정보 없음");
+
+            await axios.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` }
+            });
+
+            // 로그아웃 후 메인으로 이동
+            await AsyncStorage.removeItem("token");
+            await AsyncStorage.removeItem("userId");
+            navigation.dispatch(
+            CommonActions.reset({
+                index: 0,
+                routes: [{ name: 'MainPage' }],
+            })
+            );
+        } catch (error) {
+            console.error("❌ 탈퇴 실패:", error);
+        }
+        };
+
 
     return(
         <View style={styles.mainContainer}>
@@ -129,7 +156,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                         >
                         <Text style={styles.textOption}>로그아웃</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity onPress={() => {}}>
+                    <TouchableOpacity onPress={() => setAlertVisible(true)}>
                         <Text style={styles.textRed}>탈퇴하기</Text>
                     </TouchableOpacity>
                 </View>
@@ -137,6 +164,12 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <View style={styles.menuBarContainer}>
               <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
             </View>
+            <CustomAlert
+              visible={alertVisible}
+              title="탈퇴"
+              message="정말 탈퇴하시겠습니까?"
+              onClose={handleDeleteAccount} //취소 하는 버튼 만들어야함
+            />
         </View>
     )
 
