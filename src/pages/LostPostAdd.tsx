@@ -217,6 +217,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             style={styles.dropdown}
             containerStyle={styles.dropdownContainer}
             dropDownContainerStyle={styles.dropdownList}
+            listMode="SCROLLVIEW"
           />
 
           <CustomButton title="완료" style={styles.button} onPress={handleSubmit} />
