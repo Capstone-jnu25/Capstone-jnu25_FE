@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 interface ApplicantItemProps {
+    userId: number;
     nickname: string;
     message?: string;
     accepted: boolean;
@@ -10,13 +11,15 @@ interface ApplicantItemProps {
     onProfilePress: () => void;
 }
 
-const ApplicantItem: React.FC<ApplicantItemProps> = ({ nickname, message, accepted, onAccept, onDelete }) => {
+const ApplicantItem: React.FC<ApplicantItemProps> = ({ userId, nickname, message, accepted, onAccept, onDelete, onProfilePress }) => {
     return (
         <View style={styles.container}>
             <Image source={require('../assets/profile.png')} style={styles.profileImage} />
             <View style={styles.infoContainer}>
                 <View style={styles.textContainer}>
+                    <TouchableOpacity onPress={onProfilePress}>
                     <Text style={styles.nickname}>{nickname}</Text>
+                    </TouchableOpacity>
                     <Text style={styles.message}>{message}</Text>
                     
                     {accepted ? (

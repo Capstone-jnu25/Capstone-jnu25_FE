@@ -97,6 +97,7 @@ const LostPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         ) : post ? (
           <LostPostDetailItem
             post={{
+              userId: post.userId,
               id: post.postId,
               nickname: post.nickname,
               title: post.title,
@@ -104,8 +105,9 @@ const LostPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               image: { uri: post.photo },
               location: post.place, // ✅ 주소 + 상세 위치 조합
               time: post.relativeTime,
-            }}
-          />
+              onProfilePress: () => navigation.navigate('TheOtherPersonPage', { userId: post.userId }),
+                }}
+              />
         ) : (
           <Text>게시글을 불러올 수 없습니다.</Text>
         )}

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import { TabProps, RootStackParamList } from "../types";
+import { TabProps, RootStackParamList, NavigationProp  } from "../types";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import StudyApplicantItem from '../components/ApplicantItem';
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 
 const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
     const route = useRoute<RouteProp<RootStackParamList, 'StudyApplicantList'>>();
     const { postId } = route.params;
     const [applicants, setApplicants] = useState<any[]>([]);
@@ -69,6 +69,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                     data={applicants}
                     renderItem={({ item }) => (
                         <StudyApplicantItem
+                            userId= {item.userId}
                             nickname={item.nickname}
                             message={item.applicationText}
                             accepted={item.accepted}
@@ -128,8 +129,8 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             }
                             }}
                         onProfilePress={() => {
-                            
-                            }}
+                            navigation.navigate('TheOtherPersonPage', { userId: item.userId });
+                        }}
                         />
                     )}
                     keyExtractor={(item) => item.applicantId.toString()}

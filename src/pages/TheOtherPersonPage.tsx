@@ -75,6 +75,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                         </View>
                     </View>
                     <View style={styles.contentContainer}>
+                        
                         <View style={styles.cardContainer}>
                             <Text style={styles.nickname}>{profile.nickname}</Text>
                         </View>
@@ -87,6 +88,10 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                                 <Icon name='thumbs-down' size={20} color='#000' />
                                 <Text style={styles.dislikeText}>{profile.badCount}</Text>
                             </TouchableOpacity>
+                        </View>
+
+                        <View style={styles.cardContainer}>
+                            <Text>학과: {profile.department}</Text>
                         </View>
                     </View>
                 </View>
@@ -175,6 +180,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
         flexDirection: 'row',
         gap: 20,
+        marginBottom: 30,
     },
     likeButton: {
         flexDirection: 'row',

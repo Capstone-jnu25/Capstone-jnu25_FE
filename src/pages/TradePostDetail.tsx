@@ -78,6 +78,7 @@ const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         ) : post ? (
           <TradePostDetailItem
             post={{
+              userId: post.userId,
               id: post.postId,
               nickname: post.nickname,
               title: post.title,
@@ -85,7 +86,8 @@ const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               image: { uri: post.photo },
               location: post.place,
               time: post.relativeTime,
-              price: post.price
+              price: post.price,
+              onProfilePress: () => navigation.navigate('TheOtherPersonPage', { userId: post.userId }), 
             }}
           />
         ) : (

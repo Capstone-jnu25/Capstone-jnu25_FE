@@ -94,6 +94,8 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             <View style={styles.itemContainer}>
                                 {post ? (
                                     <StudyPostDetailItem 
+                                        nickname={post.nickname}
+                                        id= {post.userId}
                                         title={post.title}
                                         dday={post.dday}
                                         time={post.time}
@@ -103,6 +105,9 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                                         application_text={application_text}
                                         setApplication_text={setApplication_text}
                                         onSubmit={handleSubmit}
+                                        onProfilePress={() => {
+                                            navigation.navigate('TheOtherPersonPage', { userId: post.userId });
+                                        }}
                                     />
                                 ) : (
                                     <Text>게시글을 불러올 수 없습니다.</Text>

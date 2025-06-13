@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ImageSourcePropType } from 'react-native';
 
 export type PostData = {
+  userId: number;
   id: number;
   nickname: string;
   time: string;
@@ -11,6 +12,7 @@ export type PostData = {
   content: string;
   image: ImageSourcePropType;
   location: string;
+  onProfilePress: () => void;
 };
 
 const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
@@ -22,11 +24,11 @@ const LostPostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
           style={styles.profileImage} 
         />
         <View>
-          <Text style={styles.postTitle}>{post.nickname}</Text>
+          <TouchableOpacity onPress={post.onProfilePress}>
+              <Text style={styles.postTitle}>{post.nickname}</Text>
+          </TouchableOpacity>
           <Text style={styles.postDate}>{post.time}</Text>
         </View>
-        <Icon name="share-social" size={20} style={styles.iconRight} color="#233b6d"/>
-        <Icon name="ellipsis-vertical" size={20} color="#233b6d"/>
       </View>
 
       <Text style={styles.postTitle}>{post.title}</Text>

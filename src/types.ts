@@ -62,6 +62,7 @@ export type TradePost = {
 };
 
 export type Post = {
+  authorUserId: number;
   postId: number;
   nickname: string;
   title: string;

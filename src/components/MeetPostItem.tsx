@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 interface MeetPostItemProps {
+    authorUserId: number;
+    nickname: string;
     title: string;
     dDay: string;
     members: string;
@@ -12,11 +14,21 @@ interface MeetPostItemProps {
     isApplied: boolean;
     isFull: boolean;
     onApply: () => void;
+    onProfilePress: () => void;
 }
 
-const MeetPostItem: React.FC<MeetPostItemProps> = ({ title, dDay, members, details, date, location, gender, isApplied, isFull, onApply }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ authorUserId, nickname, title, dDay, members, details, date, location, gender, isApplied, isFull, onApply, onProfilePress }) => {
     return (
         <View style={styles.container}>
+            <View style={styles.postHeader}>
+                <Image 
+                    source={require('../assets/profile.png')} // 고정된 프로필 이미지
+                    style={styles.profileImage} 
+                />
+                <TouchableOpacity onPress={onProfilePress}>
+                    <Text style={styles.postTitle}>{nickname}</Text>
+                </TouchableOpacity>
+                </View>
             <View style={styles.header}>
                 <Text style={styles.dday}>{dDay}</Text>
                 <Text style={styles.members}>{members}</Text>
@@ -61,6 +73,24 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 5,
         elevation: 3,
+    },
+    postHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    postTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    profileImage: {
+        width: 45,
+        height: 45,
+        borderRadius: 30,
+        marginRight: 5,
+        borderWidth: 2,
+        borderColor: '#95CEFF'
     },
     header: {
         flexDirection: 'row',

@@ -4,15 +4,21 @@ import { TabProps, NavigationProp, RootStackParamList } from "../types";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ApplicantItem from '../components/ApplicantItem';
+import CustomAlert from '../components/CustomAlert';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
-    const navigation = useNavigation();
+    const navigation = useNavigation<NavigationProp>();
     const route = useRoute<RouteProp<RootStackParamList, 'StudyApplicantList'>>();
     const { postId } = route.params;
     const [applicants, setApplicants] = useState<any[]>([]);
     const [postTitle, setPostTitle] = useState('');
+
+    const [alertVisible, setAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState("");
+    const [alertMessage, setAlertMessage] = useState("");
+
 
     useEffect(() => {
         const fetchApplicants = async () => {
@@ -61,9 +67,67 @@ const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =>
                     data={applicants}
                     renderItem={({ item }) => (
                     <ApplicantItem
+                        userId= {item.userId}
                         nickname={item.nickname}
-                        onAccept={() => {}}
-                        onDelete={() => {}}
+                        accepted={item.accepted}
+                        onAccept={async () => {
+                                try {
+                                    const token = await AsyncStorage.getItem("token");
+                                    await axios.post(
+                                        `http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}/accept`,
+                                        {},
+                                        {
+                                            headers: {
+                                            Authorization: `Bearer ${token}`,
+                                            },
+                                        }
+                                        );
+
+                                    // 수락 후 리스트 새로고침
+                                    const updated = await axios.get(
+                                    `http://13.124.71.212:8080/api/gathering/${postId}/applicants`,
+                                    {
+                                        headers: {
+                                        Authorization: `Bearer ${token}`,
+                                        },
+                                    }
+                                    );
+                                    setApplicants(updated.data.data.content);
+                                    
+                                    setAlertTitle("수락");
+                                    setAlertMessage(`${item.nickname}님을 채팅방에 초대했습니다!`);
+                                    setAlertVisible(true);
+                                } catch (error) {
+                                    console.error("❌ 수락 실패:", error);
+                                }
+                            }}
+
+                        onDelete={async () => {
+                            try {
+                                const token = await AsyncStorage.getItem("token");
+
+                                await axios.delete(`http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}`, {
+                                headers: {
+                                    Authorization: `Bearer ${token}`,
+                                },
+                                });
+
+                                // 삭제 후 목록 다시 불러오기
+                                const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
+                                headers: { Authorization: `Bearer ${token}` },
+                                });
+                                setApplicants(res.data.data.content);
+
+                                setAlertTitle("삭제");
+                                setAlertMessage(`${item.nickname}님의 지원을 삭제했습니다.`);
+                                setAlertVisible(true);
+                            } catch (error) {
+                                console.error("❌ 지원자 삭제 실패:", error);
+                            }
+                            }}
+                        onProfilePress={() => {
+                            navigation.navigate('TheOtherPersonPage', { userId: item.userId });
+                        }}
                     />
                     )}
                     keyExtractor={(item) => item.id}
@@ -71,7 +135,12 @@ const MeetApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =>
                 />
             </View>
             </View>
-            
+            <CustomAlert
+                visible={alertVisible}
+                title={alertTitle}
+                message={alertMessage}
+                onClose={() => setAlertVisible(false)}
+            />
         </View>
     );
 };

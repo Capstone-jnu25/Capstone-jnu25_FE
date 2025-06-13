@@ -1,9 +1,10 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { ImageSourcePropType } from 'react-native';
 
 export type PostData = {
+  userId: number;
   id: number;
   nickname: string;
   time: string;
@@ -12,18 +13,21 @@ export type PostData = {
   image: ImageSourcePropType;
   price: string;
   location: string;
+  onProfilePress: () => void;
 };
 
 const TradePostDetailItem: React.FC<{ post: PostData }> = ({ post }) => {
   return (
     <View style={styles.postItem}>
       <View style={styles.postHeader}>
-        <Image 
-            source={require('../assets/profile.png')} // 고정된 프로필 이미지
-            style={styles.profileImage} 
-          />
-        <View>
-          <Text style={styles.postTitle}>{post.nickname}</Text>
+            <Image 
+              source={require('../assets/profile.png')} // 고정된 프로필 이미지
+              style={styles.profileImage} 
+            />
+            <View>
+              <TouchableOpacity onPress={post.onProfilePress}>
+                  <Text style={styles.postTitle}>{post.nickname}</Text>
+              </TouchableOpacity>
           <Text style={styles.postDate}>{post.time}</Text>
         </View>
         <Icon name="share-social" size={20} style={styles.iconRight} color="#233b6d"/>

@@ -57,6 +57,8 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
         const data = response.data.data;
         const mapped = data.map((item: any) => ({
+          authorUserId: item.authorUserId,
+          nickname: item.nickname,
           postId: item.postId,
           title: item.title,
           contents: item.contents,
@@ -121,6 +123,8 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     data={posts}
                     renderItem={({ item }) => (
                         <MeetPostItem 
+                            authorUserId={item.authorUserId}
+                            nickname={item.nickname}
                             title={item.title}
                             dDay={item.dday}
                             members={`${item.currentParticipants}/${item.maxParticipants}`}
@@ -131,6 +135,9 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                             isApplied={appliedPostIds.includes(item.postId)}
                             isFull={item.currentParticipants >= item.maxParticipants}
                             onApply={() => handleApply(item.postId)}
+                            onProfilePress={() => {
+                              navigation.navigate('TheOtherPersonPage', { userId: item.authorUserId });
+                          }}
                           />
                             )}
                             keyExtractor={item => item.postId.toString()}

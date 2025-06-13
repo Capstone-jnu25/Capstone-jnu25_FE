@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, TextInput, Image, TouchableOpacity } from 'react-native';
 import CustomButton from './CustomButton';
 
 interface StudyPostDetailItemProps {
+    id: number;
     nickname: string,
     title: string;
     dday: string;
@@ -13,15 +14,22 @@ interface StudyPostDetailItemProps {
     onSubmit: () => void;
     application_text: string;
     setApplication_text: (text: string) => void;
+    onProfilePress: () => void;
 }
 
 
-const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ nickname, title, dday, time, place, contents, gender, onSubmit, application_text, setApplication_text }) => {
+const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ id, nickname, title, dday, time, place, contents, gender, onSubmit, application_text, setApplication_text, onProfilePress }) => {
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={()=>{}}>
-                <Text>{nickname}</Text>
+            <View style={styles.postHeader}>
+            <Image 
+                source={require('../assets/profile.png')} // 고정된 프로필 이미지
+                style={styles.profileImage} 
+            />
+            <TouchableOpacity onPress={onProfilePress}>
+                <Text style={styles.postTitle}>{nickname}</Text>
             </TouchableOpacity>
+            </View>
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>
@@ -64,6 +72,24 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'space-between',
         marginBottom: 20,
+    },
+    postHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    postTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 5,
+    },
+    profileImage: {
+        width: 45,
+        height: 45,
+        borderRadius: 30,
+        marginRight: 5,
+        borderWidth: 2,
+        borderColor: '#95CEFF'
     },
     title: {
         fontSize: 24,
