@@ -68,7 +68,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
     try {
       const response = await axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`, {
-        headers: { Authorization: `KakaoAK f958d2a57846011e2462194fb63cd48c` }, // 🔁 카카오 REST API 키 입력
+        headers: { Authorization: `KakaoAK f958d2a57846011e2462194fb63cd48c` }, 
       });
 
       const address = response.data.documents?.[0]?.address?.address_name;
@@ -127,7 +127,6 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
-          // Content-Type은 axios가 자동으로 multipart로 설정
         },
       }
     );
@@ -172,7 +171,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <TouchableOpacity
             style={[
               styles.location,
-              selectedCoords && { borderColor: 'black', borderWidth: 2 } // ✅ 선택되면 테두리 표시
+              selectedCoords && { borderColor: 'black', borderWidth: 2 }
             ]}
             onPress={() => setModalVisible(true)}
           >

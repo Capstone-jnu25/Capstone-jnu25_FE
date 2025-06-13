@@ -65,7 +65,7 @@ const NotificationPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => 
     >
       <View style={styles.noticeContent}>
         <Category label={getCategoryLabel(item.boardType)} />
-        <Text style={styles.titleText}>키워드: {item.keywordText}</Text>
+        <Text style={styles.titleText}>{item.keywordText}</Text>
       </View>
     </TouchableOpacity>
   );
