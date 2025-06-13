@@ -24,7 +24,7 @@ export type RootStackParamList = {
     MeetPostAdd: undefined;
     MeetApplicantList: { postId: number };
 
-    NotificationPage: undefined;
+    NotificationPage: { postId: number };
     MyPage: undefined;
     KeywordPage: undefined;
     EditProfile: undefined;

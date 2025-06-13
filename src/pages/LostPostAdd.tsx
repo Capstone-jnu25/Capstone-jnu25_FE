@@ -79,49 +79,69 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   };
 
   const handleSubmit = async () => {
-     if (!title.trim()) {
-      setAlertTitle("확인");
-      setAlertMessage("제목을 입력해주세요.");
-      setAlertVisible(true);
-      return;
+  if (!title.trim()) {
+    setAlertTitle("확인");
+    setAlertMessage("제목을 입력해주세요.");
+    setAlertVisible(true);
+    return;
+  }
+
+  if (!selectedCoords) {
+    setAlertTitle("확인");
+    setAlertMessage("위치를 선택해주세요.");
+    setAlertVisible(true);
+    return;
+  }
+
+  try {
+    const token = await AsyncStorage.getItem("token");
+    const isLost = value === "분실";
+
+    let resolvedAddress = '';
+    if (selectedCoords) {
+      resolvedAddress = await reverseGeocode(selectedCoords.latitude, selectedCoords.longitude);
     }
 
-    if (!selectedCoords) {
-      setAlertTitle("확인");
-      setAlertMessage("위치를 선택해주세요.");
-      setAlertVisible(true);
-      return;
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("contents", contents);
+    formData.append("place", resolvedAddress + " " + place);
+    formData.append("lost", isLost.toString());
+    formData.append("lostLatitude", selectedCoords.latitude.toString());
+    formData.append("lostLongitude", selectedCoords.longitude.toString());
+
+    if (photoUri) {
+      const fileName = photoUri.split("/").pop() || "photo.jpg";
+      const fileType = fileName.split(".").pop();
+
+      formData.append("image", {
+        uri: photoUri,
+        type: `image/${fileType}`,
+        name: fileName,
+      } as any);
     }
 
-    try {
-      const token = await AsyncStorage.getItem("token");
-      const isLost = value === "분실";
-
-      let resolvedAddress = '';
-      if (selectedCoords) {
-        resolvedAddress = await reverseGeocode(selectedCoords.latitude, selectedCoords.longitude);
+    const response = await axios.post(
+      "http://13.124.71.212:8080/api/lostboards",
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          // Content-Type은 axios가 자동으로 multipart로 설정
+        },
       }
+    );
 
-      const payload = {
-        title,
-        contents,
-        place: resolvedAddress + " " + place,
-        photo: photoUri,
-        lost: isLost,
-        lostLatitude: selectedCoords?.latitude,
-        lostLongitude: selectedCoords?.longitude
-      };
+    console.log("✅ 작성 성공", response.data);
+    navigation.navigate('LostPostList');
+  } catch (error) {
+    console.error("❌ 작성 실패", error);
+    setAlertTitle("오류");
+    setAlertMessage("글 작성 중 오류가 발생했습니다.");
+    setAlertVisible(true);
+  }
+};
 
-      const response = await axios.post("http://13.124.71.212:8080/api/lostboards", payload, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      console.log("✅ 작성 성공", response.data);
-      navigation.navigate('LostPostList');
-    } catch (error) {
-      console.error("❌ 작성 실패", error);
-    }
-  };
 
   return (
     <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>

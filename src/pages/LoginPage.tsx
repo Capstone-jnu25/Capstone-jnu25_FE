@@ -38,13 +38,44 @@ const LoginPage = () => {
             console.log("🔐 로그인 응답 데이터:", response.data);
 
             const { token, userId, nickname, latitude, longitude } = response.data;
+            
 
             await AsyncStorage.setItem("userId", userId.toString());
             await AsyncStorage.setItem("token", token);
             await AsyncStorage.setItem("latitude", latitude.toString());
             await AsyncStorage.setItem("longitude", longitude.toString());
 
-        
+            const fcmToken = await messaging().getToken();
+            console.log("📱 현재 FCM 토큰:", fcmToken);
+            
+
+            // ✅ 서버의 기존 FCM 토큰과 비교
+            try {
+                const fcmCheckRes = await axios.get("http://13.124.71.212:8080/api/users/fcm-token", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                const serverFcmToken = fcmCheckRes.data.data;
+
+                if (fcmToken !== serverFcmToken) {
+                    await axios.post("http://13.124.71.212:8080/api/users/fcm-token", {
+                        fcmToken: fcmToken
+                    }, {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+
+                    console.log("✅ FCM 토큰 서버에 전송 완료");
+                } else {
+                    console.log("🟢 기존 토큰과 동일 - 전송 생략");
+                }
+            } catch (err: any) {
+                    if (axios.isAxiosError(err)) {
+                        console.log("❌ 서버 오류 상태코드:", err.response?.status);
+                        console.log("❌ 서버 응답 메시지:", err.response?.data);
+                    } else {
+                        console.log("❌ 예기치 못한 오류:", err);
+                    }
+}
 
             setAlertTitle("로그인 성공");
             setAlertMessage(`${nickname}님, 환영합니다!`);

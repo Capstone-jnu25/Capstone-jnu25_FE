@@ -5,7 +5,6 @@ import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
-import { Client } from '@stomp/stompjs';
 import { TabProps, NavigationProp, RootStackParamList } from '../types';
 
 interface ChatMessage {
@@ -33,55 +32,82 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputText, setInputText] = useState('');
-  const socketRef = useRef<Client | null>(null);
   const userIdRef = useRef<number | null>(null);
+  const socketRef = useRef<WebSocket | null>(null);
   const flatListRef = useRef<FlatList>(null);
 
+  // 메시지 불러오기 함수
+  const fetchMessages = async () => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get(
+        `http://13.124.71.212:8080/api/chatrooms/${chattingRoomId}/messages?page=0&size=30`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
 
+      const messageList = response.data.data.data
+        .sort((a: any, b: any) => new Date(a.sendTime).getTime() - new Date(b.sendTime).getTime())
+        .map((msg: any) => ({
+          messageId: msg.messageId,
+          senderId: msg.senderId,
+          senderNickname: msg.senderNickname,
+          detailMessage: msg.detailMessage,
+          sendTime: msg.sendTime,
+          isMyMessage: msg.senderId === userIdRef.current,
+        }));
+
+      setMessages(messageList);
+    } catch (error) {
+      console.error('❌ 메시지 불러오기 실패:', error);
+    }
+  };
+
+  // userId 저장 + 메시지 초기 로딩
   useEffect(() => {
-    AsyncStorage.getItem('userId').then((id) => {
+    const init = async () => {
+      const id = await AsyncStorage.getItem('userId');
       if (id) userIdRef.current = parseInt(id);
-    });
-  }, []);
-
-  useEffect(() => {
-    flatListRef.current?.scrollToEnd({ animated: true });
-  }, [messages]);
-
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get(
-          `http://13.124.71.212:8080/api/chatrooms/${chattingRoomId}/messages?page=0&size=30`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-
-        const messageList = response.data.data.data
-          .sort((a: any, b: any) => new Date(a.sendTime).getTime() - new Date(b.sendTime).getTime()) // 🔁
-          .map((msg: any) => ({
-            messageId: msg.messageId,
-            senderId: msg.senderId,
-            senderNickname: msg.senderNickname,
-            detailMessage: msg.detailMessage,
-            sendTime: msg.sendTime,
-            isMyMessage: msg.senderId === userIdRef.current,
-          }));
-
-        setMessages(messageList);
-      } catch (error) {
-        console.error('❌ 메시지 불러오기 실패:', error);
-      }
+      fetchMessages();
     };
-
-    fetchMessages();
+    init();
   }, [chattingRoomId]);
 
+  // WebSocket 연결 및 실시간 수신 처리
+  useEffect(() => {
+    const socket = new WebSocket('ws://13.124.71.212:8080/ws/chat');
+    socketRef.current = socket;
 
+    socket.onopen = () => {
+      console.log("✅ WebSocket 연결됨");
+    };
 
+    socket.onmessage = (event) => {
+      console.log("📩 수신 메시지:", event.data);
+      fetchMessages(); // ✅ 메시지 수신 시 새로 불러오기
+    };
+
+    socket.onerror = (err) => {
+      console.error("❌ WebSocket 오류:", err);
+    };
+
+    socket.onclose = () => {
+      console.log("🔌 WebSocket 연결 종료");
+    };
+
+    return () => {
+      socket.close();
+    };
+  }, [chattingRoomId]);
+
+  // 메시지 전송
   const handleSend = async () => {
     const token = await AsyncStorage.getItem("token");
-    if (!token || !socketRef.current?.connected) return;
+    const socket = socketRef.current;
+
+    if (!token || !socket || socket.readyState !== WebSocket.OPEN) {
+      console.warn("⚠️ WebSocket이 아직 연결되지 않았습니다.");
+      return;
+    }
 
     const message = {
       token,
@@ -89,17 +115,16 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       detailMessage: inputText,
     };
 
-    socketRef.current.publish({
-      destination: '/app/chat/send',
-      body: JSON.stringify(message),
-    });
+    socket.send(JSON.stringify(message));
     setInputText('');
   };
 
+  // 시간 표시 포맷
   const formatTime = (isoString: string): string => {
     const date = new Date(isoString);
-    const hours = date.getHours();
-    const minutes = date.getMinutes();
+    const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+    const hours = kst.getHours();
+    const minutes = kst.getMinutes();
     const ampm = hours >= 12 ? '오후' : '오전';
     const hour12 = hours % 12 || 12;
     return `${ampm} ${hour12}:${minutes.toString().padStart(2, '0')}`;
@@ -114,6 +139,7 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     return `${year}년 ${month}월 ${day}일 ${weekday}요일`;
   };
 
+  // 날짜 구분 라벨 삽입
   const processedMessages: ChatItem[] = [];
   let lastDate = '';
   messages.forEach((msg) => {
@@ -181,6 +207,9 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           );
         }}
         contentContainerStyle={styles.messageList}
+        onContentSizeChange={() => {
+          flatListRef.current?.scrollToEnd({ animated: false });
+        }}
       />
 
       <View style={styles.inputContainer}>
@@ -205,63 +234,59 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
   messageList: { padding: 15 },
   headerContainer: {
-    flexDirection: 'row', 
-    alignItems: 'center', 
+    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 20, 
-    paddingVertical: 10, 
-    borderBottomWidth: 1, 
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
     borderBottomColor: '#ccc',
   },
   backButton: { width: 50, alignItems: 'flex-start' },
-  nickname: { 
-    flex: 1, 
-    textAlign: 'center', 
-    fontSize: 18, 
-    fontWeight: 'bold' },
+  nickname: {
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: 'bold'
+  },
   placeholder: { width: 50 },
-
   messageContainer: { marginBottom: 12, maxWidth: '80%' },
   myContainer: { alignSelf: 'flex-end', alignItems: 'flex-end' },
   otherContainer: { alignSelf: 'flex-start', alignItems: 'flex-start' },
-
-  nicknameText: { 
-    fontSize: 12, 
-    color: '#555', 
-    marginBottom: 3, 
-    marginLeft: 5 
+  nicknameText: {
+    fontSize: 12,
+    color: '#555',
+    marginBottom: 3,
+    marginLeft: 5
   },
   messageBubble: { padding: 10, borderRadius: 15 },
   myMessage: { backgroundColor: '#C6E4FF', borderTopRightRadius: 0 },
   otherMessage: { backgroundColor: '#FFF5C4', borderTopLeftRadius: 0 },
-
   timeText: { fontSize: 11, color: '#888', marginTop: 3 },
   timeLeft: { alignSelf: 'flex-start' },
   timeRight: { alignSelf: 'flex-end' },
-
   dateContainer: {
-    alignSelf: 'center', 
-    backgroundColor: '#ddd', 
+    alignSelf: 'center',
+    backgroundColor: '#ddd',
     borderRadius: 20,
-    paddingVertical: 4, 
-    paddingHorizontal: 12, 
+    paddingVertical: 4,
+    paddingHorizontal: 12,
     marginVertical: 10,
   },
   dateText: { fontSize: 13, color: '#333' },
-
   inputContainer: {
-    flexDirection: 'row', 
+    flexDirection: 'row',
     alignItems: 'center',
-    padding: 10, 
-    backgroundColor: '#fff', 
-    borderTopWidth: 1, 
+    padding: 10,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
     borderTopColor: '#ccc',
   },
   input: {
     flex: 1,
-     padding: 10, 
-     backgroundColor: '#C6E4FF',
-    borderRadius: 20, 
+    padding: 10,
+    backgroundColor: '#C6E4FF',
+    borderRadius: 20,
     marginHorizontal: 10,
   },
 });

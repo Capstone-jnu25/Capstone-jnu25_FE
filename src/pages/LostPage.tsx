@@ -162,9 +162,37 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             <>
               <View style={styles.headerRow}>
                 <Text style={styles.title}>{postDetail.title}</Text>
-                <TouchableOpacity onPress={() => {}}>
-                  <Text style={styles.chatButton}>채팅 보내기</Text>
-                </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={async () => {
+                  try {
+                    const token = await AsyncStorage.getItem("token");
+                    if (!token) return;
+
+                    const response = await axios.post(
+                      "http://13.124.71.212:8080/api/private-chats",
+                      { postId: selectedMarkerId }, // 💡 전달할 postId
+                      {
+                        headers: {
+                          Authorization: `Bearer ${token}`,
+                        },
+                      }
+                    );
+
+                    if (response.data.status === "success") {
+                      const { chattingRoomId, chatTitle } = response.data;
+
+                      navigation.navigate('ChatPage', {
+                        chattingRoomId,
+                        chatTitle,
+                      });
+                    }
+                  } catch (e) {
+                    console.error("❌ 채팅방 생성 실패:", e);
+                  }
+                }}
+              >
+                <Text style={styles.chatButton}>채팅 보내기</Text>
+              </TouchableOpacity>
               </View>
 
               <View style={styles.separator} />

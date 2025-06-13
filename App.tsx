@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './src/types';
+
 import LoadingPage from './src/pages/LoadingPage';
 import MainPage from './src/pages/MainPage';
 import LoginPage from './src/pages/LoginPage';

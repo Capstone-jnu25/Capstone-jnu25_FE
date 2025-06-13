@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState, useCallback } from 'react';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { TabProps, NavigationProp, RootStackParamList } from "../types";
 import { View, FlatList, StyleSheet, TouchableOpacity,Text } from 'react-native';
 import ChatListItem from '../components/ChatListItem';
@@ -20,16 +20,18 @@ const ChatList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<StackNavigationProp<RootStackParamList>>();
   const [chatList, setChatList] = useState<ChatRoom[]>([]);
 
-  useEffect(() => {
+ 
+
+// useEffect 대신 아래 코드 추가
+useFocusEffect(
+  useCallback(() => {
     const fetchChatRooms = async () => {
       const token = await AsyncStorage.getItem("token");
       if (!token) return;
 
       try {
         const response = await axios.get("http://13.124.71.212:8080/api/chatrooms", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         });
 
         if (response.data.status === "success") {
@@ -41,7 +43,9 @@ const ChatList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     };
 
     fetchChatRooms();
-  }, []);
+  }, [])
+);
+
 
   return (
     <View style={styles.mainContainer}>
