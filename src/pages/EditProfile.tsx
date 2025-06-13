@@ -25,7 +25,9 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [passwordsMatch, setPasswordsMatch] = useState(false);
 
-  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertVisible, setAlertVisible] = useState(false); // 일반 알림
+const [confirmVisible, setConfirmVisible] = useState(false); // 탈퇴 확인
+
   const [alertTitle, setAlertTitle] = useState('');
   const [alertMessage, setAlertMessage] = useState('');
 
@@ -150,7 +152,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               <TouchableOpacity onPress={() => navigation.goBack()}>
                 <Icon name='arrow-back' size={25} style={{ marginTop: 16, marginBottom: 10 }} color="#233b6d" />
               </TouchableOpacity>
-              <TouchableOpacity onPress={handleDeleteAccount}>
+              <TouchableOpacity onPress={() =>setConfirmVisible(true)}>
                 <Text style={styles.deleteButton}>탈퇴하기</Text>
               </TouchableOpacity>
             </View>
@@ -209,7 +211,15 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 title={alertTitle}
                 message={alertMessage}
                 onClose={() => setAlertVisible(false)}
+                onConfirm={() => setAlertVisible(false)}
                 />
+               <CustomAlert
+                visible={confirmVisible}
+                title="탈퇴"
+                message="정말 탈퇴하시겠습니까?"
+                onClose={() => setConfirmVisible(false)} //취소 하는 버튼 만들어야함
+                onConfirm={handleDeleteAccount} 
+              />
           </View>
         </View>
       </ScrollView>

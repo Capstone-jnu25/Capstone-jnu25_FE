@@ -184,12 +184,12 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         {renderKeywordSection("SECONDHAND")}
         {renderKeywordSection("MEETUP")}
 
-        {/* ✅ CustomAlert 추가 */}
         <CustomAlert
           visible={alertVisible}
           title={alertTitle}
           message={alertMessage}
           onClose={() => setAlertVisible(false)}
+          onConfirm={() => setAlertVisible(false)}
         />
       </View>
     </View>

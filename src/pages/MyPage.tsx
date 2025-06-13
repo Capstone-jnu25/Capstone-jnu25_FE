@@ -168,7 +168,8 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               visible={alertVisible}
               title="탈퇴"
               message="정말 탈퇴하시겠습니까?"
-              onClose={handleDeleteAccount} //취소 하는 버튼 만들어야함
+              onClose={() => setAlertVisible(false)} //취소 하는 버튼 만들어야함
+              onConfirm={handleDeleteAccount} 
             />
         </View>
     )

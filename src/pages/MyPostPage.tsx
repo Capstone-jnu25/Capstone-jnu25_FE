@@ -120,6 +120,7 @@ const MyPostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 title="에러"
                 message={alertMessage}
                 onClose={() => setAlertVisible(false)}
+                 onConfirm={() => setAlertVisible(false)} 
             />
         </View>
     );

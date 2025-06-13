@@ -150,6 +150,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 title={alertTitle}
                 message={alertMessage}
                 onClose={() => setAlertVisible(false)}
+                onConfirm={() => setAlertVisible(false)} 
             />
         </View>
     )

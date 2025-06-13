@@ -126,6 +126,7 @@ const LoginPage = () => {
                 title={alertTitle}
                 message={alertMessage}
                 onClose={() => setAlertVisible(false)}
+                onConfirm={() => setAlertVisible(false)} 
             />
         </View>
     )
