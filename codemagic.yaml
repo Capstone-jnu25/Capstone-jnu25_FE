@@ -1,0 +1,22 @@
+workflows:
+  build-android:
+    name: Build Android APK
+    max_build_duration: 15
+    environment:
+      vars:
+        PACKAGE_NAME: "com.findmap"  # ← 너의 Android 패키지 이름으로 수정
+      flutter: false
+      node: 18.16.0
+      java: 17
+    scripts:
+      - echo "📦 Install dependencies"
+      - npm install
+      - echo "🚀 Build release APK"
+      - cd android
+      - ./gradlew assembleRelease
+    artifacts:
+      - android/app/build/outputs/**/*.apk
+    publishing:
+      email:
+        recipients:
+          - dmsqls0704@naver.com
