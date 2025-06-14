@@ -65,5 +65,21 @@ jobs:
       - name: Upload Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: release-apk
+          name: jupjupcampus
           path: android/app/build/outputs/apk/release/app-release.apk
+
+      - name: Send email with APK link
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: dmsqls0704@gmail.com
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: Android APK 빌드 완료 🎉
+          to: dmsqls0704@gmail.com
+          from: dmsqls0704@gmail.com
+          body: |
+            ✅ 새 APK 빌드가 완료되었습니다!
+            아래 링크에서 다운로드 가능:
+            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
