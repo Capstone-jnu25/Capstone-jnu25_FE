@@ -4,8 +4,7 @@ workflows:
     max_build_duration: 15
     environment:
       vars:
-        PACKAGE_NAME: "com.findmap"  # ← 너의 Android 패키지 이름으로 수정
-      flutter: false
+        PACKAGE_NAME: "com.findmap"
       node: 18.16.0
       java: 17
     scripts:
