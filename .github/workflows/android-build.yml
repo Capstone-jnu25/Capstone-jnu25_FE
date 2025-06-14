@@ -60,4 +60,10 @@ jobs:
       - name: Build Android
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --max-workers=4
+          ./gradlew assembleRelease --no-daemon --max-workers=4
+     
+      - name: Upload Release APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
