@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TextInput } from 'react-native';
 import { TabProps, NavigationProp, TradePost } from "../types";
-import axios from "axios";
+import axiosInstance from '../api/axiosInstance';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
@@ -27,7 +27,7 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           ? `http://13.124.71.212:8080/api/secondhand/search?query=${encodeURIComponent(searchQuery)}`
           : `http://13.124.71.212:8080/api/secondhand`; 
 
-        const response = await axios.get(endpoint, {
+        const response = await axiosInstance.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

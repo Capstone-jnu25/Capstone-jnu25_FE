@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import axios from "axios";
+import axiosInstance from '../api/axiosInstance';
 import { RootStackParamList, TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import TradePostDetailItem from "../components/TradePostDetailItem";
@@ -19,7 +19,7 @@ const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const fetchPost = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const res = await axios.get(`http://13.124.71.212:8080/api/secondhand/${postId}`, {
+        const res = await axiosInstance.get(`http://13.124.71.212:8080/api/secondhand/${postId}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setPost(res.data);
@@ -46,7 +46,7 @@ const TradePostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               const token = await AsyncStorage.getItem("token");
               if (!token) return;
 
-              const response = await axios.post(
+              const response = await axiosInstance.post(
                 "http://13.124.71.212:8080/api/private-chats",
                 { postId }, // 💡 전달할 postId
                 {

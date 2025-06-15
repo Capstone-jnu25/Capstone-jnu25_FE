@@ -5,7 +5,7 @@ import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
 import Icon from "react-native-vector-icons/Ionicons";
 import Category from "../components/Category";
-import axios from "axios";
+import axiosInstance from '../api/axiosInstance';
 import CustomAlert from "../components/CustomAlert";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
@@ -27,7 +27,7 @@ const MyPostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             const token = await AsyncStorage.getItem("token");
             if (!token) throw new Error("토큰이 없습니다.");
 
-            const response = await axios.get("http://13.124.71.212:8080/api/posts/my-grouped", {
+            const response = await axiosInstance.get("http://13.124.71.212:8080/api/posts/my-grouped", {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

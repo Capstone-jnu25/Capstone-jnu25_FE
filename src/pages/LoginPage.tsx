@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
-import axios from "axios";
+import axiosInstance from '../api/axiosInstance';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from '@react-native-firebase/messaging';
 import CustomButton from '../components/CustomButton';
@@ -31,7 +31,7 @@ const LoginPage = () => {
         }
 
         try {
-            const response = await axios.post("http://13.124.71.212:8080/api/users/login", {
+            const response = await axiosInstance.post("http://13.124.71.212:8080/api/users/login", {
                 email,
                 password,
             });
@@ -51,14 +51,14 @@ const LoginPage = () => {
 
             // ✅ 서버의 기존 FCM 토큰과 비교
             try {
-                const fcmCheckRes = await axios.get("http://13.124.71.212:8080/api/users/fcm-token", {
+                const fcmCheckRes = await axiosInstance.get("http://13.124.71.212:8080/api/users/fcm-token", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
                 const serverFcmToken = fcmCheckRes.data.data;
 
                 if (fcmToken !== serverFcmToken) {
-                    await axios.post("http://13.124.71.212:8080/api/users/fcm-token", {
+                    await axiosInstance.post("http://13.124.71.212:8080/api/users/fcm-token", {
                         fcmToken: fcmToken
                     }, {
                         headers: { Authorization: `Bearer ${token}` }
@@ -69,12 +69,7 @@ const LoginPage = () => {
                     console.log("🟢 기존 토큰과 동일 - 전송 생략");
                 }
             } catch (err: any) {
-                    if (axios.isAxiosError(err)) {
-                        console.log("❌ 서버 오류 상태코드:", err.response?.status);
-                        console.log("❌ 서버 응답 메시지:", err.response?.data);
-                    } else {
-                        console.log("❌ 예기치 못한 오류:", err);
-                    }
+                    
 }
 
             setAlertTitle("로그인 성공");

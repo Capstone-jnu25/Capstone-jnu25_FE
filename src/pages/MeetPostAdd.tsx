@@ -14,7 +14,7 @@ import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 import CustomCheckbox from "../components/CustomCheckBox";
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import DatePicker from 'react-native-date-picker'
 
@@ -45,7 +45,7 @@ const MeetPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 boardType: "MEETUP",
             };
             console.log("보내는 payload:", payload);
-            const response = await axios.post("http://13.124.71.212:8080/api/gathering", payload, {
+            const response = await axiosInstance.post("http://13.124.71.212:8080/api/gathering", payload, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Content-Type": "application/json"

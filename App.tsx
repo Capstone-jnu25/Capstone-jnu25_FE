@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from './src/types';
+import { setNavigationRef } from './src/api/axiosInstance';
 
 import LoadingPage from './src/pages/LoadingPage';
 import MainPage from './src/pages/MainPage';
@@ -41,6 +42,15 @@ import TheOtherPersonPage from './src/pages/TheOtherPersonPage';
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App: React.FC = () => {
+
+  const navigationRef = useRef(null);
+
+  useEffect(() => {
+    if (navigationRef.current) {
+      setNavigationRef(navigationRef.current);
+    }
+  }, [navigationRef]);
+
   const [currentTab, setCurrentTab] = useState('LostPage');
 
   return (

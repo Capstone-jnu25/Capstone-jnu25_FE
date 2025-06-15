@@ -4,7 +4,7 @@ import { View, StyleSheet, TouchableOpacity, Text, Image, KeyboardAvoidingView, 
 import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axios from "axios";
+import axiosInstance from '../api/axiosInstance';
 import CustomAlert from "../components/CustomAlert";
 import CustomButton from "../components/CustomButton";
 import CustomTextInput from "../components/CustomTextInput";
@@ -44,7 +44,7 @@ const [confirmVisible, setConfirmVisible] = useState(false); // 탈퇴 확인
       if (!userId || !token) return;
 
       try {
-        const res = await axios.get(`http://13.124.71.212:8080/api/users/${userId}/me`, {
+        const res = await axiosInstance.get(`http://13.124.71.212:8080/api/users/${userId}/me`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         const { nickname, email, studentNum, department } = res.data;
@@ -78,7 +78,7 @@ const [confirmVisible, setConfirmVisible] = useState(false); // 탈퇴 확인
     // 학과 입력 처리
     if (!isDepartmentSet && tempDepartment.trim()) {
         try {
-        await axios.put(`http://13.124.71.212:8080/api/users/${userId}`, {
+        await axiosInstance.put(`http://13.124.71.212:8080/api/users/${userId}`, {
             department: tempDepartment
         }, {
             headers: { Authorization: `Bearer ${token}` }
@@ -100,7 +100,7 @@ const [confirmVisible, setConfirmVisible] = useState(false); // 탈퇴 확인
         return;
         }
         try {
-        await axios.put(`http://13.124.71.212:8080/api/users/${userId}/password`, {
+        await axiosInstance.put(`http://13.124.71.212:8080/api/users/${userId}/password`, {
             newPassword
         }, {
             headers: { Authorization: `Bearer ${token}` }
@@ -124,7 +124,7 @@ const [confirmVisible, setConfirmVisible] = useState(false); // 탈퇴 확인
 
     if (!token || !userId) throw new Error("로그인 정보 없음");
 
-    await axios.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
+    await axiosInstance.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
 

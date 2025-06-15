@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, Modal } from 'react-na
 import { TabProps, RootStackParamList } from '../types';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/Ionicons';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -25,7 +25,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
         const fetchProfile = async () => {
             try {
                 const token = await AsyncStorage.getItem("token");
-                const res = await axios.get(`http://13.124.71.212:8080/api/users/${userId}`, {
+                const res = await axiosInstance.get(`http://13.124.71.212:8080/api/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
                 const data = res.data;
@@ -48,7 +48,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
     const handleEvaluate = async (type: 'good' | 'bad') => {
         try {
             const token = await AsyncStorage.getItem("token");
-            await axios.post(`http://13.124.71.212:8080/api/users/${userId}/${type}`, {}, {
+            await axiosInstance.post(`http://13.124.71.212:8080/api/users/${userId}/${type}`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setProfile(prev => ({

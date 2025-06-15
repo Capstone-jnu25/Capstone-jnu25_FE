@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import CircleButton from "../components/CircleButton";
 import StudyPostItem from "../components/StudyPostItem";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
@@ -26,7 +26,7 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=STUDY&page=0&size=10`
           : `http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`;
 
-        const response = await axios.get(endpoint, {
+        const response = await axiosInstance.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

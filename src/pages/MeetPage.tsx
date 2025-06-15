@@ -8,7 +8,7 @@ import CircleButton from "../components/CircleButton";
 import CustomAlert from "../components/CustomAlert";
 import MeetPostItem from "../components/MeetPostItem";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 
 
 const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -51,7 +51,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=MEETUP&page=0&size=10`
         : `http://13.124.71.212:8080/api/gathering?boardType=MEETUP&page=0&size=10`
 
-        const response = await axios.get(endpoint, {
+        const response = await axiosInstance.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -87,7 +87,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const handleApply = async (postId: number) => {
          const token = await AsyncStorage.getItem("token");
             try {
-                await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
+                await axiosInstance.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
                 });
                 setAppliedPostIds(prev => [...prev, postId]);
@@ -95,9 +95,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                 // 성공 시 버튼 상태 변경
             } catch (error) {
                 console.error("❌ 신청 실패:", error);
-                if (axios.isAxiosError(error) && error.response?.status === 400) {
-                    showAlert("실패", "이미 신청한 게시글입니다.");
-                }
+                showAlert("실패", "이미 신청한 게시글입니다.");
             }
     };
 

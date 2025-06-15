@@ -5,7 +5,7 @@ import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
 import GroupItem from '../components/GroupItem';
 import Icon from "react-native-vector-icons/Ionicons";
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Group {
@@ -22,7 +22,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         const fetchGroups = async () => {
             try {
             const token = await AsyncStorage.getItem("token");
-            const response = await axios.get("http://13.124.71.212:8080/api/group", {
+            const response = await axiosInstance.get("http://13.124.71.212:8080/api/group", {
                 headers: {
                 Authorization: `Bearer ${token}`,
                 },
