@@ -69,7 +69,16 @@ const LoginPage = () => {
                     console.log("🟢 기존 토큰과 동일 - 전송 생략");
                 }
             } catch (err: any) {
-                    
+                    console.error("❌ FCM 토큰 전송 실패:", err);
+
+                    // 응답 메시지 추출
+                    const errorMessage =
+                        err.response?.data?.message || "FCM 토큰 전송 중 오류가 발생했습니다.";
+
+                    // 사용자에게 알림
+                    setAlertTitle("FCM 오류");
+                    setAlertMessage(errorMessage);
+                    setAlertVisible(true);
 }
 
             setAlertTitle("로그인 성공");
@@ -92,7 +101,7 @@ const LoginPage = () => {
             }
 
             setAlertTitle("로그인 실패");
-            setAlertMessage("이메일 또는 비밀번호가 잘못되었거나, 서버 오류입니다.");
+            setAlertMessage("이메일 또는 비밀번호가 잘못되었습니다.");
             setAlertVisible(true);
         }
     }

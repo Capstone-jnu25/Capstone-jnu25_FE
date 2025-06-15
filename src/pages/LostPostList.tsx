@@ -9,6 +9,7 @@ import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
+import * as ImagePicker from "react-native-image-picker";
 
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -17,6 +18,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const [isSearching, setIsSearching] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [posts, setPosts] = useState<LostPost[]>([]);
+  const [photoUri, setPhotoUri] = useState<string | null>(null);
   const isFocused = useIsFocused(); // 화면 포커스 감지
 
  useEffect(() => {
@@ -56,6 +58,52 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   }
 }, [activeTab, isFocused, searchQuery, isSearching]);
 
+const handleImagePick = async () => {
+    const result = await ImagePicker.launchImageLibrary({
+        mediaType: "photo",
+        quality: 0.8
+    });
+
+    if (result.assets && result.assets.length > 0) {
+        const uri = result.assets[0].uri ?? null;
+        const asset = result.assets[0];
+        const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
+        const name = asset.fileName ?? "image.jpg";
+        setPhotoUri(uri);
+        
+
+        // 🔽 이미지로 유사 게시글 검색 요청
+        const token = await AsyncStorage.getItem("token");
+
+        const formData = new FormData();
+        formData.append("newImage", {
+            uri,
+            type,
+            name
+        });
+
+        try {
+      const isLost = activeTab === 'lost';
+      const response = await axios.post(
+        `http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${isLost}`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      console.log("📦 유사 게시글 추천 결과:", response.data.recommendedPostIds);
+      // TODO: 검색 결과를 화면에 반영하거나, 결과 화면으로 이동
+    } catch (error) {
+      console.error("❌ 이미지 검색 실패:", error);
+    }
+  }
+};
+
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.contentContainer}>
@@ -63,7 +111,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           <Text style={styles.headerText}>분실/습득 게시판</Text>
           <View style={styles.searchContainer}>
             <Icon1 name="search" size={25} color="#233b6d" onPress={() => setIsSearching(!isSearching)}/>
-            <Icon2 name="image-search" size={25} color="#233b6d" onPress={() =>{}}/>  
+            <Icon2 name="image-search" size={25} color="#233b6d" onPress={handleImagePick}/>  
           </View>
         </View>
         {isSearching && (
