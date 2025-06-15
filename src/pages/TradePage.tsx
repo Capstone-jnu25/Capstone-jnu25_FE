@@ -66,35 +66,31 @@ const handleImagePick = async () => {
         const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
         const name = asset.fileName ?? "image.jpg";
         setPhotoUri(uri);
-        
-
+     
         // 🔽 이미지로 유사 게시글 검색 요청
         const token = await AsyncStorage.getItem("token");
 
         const formData = new FormData();
-        formData.append("newImage", {
-            uri,
-            type,
-            name
-        });
+            formData.append("newImage", {
+              uri: uri,
+              type: type,
+              name: name,
+            } as any);
 
         try {
-      const response = await axios.post(
-        `http://13.124.71.212:8080/api/search/image?boardType=SECONDHAND`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      console.log("📦 유사 게시글 추천 결과:", response.data.recommendedPostIds);
-      // TODO: 검색 결과를 화면에 반영하거나, 결과 화면으로 이동
-    } catch (error) {
-      console.error("❌ 이미지 검색 실패:", error);
-    }
+      const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=SECONDHAND`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                // Content-Type 생략!
+              },
+              body: formData,
+            });
+            const result = await response.json();
+            console.log("🎯 이미지 검색 결과:", result);
+          } catch (err) {
+            console.error("❌ fetch 이미지 검색 실패:", err);
+          }
   }
 };
 

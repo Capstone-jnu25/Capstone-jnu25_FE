@@ -96,7 +96,6 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             try {
             const isLost = activeTab === 'lost';
 
-                    
             const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${!isLost}`, {
               method: "POST",
               headers: {
