@@ -16,7 +16,7 @@ import DropDownPicker from "react-native-dropdown-picker";
 import CustomButton from "../components/CustomButton";
 import CustomAlert from "../components/CustomAlert";
 import ModalWithMap from "../components/ModalWithMap";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "react-native-image-picker";
 
@@ -67,7 +67,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
   const reverseGeocode = async (lat: number, lng: number): Promise<string> => {
     try {
-      const response = await axiosInstance.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`, {
+      const response = await axios.get(`https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${lng}&y=${lat}`, {
         headers: { Authorization: `KakaoAK f958d2a57846011e2462194fb63cd48c` }, 
       });
 
@@ -121,7 +121,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       } as any);
     }
 
-    const response = await axiosInstance.post(
+    const response = await axios.post(
       "http://13.124.71.212:8080/api/lostboards",
       formData,
       {

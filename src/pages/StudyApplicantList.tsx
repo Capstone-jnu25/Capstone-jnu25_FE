@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import StudyApplicantItem from '../components/ApplicantItem';
 import CustomAlert from '../components/CustomAlert';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 
 const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const navigation = useNavigation<NavigationProp>();
@@ -24,7 +24,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
         const fetchApplicants = async () => {
             try {
             const token = await AsyncStorage.getItem("token");
-            const res = await axiosInstance.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
+            const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
                 headers: {
                 Authorization: `Bearer ${token}`
                 }
@@ -39,7 +39,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
         const fetchPostTitle = async () => {
             try {
             const token = await AsyncStorage.getItem("token");
-            const res = await axiosInstance.get(`http://13.124.71.212:8080/api/gathering/${postId}`, {
+            const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -76,7 +76,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             onAccept={async () => {
                                 try {
                                     const token = await AsyncStorage.getItem("token");
-                                    await axiosInstance.post(
+                                    await axios.post(
                                         `http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}/accept`,
                                         {},
                                         {
@@ -87,7 +87,7 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                                         );
 
                                     // 수락 후 리스트 새로고침
-                                    const updated = await axiosInstance.get(
+                                    const updated = await axios.get(
                                     `http://13.124.71.212:8080/api/gathering/${postId}/applicants`,
                                     {
                                         headers: {
@@ -109,14 +109,14 @@ const StudyApplicantList: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                             try {
                                 const token = await AsyncStorage.getItem("token");
 
-                                await axiosInstance.delete(`http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}`, {
+                                await axios.delete(`http://13.124.71.212:8080/api/gathering/applicants/${item.applicantId}`, {
                                 headers: {
                                     Authorization: `Bearer ${token}`,
                                 },
                                 });
 
                                 // 삭제 후 목록 다시 불러오기
-                                const res = await axiosInstance.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
+                                const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}/applicants`, {
                                 headers: { Authorization: `Bearer ${token}` },
                                 });
                                 setApplicants(res.data.data.content);

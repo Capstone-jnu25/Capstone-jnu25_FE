@@ -5,7 +5,7 @@ import { View, FlatList, StyleSheet, TouchableOpacity,Text } from 'react-native'
 import ChatListItem from '../components/ChatListItem';
 import MenuBar from "../components/MenuBar";
 import Icon from "react-native-vector-icons/Ionicons";
-import axiosInstance from "../api/axiosInstance";
+import axios from "axios";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
 
@@ -30,7 +30,7 @@ useFocusEffect(
       if (!token) return;
 
       try {
-        const response = await axiosInstance.get("http://13.124.71.212:8080/api/chatrooms", {
+        const response = await axios.get("http://13.124.71.212:8080/api/chatrooms", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

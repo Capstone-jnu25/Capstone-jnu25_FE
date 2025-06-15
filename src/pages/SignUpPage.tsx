@@ -10,7 +10,7 @@ import {
     KeyboardAvoidingView
 } from "react-native";
 import { TabProps, NavigationProp } from "../types";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import CustomButton from "../components/CustomButton";
 import CustomTextInput from "../components/CustomTextInput";
 import CustomAlert from "../components/CustomAlert";
@@ -44,7 +44,7 @@ const SignUpPage = () => {
             if (schoolName === "전남대학교") {
             address = "광주광역시 북구 용봉로 77";
             } else {
-            const res = await axiosInstance.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
+            const res = await axios.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
                 params: {
                 apiKey: "de9825b1c596b2bcd0cbbe3c166b0b08",
                 svcType: "api",
@@ -66,7 +66,7 @@ const SignUpPage = () => {
 
             console.log("📍 변환된 학교 주소:", address);
 
-            const geoRes = await axiosInstance.get("https://dapi.kakao.com/v2/local/search/address.json", {
+            const geoRes = await axios.get("https://dapi.kakao.com/v2/local/search/address.json", {
             params: { query: address },
             headers: {
                 Authorization: "KakaoAK f958d2a57846011e2462194fb63cd48c",
@@ -95,7 +95,7 @@ const SignUpPage = () => {
         }
 
         try {
-            const response = await axiosInstance.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
+            const response = await axios.get("https://www.career.go.kr/cnet/openapi/getOpenApi", {
                 params: {
                     apiKey: "de9825b1c596b2bcd0cbbe3c166b0b08",
                     type: "json",
@@ -148,7 +148,7 @@ const SignUpPage = () => {
         }
 
         try {
-            await axiosInstance.post("http://13.124.71.212:8080/api/users/verify-email", {
+            await axios.post("http://13.124.71.212:8080/api/users/verify-email", {
                 email,
                 univName,
             });
@@ -166,7 +166,7 @@ const SignUpPage = () => {
 
     const handleVerifyCode = async () => {
         try {
-            await axiosInstance.post("http://13.124.71.212:8080/api/users/verify-code", {
+            await axios.post("http://13.124.71.212:8080/api/users/verify-code", {
                 email,
                 univName,
                 code,
@@ -208,7 +208,7 @@ const SignUpPage = () => {
 
     try {
         // 이메일 인증 상태 확인
-        const verifyRes = await axiosInstance.post("http://13.124.71.212:8080/api/users/email/status", { email });
+        const verifyRes = await axios.post("http://13.124.71.212:8080/api/users/email/status", { email });
         console.log("📥 이메일 인증 상태 응답:", verifyRes.data);
         const message = verifyRes.data;
 
@@ -225,7 +225,7 @@ const SignUpPage = () => {
 
             console.log("🚀 회원가입 요청 데이터:", payload);
 
-            await axiosInstance.post("http://13.124.71.212:8080/api/users/signup", payload);
+            await axios.post("http://13.124.71.212:8080/api/users/signup", payload);
 
             setAlertTitle("회원가입 성공");
             setAlertMessage(`${nickname}님, 환영합니다!`);

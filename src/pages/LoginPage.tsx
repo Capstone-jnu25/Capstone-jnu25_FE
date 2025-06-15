@@ -3,7 +3,7 @@ import { View, StyleSheet, Text } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import messaging from '@react-native-firebase/messaging';
 import CustomButton from '../components/CustomButton';
@@ -31,7 +31,7 @@ const LoginPage = () => {
         }
 
         try {
-            const response = await axiosInstance.post("http://13.124.71.212:8080/api/users/login", {
+            const response = await axios.post("http://13.124.71.212:8080/api/users/login", {
                 email,
                 password,
             });
@@ -51,14 +51,14 @@ const LoginPage = () => {
 
             // ✅ 서버의 기존 FCM 토큰과 비교
             try {
-                const fcmCheckRes = await axiosInstance.get("http://13.124.71.212:8080/api/users/fcm-token", {
+                const fcmCheckRes = await axios.get("http://13.124.71.212:8080/api/users/fcm-token", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
                 const serverFcmToken = fcmCheckRes.data.data;
 
                 if (fcmToken !== serverFcmToken) {
-                    await axiosInstance.post("http://13.124.71.212:8080/api/users/fcm-token", {
+                    await axios.post("http://13.124.71.212:8080/api/users/fcm-token", {
                         fcmToken: fcmToken
                     }, {
                         headers: { Authorization: `Bearer ${token}` }

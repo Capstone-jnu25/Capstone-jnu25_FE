@@ -3,7 +3,7 @@ import { View, StyleSheet, Text, TouchableOpacity, Image, ActivityIndicator } fr
 import { useNavigation, useFocusEffect } from '@react-navigation/native';
 import { TabProps, NavigationProp } from "../types";
 import { WebView } from 'react-native-webview';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import MenuBar from '../components/MenuBar';
 import CircleButton from "../components/CircleButton";
@@ -22,7 +22,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const fetchMarkers = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const res = await axiosInstance.get("http://13.124.71.212:8080/api/lostboards/found/map", {
+        const res = await axios.get("http://13.124.71.212:8080/api/lostboards/found/map", {
           headers: { Authorization: `Bearer ${token}` }
         });
         const mapped = res.data.map((item: any) => ({
@@ -59,7 +59,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       try {
         setLoadingDetail(true);
         const token = await AsyncStorage.getItem("token");
-        const res = await axiosInstance.get(`http://13.124.71.212:8080/api/lostboards/${selectedMarkerId}`, {
+        const res = await axios.get(`http://13.124.71.212:8080/api/lostboards/${selectedMarkerId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setPostDetail(res.data);
@@ -168,7 +168,7 @@ const LostPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     const token = await AsyncStorage.getItem("token");
                     if (!token) return;
 
-                    const response = await axiosInstance.post(
+                    const response = await axios.post(
                       "http://13.124.71.212:8080/api/private-chats",
                       { postId: selectedMarkerId }, // 💡 전달할 postId
                       {

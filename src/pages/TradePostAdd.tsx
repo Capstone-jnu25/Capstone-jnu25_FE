@@ -14,7 +14,7 @@ import { TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import CustomButton from "../components/CustomButton";
 import CustomAlert from "../components/CustomAlert";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import * as ImagePicker from "react-native-image-picker";
 
@@ -67,7 +67,7 @@ const TradePostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
             price,
         };
 
-        const response = await axiosInstance.post("http://13.124.71.212:8080/api/secondhand", payload, {
+        const response = await axios.post("http://13.124.71.212:8080/api/secondhand", payload, {
             headers: { Authorization: `Bearer ${token}` }
         });
 

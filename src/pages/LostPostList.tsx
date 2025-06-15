@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
 import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import { TabProps, NavigationProp, LostPost } from "../types";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MenuBar from '../components/MenuBar';
 import Icon1 from 'react-native-vector-icons/Ionicons';
@@ -28,7 +28,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         ? `http://13.124.71.212:8080/api/lostboards/search?query=${encodeURIComponent(searchQuery)}&isLost=${isLost}`
         : `http://13.124.71.212:8080/api/lostboards?isLost=${isLost}`;
 
-      const response = await axiosInstance.get(endpoint, {
+      const response = await axios.get(endpoint, {
         headers: { Authorization: `Bearer ${token}` },
       });
 

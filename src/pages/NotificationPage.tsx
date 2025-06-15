@@ -6,7 +6,7 @@ import MenuBar from "../components/MenuBar";
 import Category from "../components/Category";
 import Icon from "react-native-vector-icons/Ionicons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 
 interface NotificationItem {
   keywordText: string;
@@ -24,7 +24,7 @@ const NotificationPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => 
       if (!token) return;
 
       try {
-        const response = await axiosInstance.get("http://13.124.71.212:8080/api/notifications", {
+        const response = await axios.get("http://13.124.71.212:8080/api/notifications", {
           headers: { Authorization: `Bearer ${token}` },
         });
 

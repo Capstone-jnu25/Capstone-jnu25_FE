@@ -8,7 +8,7 @@ import CustomTextInput from "../components/CustomTextInput";
 import CustomButton from "../components/CustomButton";
 import CustomText from "../components/CustomText";
 import DropDownPicker from 'react-native-dropdown-picker';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomAlert from "../components/CustomAlert"; // ✅ 알림 컴포넌트 import
 
@@ -62,7 +62,7 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     }
 
     try {
-      const response = await axiosInstance.get("http://13.124.71.212:8080/api/keywords", {
+      const response = await axios.get("http://13.124.71.212:8080/api/keywords", {
         headers: { Authorization: `Bearer ${tokenFromState}` }
       });
       setKeywords(response.data);
@@ -87,7 +87,7 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
     try {
       const token = await AsyncStorage.getItem("token");
-      await axiosInstance.post(
+      await axios.post(
         "http://13.124.71.212:8080/api/keywords",
         {
           keywordText: keyword,
@@ -113,7 +113,7 @@ const KeywordPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const handleDelete = async (id: number) => {
     try {
       const token = await AsyncStorage.getItem("token");
-      await axiosInstance.delete(`http://13.124.71.212:8080/api/keywords/${id}`, {
+      await axios.delete(`http://13.124.71.212:8080/api/keywords/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       fetchKeywords(token);

@@ -8,7 +8,7 @@ import CircleButton from "../components/CircleButton";
 import CustomAlert from "../components/CustomAlert";
 import MeetPostItem from "../components/MeetPostItem";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 
 
 const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -51,7 +51,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=MEETUP&page=0&size=10`
         : `http://13.124.71.212:8080/api/gathering?boardType=MEETUP&page=0&size=10`
 
-        const response = await axiosInstance.get(endpoint, {
+        const response = await axios.get(endpoint, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -87,7 +87,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const handleApply = async (postId: number) => {
          const token = await AsyncStorage.getItem("token");
             try {
-                await axiosInstance.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
+                await axios.post(`http://13.124.71.212:8080/api/gathering/${postId}/apply`, {}, {
                 headers: { Authorization: `Bearer ${token}` },
                 });
                 setAppliedPostIds(prev => [...prev, postId]);

@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, TextInput, FlatList, TouchableOpacity } from 'r
 import Icon1 from 'react-native-vector-icons/Ionicons';
 import Icon2 from 'react-native-vector-icons/MaterialCommunityIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import { TabProps, NavigationProp, RootStackParamList } from '../types';
 
 interface ChatMessage {
@@ -40,7 +40,7 @@ const ChatPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const fetchMessages = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
-      const response = await axiosInstance.get(
+      const response = await axios.get(
         `http://13.124.71.212:8080/api/chatrooms/${chattingRoomId}/messages?page=0&size=30`,
         { headers: { Authorization: `Bearer ${token}` } }
       );

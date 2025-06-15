@@ -5,7 +5,7 @@ import { RootStackParamList, TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import StudyPostDetailItem from "../components/StudyPostItemDetail";
 import CustomAlert from "../components/CustomAlert";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
@@ -42,7 +42,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const handleSubmit = async () => {
         try {
             const token = await AsyncStorage.getItem("token");
-            await axiosInstance.post(
+            await axios.post(
             `http://13.124.71.212:8080/api/gathering/${postId}/apply`,
             { application_text: application_text },
             {
@@ -68,7 +68,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         const fetchPost = async () => {
             try {
             const token = await AsyncStorage.getItem("token");
-            const res = await axiosInstance.get(`http://13.124.71.212:8080/api/gathering/${postId}`, {
+            const res = await axios.get(`http://13.124.71.212:8080/api/gathering/${postId}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

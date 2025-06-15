@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import { RootStackParamList, TabProps, NavigationProp } from "../types";
 import Icon from "react-native-vector-icons/Ionicons";
 import LostPostDetailItem from "../components/LostPostDetailItem";
@@ -20,7 +20,7 @@ const LostPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const fetchPost = async () => {
       try {
         const token = await AsyncStorage.getItem("token");
-        const res = await axiosInstance.get(`http://13.124.71.212:8080/api/lostboards/${postId}`, {
+        const res = await axios.get(`http://13.124.71.212:8080/api/lostboards/${postId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -28,7 +28,7 @@ const LostPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         setLoading(false);
 
         if (res.data.lostLatitude && res.data.lostLongitude) {
-          const addressRes = await axiosInstance.get(
+          const addressRes = await axios.get(
             `https://dapi.kakao.com/v2/local/geo/coord2address.json?x=${res.data.lostLongitude}&y=${res.data.lostLatitude}`,
             {
               headers: {
@@ -65,7 +65,7 @@ const LostPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
               const token = await AsyncStorage.getItem("token");
               if (!token) return;
 
-              const response = await axiosInstance.post(
+              const response = await axios.post(
                 "http://13.124.71.212:8080/api/private-chats",
                 { postId }, // 💡 전달할 postId
                 {

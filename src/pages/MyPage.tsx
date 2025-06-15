@@ -5,7 +5,7 @@ import { TabProps, NavigationProp } from "../types";
 import MenuBar from "../components/MenuBar";
 import Icon from "react-native-vector-icons/Ionicons";
 import Category from "../components/Category";
-import axiosInstance from '../api/axiosInstance';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import CustomAlert from "../components/CustomAlert";
 
@@ -26,7 +26,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         const token = await AsyncStorage.getItem("token");
         if (!token) throw new Error("토큰 없음");
 
-        const response = await axiosInstance.get("http://13.124.71.212:8080/api/posts/my-grouped", {
+        const response = await axios.get("http://13.124.71.212:8080/api/posts/my-grouped", {
             headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -80,7 +80,7 @@ const MyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
             if (!token || !userId) throw new Error("로그인 정보 없음");
 
-            await axiosInstance.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
+            await axios.delete(`http://13.124.71.212:8080/api/users/${userId}`, {
             headers: { Authorization: `Bearer ${token}` }
             });
 
