@@ -68,6 +68,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           maxParticipants: item.maxParticipants,
           currentParticipants: item.currentParticipants,
           dday: item.dday,
+          closed: item.closed
         })).sort((a: Post, b:Post) => b.postId - a.postId);
 
         setPosts(mapped);
@@ -121,6 +122,7 @@ const MeetPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     data={posts}
                     renderItem={({ item }) => (
                         <MeetPostItem 
+                            closed={item.closed}
                             authorUserId={item.authorUserId}
                             nickname={item.nickname}
                             title={item.title}

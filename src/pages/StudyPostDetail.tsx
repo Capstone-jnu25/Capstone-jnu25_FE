@@ -83,7 +83,11 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
 
     return(
-        <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : undefined}>
+        <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+            >
                 <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
                     <View style={styles.mainContainer}>
                         <View style={styles.contentContainer}>

@@ -8,14 +8,15 @@ interface StudyPostItemProps {
     details: string;
     date: string;
     location: string;
+    closed: boolean;
     onPress: () => void;
 }
 
-const StudyPostItem: React.FC<StudyPostItemProps> = ({ title, dDay, members, details, date, location, onPress }) => {
+const StudyPostItem: React.FC<StudyPostItemProps> = ({ title, dDay, members, details, date, location, closed, onPress }) => {
     return (
         <TouchableOpacity style={styles.container} onPress={onPress}>
             <View style={styles.header}>
-                <Text style={styles.dday}>{dDay}</Text>
+                <Text style={styles.dday}>{closed ? '마감' : dDay}</Text>
             </View>
             <View style={styles.content}>
                 <Text style={styles.title} numberOfLines={1}>{title}</Text>
@@ -34,8 +35,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         padding: 15,
         margin: 10,
-        width: 170,
-        height: 180,
+        width: 160,
+        height: 190,
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },

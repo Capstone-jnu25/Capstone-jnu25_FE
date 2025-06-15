@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, Platform, KeyboardAvoidingView } from "react-native";
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { useNavigation } from '@react-navigation/native';
@@ -107,6 +107,11 @@ const LoginPage = () => {
     }
 
     return (
+        <KeyboardAvoidingView
+              style={{ flex: 1 }}
+              behavior={Platform.OS === "ios" ? "padding" : "height"}
+              keyboardVerticalOffset={Platform.OS === "ios" ? 60 : 0}
+            >
         <View style={styles.container}>
             <Logo/>
 
@@ -133,6 +138,7 @@ const LoginPage = () => {
                 onConfirm={() => setAlertVisible(false)} 
             />
         </View>
+        </KeyboardAvoidingView>
     )
 }
 

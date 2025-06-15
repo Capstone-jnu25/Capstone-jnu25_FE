@@ -13,11 +13,12 @@ interface MeetPostItemProps {
     gender: string;
     isApplied: boolean;
     isFull: boolean;
+    closed: boolean;
     onApply: () => void;
     onProfilePress: () => void;
 }
 
-const MeetPostItem: React.FC<MeetPostItemProps> = ({ authorUserId, nickname, title, dDay, members, details, date, location, gender, isApplied, isFull, onApply, onProfilePress }) => {
+const MeetPostItem: React.FC<MeetPostItemProps> = ({ authorUserId, nickname, title, dDay, members, details, date, location, gender, closed, isApplied, isFull, onApply, onProfilePress }) => {
     return (
         <View style={styles.container}>
             <View style={styles.postHeader}>
@@ -30,7 +31,9 @@ const MeetPostItem: React.FC<MeetPostItemProps> = ({ authorUserId, nickname, tit
                 </TouchableOpacity>
                 </View>
             <View style={styles.header}>
-                <Text style={styles.dday}>{dDay}</Text>
+                <Text style={[styles.dday, closed && styles.closed]}>
+                    {closed ? '마감' : dDay}
+                    </Text>
                 <Text style={styles.members}>{members}</Text>
             </View>
             <View style={styles.content}>
@@ -152,6 +155,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
+    closed: {
+        color: 'red',
+        fontWeight: 'bold',
+    }
 });
 
 export default MeetPostItem;

@@ -14,45 +14,58 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const [isSearching, setIsSearching] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [posts, setPosts] = useState<Post[]>([]);
+    const [myUserId, setMyUserId] = useState<number | null>(null);
     const isFocused = useIsFocused();
 
     useEffect(() => {
-    const fetchStudyPosts = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const isSearchingWithQuery = isSearching && searchQuery.trim().length > 0;
+      const fetchMyUserId = async () => {
+        const storedId = await AsyncStorage.getItem("userId");
+        if (storedId) {
+          setMyUserId(Number(storedId));
+        }
+      };
+      fetchMyUserId();
+    }, [])
 
-        const endpoint = isSearchingWithQuery
-          ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=STUDY&page=0&size=10`
-          : `http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`;
+    useEffect(() => {
+        const fetchStudyPosts = async () => {
+            try {
+                const token = await AsyncStorage.getItem("token");
+                const isSearchingWithQuery = isSearching && searchQuery.trim().length > 0;
 
-        const response = await axios.get(endpoint, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+                const endpoint = isSearchingWithQuery
+                    ? `http://13.124.71.212:8080/api/posts/search?keyword=${encodeURIComponent(searchQuery)}&boardType=STUDY&page=0&size=10`
+                    : `http://13.124.71.212:8080/api/gathering?boardType=STUDY&page=0&size=10`;
 
-        const data = response.data.data;
-        const mapped = data.map((item: any) => ({
-          postId: item.postId,
-          title: item.title,
-          contents: item.contents,
-          place: item.place,
-          time: item.time,
-          maxParticipants: item.maxParticipants,
-          currentParticipants: item.currentParticipants,
-          dday: item.dday,
-        })).sort((a: Post, b:Post) => b.postId - a.postId);
+                const response = await axios.get(endpoint, {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
 
-        setPosts(mapped);
-        console.log("✅ 스터디 posts:", mapped);
-      } catch (error) {
-        console.error("❌ 스터디 게시글 불러오기 실패:", error);
-      }
-    };
+                const data = response.data.data;
+                const mapped = data.map((item: any) => ({
+                    postId: item.postId,
+                    title: item.title,
+                    contents: item.contents,
+                    place: item.place,
+                    time: item.time,
+                    maxParticipants: item.maxParticipants,
+                    currentParticipants: item.currentParticipants,
+                    dday: item.dday,
+                    closed: item.closed,
+                    authorUserId: item.authorUserId, // 작성자 ID
+                })).sort((a: Post, b: Post) => b.postId - a.postId);
 
-    if (isFocused) {
-      fetchStudyPosts();
-    }
- }, [isFocused, isSearching, searchQuery]);
+                setPosts(mapped);
+                console.log("✅ 스터디 posts:", mapped);
+            } catch (error) {
+                console.error("❌ 스터디 게시글 불러오기 실패:", error);
+            }
+        };
+
+        if (isFocused) {
+            fetchStudyPosts();
+        }
+    }, [isFocused, isSearching, searchQuery]);
 
     return (
         <View style={styles.mainContainer}>
@@ -73,26 +86,32 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                     <CircleButton iconName="pencil" onPress={() => { navigation.navigate('StudyPostAdd') }} />
                 </View>
 
-               <FlatList
+                <FlatList
                     data={posts}
                     keyExtractor={(item) => item.postId.toString()}
                     renderItem={({ item }) => (
                         <StudyPostItem
-                          title={item.title}
-                          dDay={item.dday}
-                          members={`${item.currentParticipants}/${item.maxParticipants}`}
-                          details={item.contents}
-                          date={`시간: ${item.time}`}
-                          location={`장소: ${item.place}`}
-                          onPress={() => {
-                              navigation.navigate('StudyPostDetail', { postId: item.postId });
-                          }}
-                        />
+                            closed={item.closed}
+                            title={item.title}
+                            dDay={item.dday}
+                            members={`${item.currentParticipants}/${item.maxParticipants}`}
+                            details={item.contents}
+                            date={`시간: ${item.time}`}
+                            location={`장소: ${item.place}`}
+                             onPress={() => {
+                                if (item.authorUserId === myUserId) {
+                                  navigation.navigate('StudyApplicantList', { postId: item.postId });
+                                } else {
+                                  navigation.navigate('StudyPostDetail', { postId: item.postId });
+                                }
+                              }}
+                            />
+  
                     )}
                     numColumns={2}
                     showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.listContainer}
-                    />
+                />
             </View>
             <MenuBar currentTab={currentTab} setCurrentTab={setCurrentTab} />
         </View>
@@ -101,24 +120,24 @@ const StudyPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
 
 const styles = StyleSheet.create({
     mainContainer: {
-      flex: 1,
-      backgroundColor : '#C6E4FF',
+        flex: 1,
+        backgroundColor: '#C6E4FF',
     },
     contentContainer: {
-      flex:1,
-      padding:20,
+        flex: 1,
+        padding: 20,
     },
     headerContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         marginBottom: 10,
-        marginTop : 16,
-      },
+        marginTop: 16,
+    },
     headerText: {
         flex: 1,
         fontSize: 20,
-        fontWeight : 'bold',
+        fontWeight: 'bold',
     },
     buttonContainer: {
         position: 'absolute',
@@ -130,12 +149,12 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     searchInput: {
-      backgroundColor: '#fff',
-      padding: 10,
-      borderRadius: 30,
-      marginBottom: 10,
-      marginTop: 10,
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 30,
+        marginBottom: 10,
+        marginTop: 10,
     },
-})
+});
 
 export default StudyPage;
