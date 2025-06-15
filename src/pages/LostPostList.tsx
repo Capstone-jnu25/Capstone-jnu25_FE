@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation, useIsFocused } from '@react-navigation/native';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, TextInput, Platform } from 'react-native';
 import { TabProps, NavigationProp, LostPost } from "../types";
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -10,7 +10,7 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 import * as ImagePicker from "react-native-image-picker";
-
+import RNFS from 'react-native-fs';
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<NavigationProp>();
@@ -58,50 +58,61 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   }
 }, [activeTab, isFocused, searchQuery, isSearching]);
 
-const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibrary({
-        mediaType: "photo",
-        quality: 0.8
-    });
-
-    if (result.assets && result.assets.length > 0) {
-        const uri = result.assets[0].uri ?? null;
-        const asset = result.assets[0];
-        const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
-        const name = asset.fileName ?? "image.jpg";
-        setPhotoUri(uri);
-        
-
-        // 🔽 이미지로 유사 게시글 검색 요청
-        const token = await AsyncStorage.getItem("token");
-
-        const formData = new FormData();
-        formData.append("newImage", {
-            uri,
-            type,
-            name
+    const handleImagePick = async () => {
+        const result = await ImagePicker.launchImageLibrary({
+            mediaType: "photo",
+            quality: 0.8
         });
 
-        try {
-      const isLost = activeTab === 'lost';
-      const response = await axios.post(
-        `http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${isLost}`,
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+        if (result.assets && result.assets.length > 0) {
+            const uri = result.assets[0].uri ?? null;
+            const asset = result.assets[0];
+            const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
+            const name = asset.fileName ?? "image.jpg";
+            setPhotoUri(uri);
+            console.log("✅ uri:", uri);
 
-      console.log("📦 유사 게시글 추천 결과:", response.data.recommendedPostIds);
-      // TODO: 검색 결과를 화면에 반영하거나, 결과 화면으로 이동
-    } catch (error) {
-      console.error("❌ 이미지 검색 실패:", error);
-    }
-  }
-};
+            // 🔽 이미지로 유사 게시글 검색 요청
+            const token = await AsyncStorage.getItem("token");
+
+            const formData = new FormData();
+            formData.append("newImage", {
+              uri: uri,
+              type: type,
+              name: name,
+            } as any);
+            
+            console.log("📎 image to send:", { uri, type, name });
+
+            // 실제 파일 경로 확인
+            const filePath = Platform.OS === 'android' ? uri : uri!.replace('file://', '');
+            if (filePath !== null) {
+              const exists = await RNFS.exists(filePath);
+              console.log("📂 실제 파일 존재함?", exists);
+            } else {
+              console.error("❌ filePath가 null입니다");
+            }
+            
+            try {
+            const isLost = activeTab === 'lost';
+
+                    
+            const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${!isLost}`, {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${token}`,
+                // Content-Type 생략!
+              },
+              body: formData,
+            });
+
+            const result = await response.json();
+            console.log("🎯 이미지 검색 결과:", result);
+          } catch (err) {
+            console.error("❌ fetch 이미지 검색 실패:", err);
+          }
+        }
+      };
 
 
   return (

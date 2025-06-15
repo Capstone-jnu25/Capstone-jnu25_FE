@@ -79,7 +79,7 @@ const LoginPage = () => {
                     setAlertTitle("FCM 오류");
                     setAlertMessage(errorMessage);
                     setAlertVisible(true);
-}
+                }
 
             setAlertTitle("로그인 성공");
             setAlertMessage(`${nickname}님, 환영합니다!`);

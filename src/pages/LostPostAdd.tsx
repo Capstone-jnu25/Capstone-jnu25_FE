@@ -78,7 +78,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     }
   };
 
-  const handleSubmit = async () => {
+ const handleSubmit = async () => {
   if (!title.trim()) {
     setAlertTitle("확인");
     setAlertMessage("제목을 입력해주세요.");
@@ -97,29 +97,45 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     const token = await AsyncStorage.getItem("token");
     const isLost = value === "분실";
 
-    let resolvedAddress = '';
-    if (selectedCoords) {
-      resolvedAddress = await reverseGeocode(selectedCoords.latitude, selectedCoords.longitude);
-    }
+    const resolvedAddress = await reverseGeocode(selectedCoords.latitude, selectedCoords.longitude);
 
     const formData = new FormData();
-    formData.append("title", title);
-    formData.append("contents", contents);
-    formData.append("place", resolvedAddress + " " + place);
-    formData.append("lost", isLost.toString());
-    formData.append("lostLatitude", selectedCoords.latitude.toString());
-    formData.append("lostLongitude", selectedCoords.longitude.toString());
 
+    // ✅ JSON 데이터는 "data" 키에 한 번에 묶어서 전송
+    const dataPayload = {
+      title,
+      contents,
+      place: resolvedAddress + " " + place,
+      lost: isLost,
+      lostLatitude: selectedCoords.latitude,
+      lostLongitude: selectedCoords.longitude,
+      photo:""
+    };
+
+    formData.append("data", JSON.stringify(dataPayload));
+
+    // ✅ 이미지 파일 첨부
+    console.log("📸 photoUri:", photoUri);
     if (photoUri) {
-      const fileName = photoUri.split("/").pop() || "photo.jpg";
-      const fileType = fileName.split(".").pop();
+      const fileName = photoUri.split("/").pop();
+      const fileType = fileName?.split(".").pop();
+
+      console.log("📄 fileName:", fileName);
+      console.log("📄 fileType:", fileType);
+
+      if (!fileType) {
+        console.warn("⚠️ 확장자 없음 — 기본 image/jpeg로 설정");
+      }
 
       formData.append("image", {
         uri: photoUri,
-        type: `image/${fileType}`,
-        name: fileName,
+        type: "image/jpeg", // fallback 처리
+        name: fileName || "image.jpg",
       } as any);
+    } else {
+      console.warn("⚠️ photoUri가 null이라 이미지 추가 안 됨");
     }
+
 
     const response = await axios.post(
       "http://13.124.71.212:8080/api/lostboards",
@@ -127,12 +143,14 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       {
         headers: {
           Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
         },
       }
     );
 
     console.log("✅ 작성 성공", response.data);
-    navigation.navigate('LostPostList');
+    navigation.navigate("LostPostList");
+
   } catch (error) {
     console.error("❌ 작성 실패", error);
     setAlertTitle("오류");
@@ -140,6 +158,7 @@ const LostPostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
     setAlertVisible(true);
   }
 };
+
 
 
   return (
