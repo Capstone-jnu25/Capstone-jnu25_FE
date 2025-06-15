@@ -59,16 +59,47 @@ const TradePostAdd: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         try {
         const token = await AsyncStorage.getItem("token");
 
-        const payload = {
-            title,
-            contents,
-            place,
-            photo: photoUri,
-            price,
-        };
+        const formData = new FormData();
 
-        const response = await axios.post("http://13.124.71.212:8080/api/secondhand", payload, {
-            headers: { Authorization: `Bearer ${token}` }
+    // ✅ JSON 데이터는 "data" 키에 한 번에 묶어서 전송
+    const dataPayload = {
+      title,
+      contents,
+      place,
+      price,
+      photo:""
+    };
+
+    formData.append("data", JSON.stringify(dataPayload));
+
+    // ✅ 이미지 파일 첨부
+    console.log("📸 photoUri:", photoUri);
+    if (photoUri) {
+      const fileName = photoUri.split("/").pop();
+      const fileType = fileName?.split(".").pop();
+
+      console.log("📄 fileName:", fileName);
+      console.log("📄 fileType:", fileType);
+
+      if (!fileType) {
+        console.warn("⚠️ 확장자 없음 — 기본 image/jpeg로 설정");
+      }
+
+      formData.append("image", {
+        uri: photoUri,
+        type: "image/jpeg", // fallback 처리
+        name: fileName || "image.jpg",
+      } as any);
+    } else {
+      console.warn("⚠️ photoUri가 null이라 이미지 추가 안 됨");
+    }
+
+
+        const response = await axios.post("http://13.124.71.212:8080/api/secondhand", formData, {
+            headers: { 
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "multipart/form-data",
+             }
         });
 
         console.log("✅ 작성 성공", response.data);

@@ -28,12 +28,12 @@ const StudyPostDetailItem: React.FC<StudyPostDetailItemProps> = ({ id, nickname,
             />
             <TouchableOpacity onPress={onProfilePress}>
                 <Text style={styles.postTitle}>{nickname}</Text>
+                <Text style={styles.dDay}>{dday}</Text>
             </TouchableOpacity>
             </View>
             {/* 헤더 */}
             <View style={styles.header}>
                 <Text style={styles.title}>{title}</Text>
-                <Text style={styles.dDay}>{dday}</Text>
             </View>
 
             {/* 시간 및 장소 */}

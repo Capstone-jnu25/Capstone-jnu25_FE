@@ -95,7 +95,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                                 {post ? (
                                     <StudyPostDetailItem 
                                         nickname={post.nickname}
-                                        id= {post.userId}
+                                        id= {post.authorId}
                                         title={post.title}
                                         dday={post.dday}
                                         time={post.time}
@@ -106,7 +106,7 @@ const StudyPostDetail: React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
                                         setApplication_text={setApplication_text}
                                         onSubmit={handleSubmit}
                                         onProfilePress={() => {
-                                            navigation.navigate('TheOtherPersonPage', { userId: post.userId });
+                                            navigation.navigate('TheOtherPersonPage', { userId: post.authorId });
                                         }}
                                     />
                                 ) : (

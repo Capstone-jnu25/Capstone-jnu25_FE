@@ -41,7 +41,7 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
           image: { uri: item.photo },
           price: item.price,  
           time: item.relativeTime,
-        }));
+        })).sort((a: TradePost, b:TradePost) => b.id - a.id);
         setPosts(mapped);
         console.log("✅ mapped posts:", mapped);
 
@@ -54,46 +54,77 @@ const TradePage:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
       }
 }, [isFocused, isSearching, searchQuery]);
 
-const handleImagePick = async () => {
-    const result = await ImagePicker.launchImageLibrary({
-        mediaType: "photo",
-        quality: 0.8
+ const fetchRecommendedPostIds = async (formData: FormData, token: string): Promise<number[]> => {
+  try {
+    const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=SECONDHAND`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
     });
-
-    if (result.assets && result.assets.length > 0) {
-        const uri = result.assets[0].uri ?? null;
-        const asset = result.assets[0];
-        const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
-        const name = asset.fileName ?? "image.jpg";
-        setPhotoUri(uri);
-     
-        // 🔽 이미지로 유사 게시글 검색 요청
-        const token = await AsyncStorage.getItem("token");
-
-        const formData = new FormData();
-            formData.append("newImage", {
-              uri: uri,
-              type: type,
-              name: name,
-            } as any);
-
-        try {
-      const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=SECONDHAND`, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                // Content-Type 생략!
-              },
-              body: formData,
-            });
-            const result = await response.json();
-            console.log("🎯 이미지 검색 결과:", result);
-          } catch (err) {
-            console.error("❌ fetch 이미지 검색 실패:", err);
-          }
+    const result = await response.json();
+    if (result.status === "success" && result.recommendedPostIds) {
+      return result.recommendedPostIds;
+    } else {
+      console.warn("추천 게시글 ID가 없습니다.");
+      return [];
+    }
+  } catch (err) {
+    console.error("추천 게시글 ID 조회 실패:", err);
+    return [];
   }
 };
 
+const fetchPostDetailsByIds = async (postIds: number[], token: string): Promise<TradePost[]> => {
+  if (postIds.length === 0) return [];
+
+  try {
+    const response = await axios.post(
+      "http://13.124.71.212:8080/api/secondhand/recommend",
+      { postIds },
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    return response.data.data.map((item: any)=> ({
+      id: item.postId,
+      title: item.title,
+      content: item.contents,
+      image: { uri: item.photo },
+      price: item.price,
+      time: item.relativeTime,
+    }));
+  } catch (error) {
+    console.error("상세 게시글 조회 실패:", error);
+    return [];
+  }
+};
+
+const handleImagePick = async () => {
+  const result = await ImagePicker.launchImageLibrary({
+    mediaType: "photo",
+    quality: 0.8,
+  });
+
+  if (result.assets && result.assets.length > 0) {
+    const uri = result.assets[0].uri ?? null;
+    const asset = result.assets[0];
+    const type = asset.type ?? "image/jpeg";
+    const name = asset.fileName ?? "image.jpg";
+    setPhotoUri(uri);
+
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
+
+    const formData = new FormData();
+    formData.append("newImage", { uri, type, name });
+
+    const recommendedPostIds = await fetchRecommendedPostIds(formData, token);
+    const recommendedPosts = await fetchPostDetailsByIds(recommendedPostIds, token);
+
+    setPosts(recommendedPosts);
+  }
+};
 
   return (
     <View style={styles.mainContainer}>

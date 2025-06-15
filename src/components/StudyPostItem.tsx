@@ -21,7 +21,7 @@ const StudyPostItem: React.FC<StudyPostItemProps> = ({ title, dDay, members, det
                 <Text style={styles.title} numberOfLines={1}>{title}</Text>
                 <Text style={styles.details}>{date}</Text>
                 <Text style={styles.details}>{location}</Text>
-                <Text style={styles.details} numberOfLines={3}>{details}</Text>
+                <Text style={styles.details} numberOfLines={2}>{details}</Text>
                 
                 <Text style={styles.members}>{members}</Text>
             </View>

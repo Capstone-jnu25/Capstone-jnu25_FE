@@ -18,13 +18,14 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
         department: '',
         studentNum: '',
         goodCount: 0,
-        badCount: 0,
+        badCount: 0
     });
 
     useEffect(() => {
         const fetchProfile = async () => {
             try {
                 const token = await AsyncStorage.getItem("token");
+                console.log("📌 userId:", userId);
                 const res = await axios.get(`http://13.124.71.212:8080/api/users/${userId}`, {
                     headers: { Authorization: `Bearer ${token}` },
                 });
@@ -35,7 +36,7 @@ const TheOtherPersonPage: React.FC<TabProps> = ({ currentTab, setCurrentTab }) =
                     department: data.department || '미입력',
                     studentNum: data.studentNum,
                     goodCount: data.goodCount,
-                    badCount: data.badCount,
+                    badCount: data.badCount
                 });
             } catch (error) {
                 console.error("❌ 프로필 조회 실패:", error);

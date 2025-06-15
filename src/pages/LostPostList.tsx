@@ -10,7 +10,6 @@ import Icon2 from 'react-native-vector-icons/MaterialIcons'
 import CircleButton from "../components/CircleButton";
 import LostPostItem from '../components/LostPostItem';
 import * as ImagePicker from "react-native-image-picker";
-import RNFS from 'react-native-fs';
 
 const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   const navigation = useNavigation<NavigationProp>();
@@ -44,7 +43,7 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
         image: { uri: item.photo },
         location: item.place,
         time: item.relativeTime,
-      }));
+      })).sort((a: LostPost, b:LostPost) => b.id - a.id);
       setPosts(mapped);
       console.log("✅ mapped posts:", mapped);
 
@@ -58,60 +57,93 @@ const LostPostList:React.FC<TabProps> = ({ currentTab, setCurrentTab }) => {
   }
 }, [activeTab, isFocused, searchQuery, isSearching]);
 
-    const handleImagePick = async () => {
-        const result = await ImagePicker.launchImageLibrary({
-            mediaType: "photo",
-            quality: 0.8
-        });
+   const handleImagePick = async () => {
+  const result = await ImagePicker.launchImageLibrary({
+    mediaType: "photo",
+    quality: 0.8,
+  });
 
-        if (result.assets && result.assets.length > 0) {
-            const uri = result.assets[0].uri ?? null;
-            const asset = result.assets[0];
-            const type = asset.type ?? "image/jpeg"; // jpeg, png 등 자동 인식
-            const name = asset.fileName ?? "image.jpg";
-            setPhotoUri(uri);
-            console.log("✅ uri:", uri);
+  if (result.assets && result.assets.length > 0) {
+    const uri = result.assets[0].uri ?? null;
+    const asset = result.assets[0];
+    const type = asset.type ?? "image/jpeg";
+    const name = asset.fileName ?? "image.jpg";
+    setPhotoUri(uri);
 
-            // 🔽 이미지로 유사 게시글 검색 요청
-            const token = await AsyncStorage.getItem("token");
+    const token = await AsyncStorage.getItem("token");
+    if (!token) return;
 
-            const formData = new FormData();
-            formData.append("newImage", {
-              uri: uri,
-              type: type,
-              name: name,
-            } as any);
-            
-            console.log("📎 image to send:", { uri, type, name });
+    const formData = new FormData();
+    formData.append("newImage", {
+      uri,
+      type,
+      name,
+    } as any);
 
-            // 실제 파일 경로 확인
-            const filePath = Platform.OS === 'android' ? uri : uri!.replace('file://', '');
-            if (filePath !== null) {
-              const exists = await RNFS.exists(filePath);
-              console.log("📂 실제 파일 존재함?", exists);
-            } else {
-              console.error("❌ filePath가 null입니다");
-            }
-            
-            try {
-            const isLost = activeTab === 'lost';
+    const isLost = activeTab === "lost";
 
-            const response = await fetch(`http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${!isLost}`, {
-              method: "POST",
-              headers: {
-                Authorization: `Bearer ${token}`,
-                // Content-Type 생략!
-              },
-              body: formData,
-            });
+    // 1. 추천 ID 받기
+    const recommendedPostIds = await fetchRecommendedPostIds(formData, token, isLost);
 
-            const result = await response.json();
-            console.log("🎯 이미지 검색 결과:", result);
-          } catch (err) {
-            console.error("❌ fetch 이미지 검색 실패:", err);
+    // 2. 상세 게시글 데이터 받기
+    const posts = await fetchPostDetailsByIds(recommendedPostIds, token, isLost);
+
+    // 3. 상태 업데이트
+    setPosts(posts);
+  }
+};
+
+      const fetchRecommendedPostIds = async (formData: FormData, token: string, isLost: boolean): Promise<number[]> => {
+      try {
+        const response = await fetch(
+          `http://13.124.71.212:8080/api/search/image?boardType=LOST&isLost=${!isLost}`,
+          {
+            method: "POST",
+            headers: { Authorization: `Bearer ${token}` },
+            body: formData,
           }
+        );
+        const result = await response.json();
+        if (result.status === "success" && result.recommendedPostIds) {
+          return result.recommendedPostIds;
+        } else {
+          console.warn("추천 ID 없음");
+          return [];
         }
-      };
+      } catch (error) {
+        console.error("추천 ID 요청 실패", error);
+        return [];
+      }
+    };
+
+const fetchPostDetailsByIds = async (postIds: number[], token: string, isLost: boolean): Promise<LostPost[]> => {
+  if (postIds.length === 0) return [];
+
+  try {
+    const response = await axios.post(
+      "http://13.124.71.212:8080/api/lostboards/recommend",
+      { postIds: postIds }, 
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+
+    return response.data.data.map((item: any) => ({
+      id: item.postId,
+      type: isLost ? "lost" : "found",
+      title: item.title ?? "",
+      nickname: item.nickname ?? "",
+      content: item.contents,
+      image: { uri: item.photo },
+      location: item.place,
+      time: item.relativeTime,
+    }));
+  } catch (error) {
+    console.error("상세 게시글 조회 실패", error);
+    return [];
+  }
+};
+
 
 
   return (
